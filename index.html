@@ -1,680 +1,1263 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ASCEND SYSTEM — ELITE PERFORMANCE</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,700&family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
 
 <style>
-
 :root{
-  --bg:#050505;
-  --bg2:#0d0d0d;
-  --text:#f5f5f5;
-  --muted:#8f8f8f;
-  --line:rgba(255,255,255,0.08);
-  --green:#c7ff3f;
-  --green2:#95ff00;
+  --bg:#040404;
+  --bg2:#090909;
+  --surface:rgba(255,255,255,0.028);
+  --text:#f0ede8;
+  --muted:#7a7672;
+  --accent:#c8ff3e;
+  --accent2:#aaff00;
+  --accent-dim:rgba(200,255,62,0.12);
+  --line:rgba(255,255,255,0.07);
+  --red:#ff3e3e;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  --font-cond:'Barlow Condensed',sans-serif;
 }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
-html{
-  scroll-behavior:smooth;
-}
+html{scroll-behavior:smooth;font-size:16px;}
 
 body{
-  font-family:'Inter',sans-serif;
+  font-family:var(--font-body);
   background:var(--bg);
   color:var(--text);
   overflow-x:hidden;
+  cursor:none;
 }
 
+/* ─── CUSTOM CURSOR ─── */
+#cursor{
+  position:fixed;
+  width:12px;height:12px;
+  background:var(--accent);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:width .25s,height .25s,background .25s,opacity .25s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;
+  width:44px;height:44px;
+  border:1.5px solid rgba(200,255,62,0.5);
+  border-radius:50%;
+  pointer-events:none;
+  z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:width .4s cubic-bezier(.16,1,.3,1),height .4s cubic-bezier(.16,1,.3,1),border-color .3s,opacity .3s;
+}
+body:has(a:hover) #cursor,
+body:has(button:hover) #cursor{width:20px;height:20px;}
+body:has(a:hover) #cursor-ring,
+body:has(button:hover) #cursor-ring{width:70px;height:70px;border-color:var(--accent);}
+
+/* ─── NOISE GRAIN ─── */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:9998;
+  opacity:.45;
+}
+
+/* ─── GLOBAL GLOW BG ─── */
 body::before{
   content:'';
   position:fixed;
   inset:0;
   background:
-  radial-gradient(circle at top left, rgba(199,255,63,0.12), transparent 35%),
-  radial-gradient(circle at bottom right, rgba(199,255,63,0.08), transparent 35%);
+    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(200,255,62,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 100%, rgba(200,255,62,0.06) 0%, transparent 60%);
   pointer-events:none;
   z-index:-1;
 }
 
-::-webkit-scrollbar{
-  width:10px;
-}
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.3);border-radius:999px;}
 
-::-webkit-scrollbar-thumb{
-  background:rgba(255,255,255,0.12);
-  border-radius:999px;
-}
-
-section{
-  position:relative;
-}
-
+/* ─── NAV ─── */
 .nav{
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  padding:28px 70px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  z-index:9999;
-  transition:0.4s ease;
-  backdrop-filter:blur(18px);
+  top:0;left:0;width:100%;
+  padding:32px 80px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:9000;
+  transition:padding .5s ease, background .5s ease, border-color .5s ease;
+  border-bottom:1px solid transparent;
 }
-
 .nav.scrolled{
-  padding:18px 70px;
-  background:rgba(5,5,5,0.72);
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  padding:16px 80px;
+  background:rgba(4,4,4,0.82);
+  backdrop-filter:blur(28px) saturate(180%);
+  border-bottom-color:var(--line);
 }
 
 .logo{
-  font-size:20px;
-  font-weight:900;
-  letter-spacing:4px;
+  font-family:var(--font-display);
+  font-size:26px;
+  letter-spacing:6px;
   color:white;
+  display:flex;align-items:center;gap:10px;
 }
-
-.logo span{
-  color:var(--green);
+.logo-mark{
+  width:28px;height:28px;
+  background:var(--accent);
+  clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
+  flex-shrink:0;
 }
+.logo span{color:var(--accent);}
 
 .nav-links{
-  display:flex;
-  gap:40px;
+  display:flex;gap:44px;align-items:center;
 }
-
 .nav-links a{
   text-decoration:none;
-  color:#d9d9d9;
-  font-size:14px;
-  font-weight:600;
-  letter-spacing:1px;
+  color:rgba(240,237,232,0.6);
+  font-family:var(--font-cond);
+  font-size:13px;font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
   position:relative;
-  transition:0.3s;
+  transition:color .3s;
 }
-
 .nav-links a::after{
   content:'';
   position:absolute;
-  left:0;
-  bottom:-8px;
-  width:0%;
-  height:2px;
-  background:var(--green);
-  transition:0.4s;
+  left:0;bottom:-6px;
+  width:0;height:1.5px;
+  background:var(--accent);
+  transition:width .4s cubic-bezier(.16,1,.3,1);
+}
+.nav-links a:hover{color:white;}
+.nav-links a:hover::after{width:100%;}
+
+.nav-cta{
+  font-family:var(--font-cond);
+  font-size:13px;font-weight:800;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:black;
+  background:var(--accent);
+  padding:12px 28px;
+  border:none;
+  cursor:pointer;
+  clip-path:polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition:transform .3s, box-shadow .3s;
+}
+.nav-cta:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 50px rgba(200,255,62,0.35);
 }
 
-.nav-links a:hover{
-  color:white;
-}
-
-.nav-links a:hover::after{
-  width:100%;
-}
-
+/* ─── HERO ─── */
 .hero{
+  position:relative;
   min-height:100vh;
-  display:flex;
-  align-items:center;
-  padding:0 7%;
+  display:grid;
+  grid-template-rows:1fr;
   overflow:hidden;
 }
 
-.hero-bg{
+.hero-media{
   position:absolute;
-  inset:0;
-  z-index:-2;
-  overflow:hidden;
+  inset:0;z-index:0;
 }
-
-.hero-bg img{
-  width:100%;
-  height:100%;
+.hero-media img{
+  width:100%;height:100%;
   object-fit:cover;
-  transform:scale(1.1);
-  filter:brightness(0.35) contrast(1.1);
+  transform-origin:center;
+  filter:brightness(.28) saturate(1.2);
+  will-change:transform;
 }
 
-.hero-overlay{
-  position:absolute;
-  inset:0;
+.hero-vignette{
+  position:absolute;inset:0;z-index:1;
   background:
-  linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.95)),
-  radial-gradient(circle at center, transparent 0%, #050505 90%);
-  z-index:-1;
+    linear-gradient(to right, rgba(4,4,4,0.95) 0%, rgba(4,4,4,0.5) 55%, transparent 100%),
+    linear-gradient(to top, rgba(4,4,4,1) 0%, transparent 35%),
+    linear-gradient(to bottom, rgba(4,4,4,0.5) 0%, transparent 20%);
 }
 
+/* Animated grid lines */
 .hero-grid{
-  position:absolute;
-  inset:0;
+  position:absolute;inset:0;z-index:2;
   background-image:
-  linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-  linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size:70px 70px;
-  mask-image:linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
-  opacity:0.35;
+    linear-gradient(rgba(200,255,62,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,255,62,0.04) 1px, transparent 1px);
+  background-size:80px 80px;
+  mask-image:linear-gradient(to right, black 0%, black 60%, transparent 100%);
+  animation:gridMove 25s linear infinite;
+}
+@keyframes gridMove{
+  0%{background-position:0 0;}
+  100%{background-position:80px 80px;}
+}
+
+.hero-scan{
+  position:absolute;
+  inset:0;z-index:3;
+  background:linear-gradient(transparent 0%, rgba(200,255,62,0.03) 50%, transparent 100%);
+  background-size:100% 200px;
+  animation:scanDown 8s linear infinite;
+  pointer-events:none;
+}
+@keyframes scanDown{
+  0%{background-position:0 -200px;}
+  100%{background-position:0 100vh;}
 }
 
 .hero-content{
-  max-width:980px;
+  position:relative;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:160px 80px 120px;
+  min-height:100vh;
+  max-width:1100px;
 }
 
-.pill{
-  display:inline-flex;
-  align-items:center;
-  gap:12px;
-  padding:14px 24px;
-  border:1px solid rgba(255,255,255,0.08);
-  background:rgba(255,255,255,0.03);
-  border-radius:999px;
-  margin-bottom:34px;
-  backdrop-filter:blur(12px);
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:14px;
+  margin-bottom:40px;
+  opacity:1;
+}
+.eyebrow-line{
+  width:40px;height:2px;
+  background:var(--accent);
+  position:relative;
+  overflow:hidden;
+}
+.eyebrow-line::after{
+  content:'';
+  position:absolute;
+  top:0;left:-100%;
+  width:100%;height:100%;
+  background:white;
+  animation:lineSweep 2s ease-in-out infinite;
+}
+@keyframes lineSweep{
+  0%{left:-100%;}
+  50%,100%{left:200%;}
+}
+.eyebrow-text{
+  font-family:var(--font-cond);
+  font-size:12px;font-weight:700;
+  letter-spacing:4px;
+  color:var(--accent);
+  text-transform:uppercase;
+}
+.eyebrow-badge{
+  padding:4px 12px;
+  border:1px solid rgba(200,255,62,0.3);
+  background:rgba(200,255,62,0.06);
+  font-family:var(--font-cond);
+  font-size:10px;font-weight:700;
+  letter-spacing:3px;
+  color:var(--accent);
 }
 
-.pill-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 18px var(--green);
+.hero-h1{
+  font-family:var(--font-display);
+  font-size:clamp(80px, 12vw, 160px);
+  line-height:.88;
+  letter-spacing:-2px;
+  color:white;
+  margin-bottom:36px;
+  position:relative;
 }
-
-.pill span{
-  color:#d7d7d7;
-  letter-spacing:2px;
-  font-size:12px;
-  font-weight:700;
+.hero-h1 .line-accent{
+  color:var(--accent);
+  display:block;
+  position:relative;
 }
-
-.hero h1{
-  font-size:120px;
-  line-height:0.9;
-  font-weight:900;
-  letter-spacing:-6px;
-  margin-bottom:30px;
+.hero-h1 .line-accent::after{
+  content:attr(data-text);
+  position:absolute;
+  top:0;left:0;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(200,255,62,0.2);
+  z-index:-1;
+  transform:translate(3px,3px);
 }
-
-.hero h1 span{
-  color:var(--green);
+.hero-h1 .line-stroke{
+  display:block;
+  -webkit-text-stroke:1.5px rgba(255,255,255,0.35);
+  color:transparent;
 }
 
 .hero-sub{
-  max-width:760px;
-  font-size:24px;
-  line-height:1.7;
-  color:#b8b8b8;
+  max-width:620px;
+  font-size:20px;
+  line-height:1.75;
+  color:rgba(240,237,232,0.62);
+  font-weight:400;
+  margin-bottom:60px;
+  border-left:2px solid var(--accent);
+  padding-left:24px;
 }
 
-.hero-buttons{
-  margin-top:50px;
-  display:flex;
-  gap:22px;
-  flex-wrap:wrap;
+.hero-actions{
+  display:flex;align-items:center;gap:28px;flex-wrap:wrap;
 }
 
-.btn{
+.btn-main{
   position:relative;
   overflow:hidden;
-  padding:20px 34px;
-  border-radius:18px;
-  font-weight:800;
-  text-decoration:none;
-  transition:0.45s;
-  cursor:pointer;
-}
-
-.btn-primary{
-  background:var(--green);
+  font-family:var(--font-cond);
+  font-size:14px;font-weight:800;
+  letter-spacing:3px;
+  text-transform:uppercase;
   color:black;
+  background:var(--accent);
+  border:none;
+  padding:22px 48px;
+  cursor:pointer;
+  clip-path:polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  transition:transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+  text-decoration:none;
+  display:inline-block;
+}
+.btn-main::before{
+  content:'';
+  position:absolute;
+  top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  transform:skewX(-25deg);
+  transition:left .7s;
+}
+.btn-main:hover::before{left:150%;}
+.btn-main:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 28px 80px rgba(200,255,62,.4), 0 0 0 1px rgba(200,255,62,0.3);
 }
 
-.btn-primary::before{
+.btn-ghost{
+  font-family:var(--font-cond);
+  font-size:13px;font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  color:rgba(240,237,232,0.7);
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.12);
+  padding:21px 44px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block;
+  transition:all .4s;
+  position:relative;
+  overflow:hidden;
+}
+.btn-ghost::before{
   content:'';
   position:absolute;
   inset:0;
-  background:linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-  transform:translateX(-100%);
-}
-
-.btn-primary:hover::before{
-  transform:translateX(200%);
-  transition:1s;
-}
-
-.btn-primary:hover{
-  transform:translateY(-8px);
-  box-shadow:0 30px 80px rgba(199,255,63,0.35);
-}
-
-.btn-secondary{
-  border:1px solid rgba(255,255,255,0.1);
-  color:white;
   background:rgba(255,255,255,0.04);
-  backdrop-filter:blur(12px);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+.btn-ghost:hover::before{transform:scaleX(1);}
+.btn-ghost:hover{color:white;border-color:rgba(255,255,255,0.25);transform:translateY(-4px);}
+
+.btn-ghost svg{
+  display:inline;vertical-align:middle;
+  margin-right:10px;
 }
 
-.btn-secondary:hover{
-  transform:translateY(-8px);
-  background:rgba(255,255,255,0.08);
-}
-
-.hero-stats{
+/* ─── HERO STATS BAND ─── */
+.hero-stats-band{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  z-index:10;
   display:flex;
-  gap:60px;
-  margin-top:90px;
-  flex-wrap:wrap;
+  border-top:1px solid var(--line);
 }
+.stat-cell{
+  flex:1;
+  padding:36px 48px;
+  border-right:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+  background:rgba(4,4,4,0.6);
+  backdrop-filter:blur(20px);
+  transition:background .4s;
+}
+.stat-cell:last-child{border-right:none;}
+.stat-cell::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:var(--accent);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .6s cubic-bezier(.16,1,.3,1);
+}
+.stat-cell:hover::before{transform:scaleX(1);}
+.stat-cell:hover{background:rgba(200,255,62,0.04);}
 
-.stat h2{
+.stat-number{
+  font-family:var(--font-display);
   font-size:56px;
-  color:var(--green);
-  margin-bottom:8px;
+  color:var(--accent);
+  line-height:1;
+  margin-bottom:6px;
+  display:block;
+}
+.stat-label{
+  font-family:var(--font-cond);
+  font-size:11px;font-weight:700;
+  letter-spacing:3px;
+  color:var(--muted);
+  text-transform:uppercase;
 }
 
-.stat p{
-  color:#8d8d8d;
-  font-size:14px;
-  letter-spacing:1px;
-}
-
+/* ─── SECTION COMMON ─── */
 .section{
-  padding:180px 7%;
+  padding:180px 80px;
+  position:relative;
 }
 
-.section-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:end;
-  gap:40px;
-  margin-bottom:100px;
+.overline{
+  font-family:var(--font-cond);
+  font-size:11px;font-weight:700;
+  letter-spacing:4px;
+  color:var(--accent);
+  text-transform:uppercase;
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:24px;
+}
+.overline::before{
+  content:'';
+  width:30px;height:1.5px;
+  background:var(--accent);
 }
 
 .section-title{
-  font-size:72px;
-  line-height:0.95;
-  font-weight:900;
-  letter-spacing:-3px;
+  font-family:var(--font-display);
+  font-size:clamp(56px,8vw,110px);
+  line-height:.9;
+  letter-spacing:-1px;
+  color:white;
+}
+.section-title em{
+  font-style:normal;
+  color:var(--accent);
 }
 
-.section-desc{
-  max-width:620px;
-  color:#9f9f9f;
-  font-size:20px;
-  line-height:1.8;
-}
-
-.massive-grid{
+/* ─── SECTION 1: IDENTITY ─── */
+.identity-section{
   display:grid;
-  grid-template-columns:repeat(12,1fr);
-  gap:28px;
+  grid-template-columns:1fr 1fr;
+  gap:120px;
+  align-items:center;
+}
+.identity-left{}
+.identity-right{
+  position:relative;
 }
 
-.big-card{
+.identity-desc{
+  margin-top:40px;
+  font-size:19px;
+  line-height:1.8;
+  color:rgba(240,237,232,0.6);
+  max-width:540px;
+}
+
+.identity-metrics{
+  margin-top:70px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2px;
+}
+.metric-block{
+  padding:32px;
+  background:var(--surface);
+  border:1px solid var(--line);
   position:relative;
   overflow:hidden;
-  border-radius:34px;
-  min-height:500px;
-  border:1px solid rgba(255,255,255,0.06);
-  background:#0b0b0b;
+  transition:background .4s;
+}
+.metric-block::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;
+  width:3px;height:100%;
+  background:var(--accent);
+  transform:scaleY(0);
+  transform-origin:bottom;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.metric-block:hover{background:rgba(200,255,62,0.04);}
+.metric-block:hover::before{transform:scaleY(1);}
+.metric-n{
+  font-family:var(--font-display);
+  font-size:48px;
+  color:var(--accent);
+  line-height:1;
+  display:block;
+  margin-bottom:8px;
+}
+.metric-t{
+  font-family:var(--font-cond);
+  font-size:12px;font-weight:700;
+  letter-spacing:2.5px;
+  color:var(--muted);
+  text-transform:uppercase;
 }
 
-.big-card::before{
+/* Right col: stacked visual */
+.identity-visual{
+  position:relative;
+  height:700px;
+}
+.identity-img-main{
+  position:absolute;
+  right:0;top:0;
+  width:80%;height:80%;
+  object-fit:cover;
+  filter:brightness(.55) saturate(1.1);
+}
+.identity-img-main::after{
   content:'';
   position:absolute;
   inset:0;
-  background:linear-gradient(to top, rgba(0,0,0,0.9), transparent 55%);
-  z-index:2;
+  background:linear-gradient(to top, var(--bg), transparent 50%);
 }
-
-.big-card img{
+.identity-img-secondary{
   position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
+  bottom:0;left:0;
+  width:55%;
+  height:55%;
   object-fit:cover;
-  transition:1.2s ease;
-  filter:brightness(0.7);
+  filter:brightness(.5) saturate(1.2);
+  border:4px solid var(--bg);
 }
-
-.big-card:hover img{
-  transform:scale(1.08);
-}
-
-.big-card-content{
+.identity-badge{
   position:absolute;
-  bottom:40px;
-  left:40px;
-  z-index:5;
-  max-width:80%;
+  top:40%;right:-30px;
+  width:130px;height:130px;
+  background:var(--accent);
+  border-radius:50%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:10;
+  animation:rotateBadge 20s linear infinite;
+}
+@keyframes rotateBadge{
+  to{transform:rotate(360deg);}
+}
+.identity-badge-inner{
+  text-align:center;
+  animation:rotateBadge 20s linear infinite reverse;
+}
+.identity-badge-inner strong{
+  display:block;
+  font-family:var(--font-display);
+  font-size:38px;
+  color:black;
+  line-height:1;
+}
+.identity-badge-inner span{
+  font-family:var(--font-cond);
+  font-size:10px;font-weight:800;
+  letter-spacing:2px;
+  color:rgba(0,0,0,0.7);
+  text-transform:uppercase;
 }
 
-.big-card-content h3{
-  font-size:42px;
-  margin-bottom:14px;
-  font-weight:900;
+/* ─── SECTION 2: PILLARS (horizontal mega scroll feel) ─── */
+.pillars-section{
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  overflow:hidden;
 }
 
-.big-card-content p{
-  color:#d1d1d1;
-  line-height:1.7;
-  font-size:18px;
-}
-
-.card-1{
-  grid-column:span 7;
-}
-
-.card-2{
-  grid-column:span 5;
-}
-
-.card-3{
-  grid-column:span 5;
-}
-
-.card-4{
-  grid-column:span 7;
-}
-
-.lux-section{
-  padding:220px 7%;
-  background:linear-gradient(to bottom, #050505, #0b0b0b);
-}
-
-.horizontal-wrapper{
+.pillars-header{
+  padding:120px 80px 80px;
   display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
   gap:40px;
-  margin-top:100px;
+}
+.pillars-header-desc{
+  max-width:500px;
+  font-size:18px;
+  line-height:1.8;
+  color:rgba(240,237,232,0.55);
 }
 
-.horizontal-card{
-  min-width:520px;
-  height:620px;
-  border-radius:34px;
-  overflow:hidden;
+.pillars-track{
+  display:flex;
+  gap:3px;
+  padding:0 80px 120px;
+}
+
+.pillar{
+  flex:0 0 420px;
+  height:600px;
   position:relative;
-  background:#111;
-  border:1px solid rgba(255,255,255,0.06);
+  overflow:hidden;
+  cursor:pointer;
+  transition:flex .7s cubic-bezier(.16,1,.3,1);
 }
+.pillar:hover{flex:0 0 580px;}
 
-.horizontal-card img{
-  width:100%;
-  height:100%;
+.pillar img{
+  width:100%;height:100%;
   object-fit:cover;
-  filter:brightness(0.7);
-  transition:1s;
+  filter:brightness(.35) saturate(1.3);
+  transition:filter .7s, transform .7s;
+}
+.pillar:hover img{
+  filter:brightness(.45) saturate(1.4);
+  transform:scale(1.04);
 }
 
-.horizontal-card:hover img{
-  transform:scale(1.06);
-}
-
-.horizontal-card::before{
-  content:'';
+.pillar-overlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(to top, rgba(0,0,0,0.95), transparent 60%);
+  background:linear-gradient(to top, rgba(4,4,4,.98) 0%, rgba(4,4,4,0.2) 50%, transparent 100%);
   z-index:1;
 }
 
-.horizontal-card-content{
+.pillar-content{
   position:absolute;
-  left:35px;
-  bottom:35px;
+  bottom:0;left:0;right:0;
+  padding:40px;
   z-index:2;
 }
 
-.horizontal-card-content h2{
-  font-size:48px;
+.pillar-number{
+  font-family:var(--font-display);
+  font-size:100px;
+  color:rgba(200,255,62,0.08);
+  line-height:1;
+  position:absolute;
+  top:20px;right:30px;
+  z-index:2;
+  transition:color .5s;
+}
+.pillar:hover .pillar-number{color:rgba(200,255,62,0.14);}
+
+.pillar-tag{
+  font-family:var(--font-cond);
+  font-size:11px;font-weight:700;
+  letter-spacing:3px;
+  color:var(--accent);
+  text-transform:uppercase;
   margin-bottom:14px;
-  font-weight:900;
+  display:block;
 }
 
-.horizontal-card-content p{
-  max-width:420px;
-  color:#c4c4c4;
+.pillar-title{
+  font-family:var(--font-display);
+  font-size:52px;
+  color:white;
+  line-height:.95;
+  margin-bottom:18px;
+}
+
+.pillar-body{
+  font-size:15px;
   line-height:1.7;
+  color:rgba(240,237,232,0.6);
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .7s cubic-bezier(.16,1,.3,1);
+}
+.pillar:hover .pillar-body{max-height:120px;}
+
+.pillar-arrow{
+  display:inline-flex;
+  align-items:center;gap:10px;
+  margin-top:20px;
+  font-family:var(--font-cond);
+  font-size:12px;font-weight:700;
+  letter-spacing:2.5px;
+  color:var(--accent);
+  text-transform:uppercase;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity .5s .1s, transform .5s .1s;
+}
+.pillar:hover .pillar-arrow{opacity:1;transform:translateY(0);}
+.pillar-arrow::after{
+  content:'→';
+  font-size:16px;
+  transition:transform .3s;
+}
+.pillar:hover .pillar-arrow::after{transform:translateX(5px);}
+
+/* ─── SECTION 3: PARALLAX MANIFESTO ─── */
+.manifesto{
+  position:relative;
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.manifesto-bg{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at center, rgba(200,255,62,0.1) 0%, transparent 65%),
+    var(--bg);
+}
+.manifesto-lines{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+}
+.manifesto-lines span{
+  position:absolute;
+  left:0;right:0;
+  height:1px;
+  background:var(--line);
+  transform-origin:left;
 }
 
-.parallax{
-  height:90vh;
+.manifesto-content{
+  position:relative;
+  z-index:5;
+  text-align:center;
+  max-width:1100px;
+  padding:0 60px;
+}
+.manifesto-quote{
+  font-family:var(--font-display);
+  font-size:clamp(54px, 9vw, 120px);
+  line-height:.88;
+  letter-spacing:-2px;
+  color:white;
+}
+.manifesto-quote .word-accent{color:var(--accent);}
+.manifesto-quote .word-stroke{
+  -webkit-text-stroke:1px rgba(255,255,255,0.4);
+  color:transparent;
+}
+
+.manifesto-sub{
+  margin-top:40px;
+  font-size:20px;
+  color:rgba(240,237,232,0.5);
+  line-height:1.7;
+  max-width:700px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* ─── SECTION 4: SYSTEM MODULES ─── */
+.modules-section{
+  background:var(--bg);
+}
+.modules-header{
+  margin-bottom:100px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:end;
+}
+.modules-header-desc{
+  font-size:18px;
+  line-height:1.8;
+  color:rgba(240,237,232,0.55);
+}
+.modules-header-desc strong{color:var(--text);}
+
+.modules-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:3px;
+}
+.module-card{
+  position:relative;
+  padding:56px 44px;
+  background:var(--surface);
+  border:1px solid var(--line);
   overflow:hidden;
+  transition:background .5s, border-color .5s;
+  cursor:default;
+}
+.module-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg, var(--accent), var(--accent2));
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform .6s cubic-bezier(.16,1,.3,1);
+}
+.module-card:hover::before{transform:scaleX(1);}
+.module-card:hover{
+  background:rgba(200,255,62,0.03);
+  border-color:rgba(200,255,62,0.12);
+}
+
+.module-icon{
+  width:56px;height:56px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(200,255,62,0.08);
+  border:1px solid rgba(200,255,62,0.15);
+  margin-bottom:32px;
+  transition:background .4s, border-color .4s;
+  font-size:24px;
+}
+.module-card:hover .module-icon{
+  background:rgba(200,255,62,0.14);
+  border-color:rgba(200,255,62,0.3);
+}
+
+.module-title{
+  font-family:var(--font-display);
+  font-size:38px;
+  color:white;
+  margin-bottom:18px;
+  line-height:.95;
+}
+.module-desc{
+  font-size:15px;
+  line-height:1.75;
+  color:rgba(240,237,232,0.55);
+  margin-bottom:32px;
+}
+.module-tags{
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.module-tag{
+  font-family:var(--font-cond);
+  font-size:10px;font-weight:700;
+  letter-spacing:2px;
+  color:var(--muted);
+  text-transform:uppercase;
+  padding:5px 12px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.module-card.featured{
+  background:rgba(200,255,62,0.05);
+  border-color:rgba(200,255,62,0.15);
+  grid-column:span 2;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:center;
+}
+.module-card.featured::before{transform:scaleX(1);opacity:.6;}
+.module-card.featured .module-title{font-size:56px;}
+.featured-visual{
+  height:280px;
+  position:relative;
+  overflow:hidden;
+}
+.featured-visual img{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:brightness(.4) saturate(1.3);
+  transition:transform .8s, filter .8s;
+}
+.module-card.featured:hover .featured-visual img{
+  transform:scale(1.05);
+  filter:brightness(.5) saturate(1.4);
+}
+
+/* ─── SECTION 5: HORIZONTAL SHOWCASES ─── */
+.showcases{
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+}
+.showcases-inner{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:3px;
+  min-height:680px;
+}
+.showcase{
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+}
+.showcase img{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:brightness(.3) saturate(1.2);
+  transition:filter 1s, transform 1s;
+}
+.showcase:hover img{
+  filter:brightness(.45) saturate(1.5);
+  transform:scale(1.06);
+}
+.showcase-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top, rgba(4,4,4,.95) 0%, transparent 60%);
+  z-index:1;
+}
+.showcase-content{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  padding:48px;
+  z-index:2;
+}
+.showcase-num{
+  font-family:var(--font-display);
+  font-size:80px;
+  color:rgba(200,255,62,0.1);
+  position:absolute;
+  top:20px;left:24px;
+  z-index:2;
+  transition:color .5s;
+}
+.showcase:hover .showcase-num{color:rgba(200,255,62,0.18);}
+.showcase-label{
+  font-family:var(--font-cond);
+  font-size:11px;font-weight:700;
+  letter-spacing:3px;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:12px;
+  display:block;
+}
+.showcase-title{
+  font-family:var(--font-display);
+  font-size:clamp(38px,4vw,56px);
+  color:white;
+  line-height:.92;
+  margin-bottom:16px;
+}
+.showcase-desc{
+  font-size:15px;
+  color:rgba(240,237,232,0.55);
+  line-height:1.65;
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .6s cubic-bezier(.16,1,.3,1);
+}
+.showcase:hover .showcase-desc{max-height:100px;}
+
+/* ─── SECTION 6: PROCESS TIMELINE ─── */
+.process-section{}
+.process-header{
+  text-align:center;
+  margin-bottom:120px;
+}
+.process-header .section-title{
+  margin-top:20px;
+}
+
+.process-steps{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
   position:relative;
 }
-
-.parallax img{
-  width:100%;
-  height:120%;
-  object-fit:cover;
-  filter:brightness(0.35);
+.process-steps::before{
+  content:'';
+  position:absolute;
+  top:64px;left:calc(12.5% + 32px);right:calc(12.5% + 32px);
+  height:1px;
+  background:linear-gradient(90deg, var(--accent), rgba(200,255,62,0.3), var(--accent));
 }
 
-.parallax-overlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(to bottom, rgba(0,0,0,0.4), #050505);
+.process-step{
+  text-align:center;
+  padding:0 30px;
+  position:relative;
+}
+.step-circle{
+  width:64px;height:64px;
+  border-radius:50%;
+  background:var(--bg);
+  border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 36px;
+  position:relative;
+  z-index:1;
+  transition:background .4s, box-shadow .4s;
+  box-shadow:0 0 0 8px var(--bg);
+}
+.step-circle:hover{
+  background:rgba(200,255,62,0.1);
+  box-shadow:0 0 0 8px var(--bg), 0 0 40px rgba(200,255,62,0.3);
+}
+.step-n{
+  font-family:var(--font-display);
+  font-size:26px;
+  color:var(--accent);
+}
+.step-title{
+  font-family:var(--font-display);
+  font-size:32px;
+  color:white;
+  margin-bottom:16px;
+  line-height:.95;
+}
+.step-desc{
+  font-size:14px;
+  line-height:1.75;
+  color:rgba(240,237,232,0.5);
 }
 
-.parallax-content{
-  position:absolute;
-  inset:0;
+/* ─── SECTION 7: FINAL CTA ─── */
+.final-section{
+  position:relative;
+  overflow:hidden;
+  min-height:100vh;
   display:flex;
-  flex-direction:column;
   align-items:center;
   justify-content:center;
   text-align:center;
-  padding:20px;
 }
-
-.parallax-content h2{
-  font-size:110px;
-  line-height:0.9;
-  font-weight:900;
-  max-width:1200px;
-  letter-spacing:-5px;
+.final-bg{
+  position:absolute;inset:0;z-index:0;
 }
-
-.parallax-content p{
-  margin-top:30px;
-  max-width:760px;
-  font-size:24px;
-  color:#bcbcbc;
-  line-height:1.8;
+.final-bg img{
+  width:100%;height:100%;
+  object-fit:cover;
+  filter:brightness(.2) saturate(1.4);
+  transform-origin:center;
 }
-
-.final-cta{
-  padding:220px 7%;
-  text-align:center;
-  position:relative;
+.final-vignette{
+  position:absolute;inset:0;z-index:1;
+  background:
+    radial-gradient(ellipse 80% 60% at center, rgba(4,4,4,0.3) 0%, rgba(4,4,4,0.92) 70%),
+    linear-gradient(to top, var(--bg), transparent 30%),
+    linear-gradient(to bottom, var(--bg), transparent 30%);
 }
-
-.final-cta::before{
-  content:'';
+.final-glow{
   position:absolute;
-  width:700px;
-  height:700px;
-  background:radial-gradient(circle, rgba(199,255,63,0.16), transparent 70%);
-  left:50%;
-  top:50%;
+  width:900px;height:900px;
+  background:radial-gradient(circle, rgba(200,255,62,0.18) 0%, transparent 70%);
+  left:50%;top:50%;
   transform:translate(-50%,-50%);
-  z-index:-1;
+  z-index:2;
+  animation:glowPulse 4s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}
 }
 
-.final-cta h2{
-  font-size:110px;
-  line-height:0.9;
-  letter-spacing:-6px;
-  margin-bottom:30px;
+.final-content{
+  position:relative;z-index:5;
+  padding:80px 40px;
 }
-
-.final-cta p{
-  max-width:900px;
-  margin:auto;
-  font-size:24px;
-  color:#a5a5a5;
+.final-content .overline{justify-content:center;}
+.final-title{
+  font-family:var(--font-display);
+  font-size:clamp(80px, 14vw, 180px);
+  line-height:.85;
+  letter-spacing:-4px;
+  margin:24px 0 40px;
+}
+.final-title em{
+  font-style:normal;
+  color:var(--accent);
+  display:block;
+}
+.final-sub{
+  max-width:800px;
+  margin:0 auto 70px;
+  font-size:20px;
   line-height:1.8;
+  color:rgba(240,237,232,0.6);
+}
+.final-actions{
+  display:flex;align-items:center;
+  justify-content:center;
+  gap:24px;flex-wrap:wrap;
+}
+.final-note{
+  margin-top:40px;
+  font-family:var(--font-cond);
+  font-size:12px;font-weight:600;
+  letter-spacing:2px;
+  color:var(--muted);
+  text-transform:uppercase;
+  display:flex;align-items:center;
+  justify-content:center;gap:12px;
+}
+.final-note::before,.final-note::after{
+  content:'';width:30px;height:1px;
+  background:var(--muted);
 }
 
-.final-cta .btn{
-  margin-top:60px;
-}
-
+/* ─── FOOTER ─── */
 footer{
-  padding:50px;
-  border-top:1px solid rgba(255,255,255,0.06);
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+  padding:80px;
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr 1fr;
+  gap:60px;
+}
+.footer-brand .logo{font-size:22px;margin-bottom:20px;}
+.footer-brand p{
+  font-size:14px;
+  line-height:1.8;
+  color:var(--muted);
+  max-width:280px;
+}
+.footer-col-title{
+  font-family:var(--font-cond);
+  font-size:11px;font-weight:700;
+  letter-spacing:3px;
+  color:rgba(240,237,232,0.4);
+  text-transform:uppercase;
+  margin-bottom:24px;
+}
+.footer-links{
+  display:flex;flex-direction:column;gap:12px;
+}
+.footer-links a{
+  font-size:14px;
+  color:var(--muted);
+  text-decoration:none;
+  transition:color .3s;
+  font-weight:500;
+}
+.footer-links a:hover{color:var(--text);}
+
+.footer-bottom{
+  border-top:1px solid var(--line);
+  padding:30px 80px;
   display:flex;
   justify-content:space-between;
-  flex-wrap:wrap;
-  gap:20px;
-  color:#6f6f6f;
+  align-items:center;
+}
+.footer-bottom p{
+  font-size:12px;
+  color:var(--muted);
+  font-family:var(--font-cond);
+  letter-spacing:1px;
+}
+.footer-accent-line{
+  width:80px;height:2px;
+  background:linear-gradient(90deg, var(--accent), transparent);
 }
 
-.blur-orb{
-  position:absolute;
-  width:500px;
-  height:500px;
-  background:radial-gradient(circle, rgba(199,255,63,0.16), transparent 70%);
+/* ─── TICKER MARQUEE ─── */
+.ticker{
+  background:var(--accent);
+  overflow:hidden;
+  white-space:nowrap;
+  padding:16px 0;
+  border-top:none;
+  position:relative;
+  z-index:20;
+}
+.ticker-inner{
+  display:inline-flex;
+  animation:tickerMove 22s linear infinite;
+  gap:0;
+}
+.ticker-item{
+  display:inline-flex;
+  align-items:center;
+  gap:24px;
+  padding:0 30px;
+}
+.ticker-item span{
+  font-family:var(--font-cond);
+  font-size:13px;font-weight:800;
+  letter-spacing:3px;
+  color:black;
+  text-transform:uppercase;
+}
+.ticker-dot{
+  width:5px;height:5px;
+  background:black;
   border-radius:50%;
-  filter:blur(40px);
-  pointer-events:none;
+  opacity:.4;
+}
+@keyframes tickerMove{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-50%);}
 }
 
-.orb-1{
-  top:-100px;
-  right:-120px;
+/* ─── REVEAL CLASSES ─── */
+.reveal{
+  opacity:1 !important;
+  transform:none !important;
 }
 
-.orb-2{
-  bottom:-200px;
-  left:-150px;
+/* Initial visible state — items are visible by default, JS will animate them */
+[data-anim]{
+  transition:none;
 }
 
-.fade-up{
-  opacity:0;
-  transform:translateY(100px);
+/* ─── RESPONSIVE ─── */
+@media(max-width:1300px){
+  .identity-section{grid-template-columns:1fr;gap:80px;}
+  .identity-visual{height:500px;}
+  .modules-grid{grid-template-columns:1fr 1fr;}
+  .module-card.featured{grid-column:span 2;grid-template-columns:1fr;}
+  .modules-header{grid-template-columns:1fr;}
+  .process-steps{grid-template-columns:1fr 1fr;gap:60px;}
+  .process-steps::before{display:none;}
+  footer{grid-template-columns:1fr 1fr;gap:50px;}
 }
-
-@media(max-width:1200px){
-
-.hero h1{
-  font-size:84px;
+@media(max-width:900px){
+  .section{padding:120px 30px;}
+  .nav{padding:20px 30px;}
+  .nav.scrolled{padding:14px 30px;}
+  .nav-links{display:none;}
+  .hero-content{padding:140px 30px 200px;}
+  .hero-stats-band{flex-direction:column;}
+  .stat-cell{border-right:none;border-bottom:1px solid var(--line);padding:24px 30px;}
+  .pillars-header{padding:80px 30px 50px;flex-direction:column;align-items:flex-start;}
+  .pillars-track{padding:0 30px 80px;}
+  .showcases-inner{grid-template-columns:1fr;}
+  .showcases-inner .showcase{min-height:400px;}
+  .modules-grid{grid-template-columns:1fr;}
+  .module-card.featured{grid-column:span 1;grid-template-columns:1fr;}
+  .process-steps{grid-template-columns:1fr 1fr;}
+  footer{grid-template-columns:1fr;padding:60px 30px;}
+  .footer-bottom{padding:24px 30px;flex-direction:column;gap:12px;}
+  .showcases-header{padding:80px 30px 50px;}
+  .final-section{min-height:80vh;}
+  .final-title{letter-spacing:-2px;}
 }
-
-.section-title{
-  font-size:56px;
-}
-
-.parallax-content h2{
-  font-size:72px;
-}
-
-.final-cta h2{
-  font-size:72px;
-}
-
-.card-1,
-.card-2,
-.card-3,
-.card-4{
-  grid-column:span 12;
-}
-
-}
-
-@media(max-width:768px){
-
-.nav{
-  padding:20px;
-}
-
-.nav-links{
-  display:none;
-}
-
-.hero{
-  padding:140px 20px 80px;
-}
-
-.hero h1{
-  font-size:58px;
-  letter-spacing:-3px;
-}
-
-.hero-sub{
-  font-size:18px;
-}
-
-.hero-stats{
-  gap:30px;
-}
-
-.section{
-  padding:120px 20px;
-}
-
-.section-top{
-  flex-direction:column;
-  align-items:flex-start;
-}
-
-.section-title{
-  font-size:42px;
-}
-
-.section-desc{
-  font-size:18px;
-}
-
-.horizontal-card{
-  min-width:92vw;
-  height:520px;
-}
-
-.parallax-content h2{
-  font-size:52px;
-}
-
-.parallax-content p{
-  font-size:18px;
-}
-
-.final-cta{
-  padding:140px 20px;
-}
-
-.final-cta h2{
-  font-size:54px;
-}
-
-}
-
 </style>
 </head>
-
 <body>
 
-<nav class="nav">
-  <div class="logo">ASCEND <span>SYSTEM</span></div>
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
+<!-- ─── NAV ─── -->
+<nav class="nav" id="nav">
+  <div class="logo">
+    <div class="logo-mark"></div>
+    ASCEND <span>SYSTEM</span>
+  </div>
   <div class="nav-links">
     <a href="#">INICIO</a>
     <a href="#">SISTEMA</a>
@@ -682,364 +1265,729 @@ footer{
     <a href="#">RESULTADOS</a>
     <a href="#">CONTACTO</a>
   </div>
+  <button class="nav-cta">ENTRAR AHORA</button>
 </nav>
 
+<!-- ─── HERO ─── -->
 <section class="hero">
+  <div class="hero-media">
+    <img id="hero-img" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2400&auto=format&fit=crop" alt="Elite performance">
+  </div>
+  <div class="hero-vignette"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-scan"></div>
 
-<div class="hero-bg">
-<img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2400&auto=format&fit=crop">
-</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow" data-anim="fade-up" data-delay="0">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Elite Performance System</span>
+      <div class="eyebrow-badge">2026</div>
+    </div>
 
-<div class="hero-overlay"></div>
-<div class="hero-grid"></div>
+    <h1 class="hero-h1" data-anim="fade-up" data-delay="1">
+      <span class="line-stroke">CONSTRUYE</span>
+      <span class="line-accent" data-text="IMPARABLE">IMPARABLE</span>
+    </h1>
 
-<div class="blur-orb orb-1"></div>
+    <p class="hero-sub" data-anim="fade-up" data-delay="2">
+      El sistema definitivo de transformación física, mental y productiva. Diseñado para personas obsesionadas con dominar su vida al máximo nivel absoluto.
+    </p>
 
-<div class="hero-content">
+    <div class="hero-actions" data-anim="fade-up" data-delay="3">
+      <a href="#" class="btn-main">ENTRAR AL SISTEMA</a>
+      <a href="#" class="btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16 10,8"/></svg>
+        VER MANIFIESTO
+      </a>
+    </div>
+  </div>
 
-<div class="pill fade-up">
-<div class="pill-dot"></div>
-<span>ELITE PERFORMANCE SYSTEM</span>
-</div>
-
-<h1 class="fade-up">
-Construye una
-<span>versión imparable</span>
-de ti mismo
-</h1>
-
-<p class="hero-sub fade-up">
-El sistema definitivo de transformación física, mental y productiva diseñado para personas obsesionadas con dominar su vida al máximo nivel.
-</p>
-
-<div class="hero-buttons fade-up">
-<a class="btn btn-primary">ENTRAR AHORA</a>
-<a class="btn btn-secondary">EXPLORAR SISTEMA</a>
-</div>
-
-<div class="hero-stats fade-up">
-
-<div class="stat">
-<h2>90D</h2>
-<p>TRANSFORMACIÓN TOTAL</p>
-</div>
-
-<div class="stat">
-<h2>4X</h2>
-<p>PRODUCTIVIDAD</p>
-</div>
-
-<div class="stat">
-<h2>100%</h2>
-<p>DISCIPLINA ESTRUCTURADA</p>
-</div>
-
-</div>
-
-</div>
-
+  <div class="hero-stats-band" data-anim="fade-up" data-delay="4">
+    <div class="stat-cell">
+      <span class="stat-number">90D</span>
+      <span class="stat-label">Transformación Total</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-number">4X</span>
+      <span class="stat-label">Productividad</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-number">100%</span>
+      <span class="stat-label">Disciplina Estructurada</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-number">∞</span>
+      <span class="stat-label">Potencial Desbloqueado</span>
+    </div>
+  </div>
 </section>
 
+<!-- ─── TICKER ─── -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <!-- repeated for seamless loop -->
+    <div class="ticker-item"><span>DISCIPLINA ABSOLUTA</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>IDENTIDAD ELITE</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>TRANSFORMACIÓN TOTAL</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>DEEP FOCUS</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>SISTEMA PREMIUM</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ALTO RENDIMIENTO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>EXECUTION MODE</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>NIVEL MÁXIMO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>DISCIPLINA ABSOLUTA</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>IDENTIDAD ELITE</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>TRANSFORMACIÓN TOTAL</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>DEEP FOCUS</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>SISTEMA PREMIUM</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ALTO RENDIMIENTO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>EXECUTION MODE</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>NIVEL MÁXIMO</span><div class="ticker-dot"></div></div>
+  </div>
+</div>
+
+<!-- ─── IDENTITY SECTION ─── -->
+<section class="section" style="background:var(--bg);">
+  <div class="identity-section">
+    <div class="identity-left">
+      <div class="overline" data-anim="fade-up" data-delay="0">Filosofía del Sistema</div>
+      <h2 class="section-title" data-anim="fade-up" data-delay="1">
+        No es<br>motivación.<br><em>Es identidad.</em>
+      </h2>
+      <p class="identity-desc" data-anim="fade-up" data-delay="2">
+        ASCEND SYSTEM redefine completamente la forma en la que entrenas, produces, duermes, comes y ejecutas. No estamos hablando de hábitos. Estamos hablando de convertirte en otra persona.
+      </p>
+      <div class="identity-metrics" data-anim="fade-up" data-delay="3">
+        <div class="metric-block">
+          <span class="metric-n">12K+</span>
+          <span class="metric-t">Miembros Elite</span>
+        </div>
+        <div class="metric-block">
+          <span class="metric-n">97%</span>
+          <span class="metric-t">Retención 90d</span>
+        </div>
+        <div class="metric-block">
+          <span class="metric-n">3.8X</span>
+          <span class="metric-t">Rendimiento Medio</span>
+        </div>
+        <div class="metric-block">
+          <span class="metric-n">0</span>
+          <span class="metric-t">Excusas Toleradas</span>
+        </div>
+      </div>
+    </div>
+    <div class="identity-right" data-anim="fade-left" data-delay="1">
+      <div class="identity-visual">
+        <img class="identity-img-main" src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1800&auto=format&fit=crop" alt="Training">
+        <img class="identity-img-secondary" src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74?q=80&w=900&auto=format&fit=crop" alt="Focus">
+        <div class="identity-badge">
+          <div class="identity-badge-inner">
+            <strong>V1</strong>
+            <span>ASCEND</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PILLARS ─── -->
+<section class="pillars-section">
+  <div class="pillars-header">
+    <div>
+      <div class="overline" data-anim="fade-up" data-delay="0">Los 4 Pilares</div>
+      <h2 class="section-title" data-anim="fade-up" data-delay="1">
+        Sistema<br><em>Completo</em>
+      </h2>
+    </div>
+    <p class="pillars-header-desc" data-anim="fade-up" data-delay="2">
+      Cuatro módulos integrados diseñados para actuar en sincronía. No funciona un módulo sin los otros. Todo o nada.
+    </p>
+  </div>
+
+  <div class="pillars-track" data-anim="pillars">
+    <div class="pillar">
+      <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=900&auto=format&fit=crop" alt="Disciplina">
+      <div class="pillar-overlay"></div>
+      <span class="pillar-number">01</span>
+      <div class="pillar-content">
+        <span class="pillar-tag">Pilar I</span>
+        <h3 class="pillar-title">DISCIPLINA<br>ABSOLUTA</h3>
+        <p class="pillar-body">Rutinas de ejecución extrema, automatización mental y sistemas diseñados para eliminar completamente las excusas de tu sistema operativo.</p>
+        <div class="pillar-arrow">VER MÓDULO</div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?q=80&w=900&auto=format&fit=crop" alt="Focus">
+      <div class="pillar-overlay"></div>
+      <span class="pillar-number">02</span>
+      <div class="pillar-content">
+        <span class="pillar-tag">Pilar II</span>
+        <h3 class="pillar-title">DEEP<br>FOCUS</h3>
+        <p class="pillar-body">Concentración agresiva de bloque. Sin distracciones, sin ruido mental. El trabajo profundo como arma competitiva definitiva.</p>
+        <div class="pillar-arrow">VER MÓDULO</div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=900&auto=format&fit=crop" alt="Physical">
+      <div class="pillar-overlay"></div>
+      <span class="pillar-number">03</span>
+      <div class="pillar-content">
+        <span class="pillar-tag">Pilar III</span>
+        <h3 class="pillar-title">CUERPO<br>ELITE</h3>
+        <p class="pillar-body">Entrenamiento, nutrición y recuperación fusionados en un sistema biológico de alto rendimiento que funciona con precisión militar.</p>
+        <div class="pillar-arrow">VER MÓDULO</div>
+      </div>
+    </div>
+
+    <div class="pillar">
+      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=900&auto=format&fit=crop" alt="Systems">
+      <div class="pillar-overlay"></div>
+      <span class="pillar-number">04</span>
+      <div class="pillar-content">
+        <span class="pillar-tag">Pilar IV</span>
+        <h3 class="pillar-title">SISTEMAS<br>MENTALES</h3>
+        <p class="pillar-body">Arquitectura mental construida para decisiones de alta velocidad, control emocional absoluto y ejecución sin fricción.</p>
+        <div class="pillar-arrow">VER MÓDULO</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MANIFESTO PARALLAX ─── -->
+<section class="manifesto">
+  <div class="manifesto-bg"></div>
+  <div class="manifesto-lines" id="manifestoLines"></div>
+
+  <div class="manifesto-content">
+    <div class="overline" style="justify-content:center;" data-anim="fade-up" data-delay="0">El Manifiesto</div>
+    <h2 class="manifesto-quote" data-anim="fade-up" data-delay="1">
+      Tu entorno<br>
+      <span class="word-stroke">define</span><br>
+      <span class="word-accent">tu identidad</span>
+    </h2>
+    <p class="manifesto-sub" data-anim="fade-up" data-delay="2">
+      Cuando todo se siente premium, poderoso y preciso, empiezas a actuar diferente. El sistema no es una herramienta. Es el espejo de lo que eres capaz de convertirte.
+    </p>
+  </div>
+</section>
+
+<!-- ─── MODULES ─── -->
+<section class="section modules-section">
+  <div class="modules-header" data-anim="fade-up" data-delay="0">
+    <div>
+      <div class="overline">Arquitectura del Sistema</div>
+      <h2 class="section-title" style="margin-top:20px;">Módulos<br><em>Premium</em></h2>
+    </div>
+    <p class="modules-header-desc">
+      Cada módulo se siente como una <strong>aplicación de rendimiento de élite</strong>. Construidos sobre años de investigación en comportamiento humano de alto rendimiento, neurociencia aplicada y psicología de ejecución.
+    </p>
+  </div>
+
+  <div class="modules-grid">
+    <div class="module-card" data-anim="fade-up" data-delay="0">
+      <div class="module-icon">⚡</div>
+      <h3 class="module-title">PRODUCTIVIDAD EXTREMA</h3>
+      <p class="module-desc">Deep work, bloques de flujo y control total del tiempo. Convierte cada hora en una unidad de salida máxima.</p>
+      <div class="module-tags">
+        <span class="module-tag">Deep Work</span>
+        <span class="module-tag">Time Blocking</span>
+        <span class="module-tag">Flow States</span>
+      </div>
+    </div>
+
+    <div class="module-card" data-anim="fade-up" data-delay="1">
+      <div class="module-icon">🧠</div>
+      <h3 class="module-title">HABIT ARCHITECTURE</h3>
+      <p class="module-desc">Construye hábitos que cambian tu identidad a nivel neurológico. No disciplina. Automatización de comportamiento.</p>
+      <div class="module-tags">
+        <span class="module-tag">Neuroplasticidad</span>
+        <span class="module-tag">Habit Loops</span>
+        <span class="module-tag">Identity</span>
+      </div>
+    </div>
+
+    <div class="module-card" data-anim="fade-up" data-delay="2">
+      <div class="module-icon">🔋</div>
+      <h3 class="module-title">RECOVERY PROTOCOL</h3>
+      <p class="module-desc">Sueño, energía y recuperación optimizados con protocolo de biohacking para operar al máximo nivel cada día.</p>
+      <div class="module-tags">
+        <span class="module-tag">Sleep Science</span>
+        <span class="module-tag">HRV</span>
+        <span class="module-tag">Biohacking</span>
+      </div>
+    </div>
+
+    <div class="module-card featured" data-anim="fade-up" data-delay="3">
+      <div>
+        <div class="module-icon">🏆</div>
+        <h3 class="module-title">PERFORMANCE<br>DASHBOARD</h3>
+        <p class="module-desc">El núcleo del sistema. Dashboard visual e inmersivo que integra todos los módulos en una sola vista de control total sobre tu vida y rendimiento.</p>
+        <div class="module-tags">
+          <span class="module-tag">Analytics</span>
+          <span class="module-tag">KPIs Personales</span>
+          <span class="module-tag">Tracking</span>
+          <span class="module-tag">Visual System</span>
+        </div>
+      </div>
+      <div class="featured-visual">
+        <img src="https://images.unsplash.com/photo-1526401485004-2fda9fdd2c49?q=80&w=900&auto=format&fit=crop" alt="Dashboard">
+      </div>
+    </div>
+
+    <div class="module-card" data-anim="fade-up" data-delay="4">
+      <div class="module-icon">💪</div>
+      <h3 class="module-title">PHYSICAL SYSTEM</h3>
+      <p class="module-desc">Protocolo de entrenamiento y nutrición de élite diseñado para maximizar fuerza, composición y rendimiento cognitivo.</p>
+      <div class="module-tags">
+        <span class="module-tag">Strength</span>
+        <span class="module-tag">Nutrition</span>
+        <span class="module-tag">Performance</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SHOWCASES ─── -->
+<section class="showcases">
+  <div style="padding:120px 80px 80px;">
+    <div class="overline" data-anim="fade-up" data-delay="0">Resultados Reales</div>
+    <h2 class="section-title" style="margin-top:20px;" data-anim="fade-up" data-delay="1">Así se<br><em>ejecuta</em></h2>
+  </div>
+  <div class="showcases-inner">
+    <div class="showcase" data-anim="fade-up" data-delay="0">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop" alt="Productividad">
+      <div class="showcase-overlay"></div>
+      <span class="showcase-num">01</span>
+      <div class="showcase-content">
+        <span class="showcase-label">Módulo I</span>
+        <h3 class="showcase-title">PRODUCTIVIDAD<br>EXTREMA</h3>
+        <p class="showcase-desc">Elimina el ruido. Entra en el bloque de flujo. Produce resultados que parecen imposibles para el promedio.</p>
+      </div>
+    </div>
+    <div class="showcase" data-anim="fade-up" data-delay="1">
+      <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop" alt="Físico">
+      <div class="showcase-overlay"></div>
+      <span class="showcase-num">02</span>
+      <div class="showcase-content">
+        <span class="showcase-label">Módulo III</span>
+        <h3 class="showcase-title">ÉLITE<br>FÍSICO</h3>
+        <p class="showcase-desc">Tu cuerpo es tu base de operaciones. Cuando está optimizado, todo lo demás se amplifica exponencialmente.</p>
+      </div>
+    </div>
+    <div class="showcase" data-anim="fade-up" data-delay="2">
+      <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?q=80&w=1200&auto=format&fit=crop" alt="Mental">
+      <div class="showcase-overlay"></div>
+      <span class="showcase-num">03</span>
+      <div class="showcase-content">
+        <span class="showcase-label">Módulo IV</span>
+        <h3 class="showcase-title">FORTALEZA<br>MENTAL</h3>
+        <p class="showcase-desc">La mente es el campo de batalla real. Domínala y dominas todo lo demás sin excepción.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROCESS ─── -->
 <section class="section">
+  <div class="process-header">
+    <div class="overline" style="justify-content:center;" data-anim="fade-up" data-delay="0">El Proceso</div>
+    <h2 class="section-title" style="margin-top:20px;" data-anim="fade-up" data-delay="1">Cómo<br><em>Funciona</em></h2>
+  </div>
 
-<div class="section-top fade-up">
-<h2 class="section-title">
-No es motivación.
-<br>
-Es identidad.
-</h2>
-
-<p class="section-desc">
-ASCEND SYSTEM redefine completamente la forma en la que entrenas, produces, duermes, comes y ejecutas. Todo está diseñado con una experiencia visual premium y una sensación de tecnología futurista de alto rendimiento.
-</p>
-</div>
-
-<div class="massive-grid">
-
-<div class="big-card card-1 fade-up">
-
-<img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1800&auto=format&fit=crop">
-
-<div class="big-card-content">
-<h3>Disciplina Absoluta</h3>
-<p>
-Rutinas de ejecución extrema, automatización mental y sistemas diseñados para eliminar completamente las excusas.
-</p>
-</div>
-
-</div>
-
-<div class="big-card card-2 fade-up">
-
-<img src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74?q=80&w=1800&auto=format&fit=crop">
-
-<div class="big-card-content">
-<h3>Estructura Total</h3>
-<p>
-Cada hora del día optimizada para rendimiento máximo y claridad mental.
-</p>
-</div>
-
-</div>
-
-<div class="big-card card-3 fade-up">
-
-<img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?q=80&w=1800&auto=format&fit=crop">
-
-<div class="big-card-content">
-<h3>Deep Focus</h3>
-<p>
-Concentración agresiva sin distracciones ni ruido mental.
-</p>
-</div>
-
-</div>
-
-<div class="big-card card-4 fade-up">
-
-<img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1800&auto=format&fit=crop">
-
-<div class="big-card-content">
-<h3>Transformación Física</h3>
-<p>
-Entrenamiento, nutrición y recuperación sincronizados como un sistema de élite.
-</p>
-</div>
-
-</div>
-
-</div>
-
+  <div class="process-steps">
+    <div class="process-step" data-anim="fade-up" data-delay="0">
+      <div class="step-circle"><span class="step-n">01</span></div>
+      <h3 class="step-title">ASSESSMENT</h3>
+      <p class="step-desc">Diagnóstico completo de tu nivel actual en las 4 áreas del sistema. Sin mentiras, sin filtros.</p>
+    </div>
+    <div class="process-step" data-anim="fade-up" data-delay="1">
+      <div class="step-circle"><span class="step-n">02</span></div>
+      <h3 class="step-title">ARQUITECTURA</h3>
+      <p class="step-desc">Diseño de tu sistema personalizado basado en tus datos, objetivos y nivel de ejecución actual.</p>
+    </div>
+    <div class="process-step" data-anim="fade-up" data-delay="2">
+      <div class="step-circle"><span class="step-n">03</span></div>
+      <h3 class="step-title">EJECUCIÓN</h3>
+      <p class="step-desc">90 días de ejecución estructurada con el sistema activo. Seguimiento diario. Sin espacio para excusas.</p>
+    </div>
+    <div class="process-step" data-anim="fade-up" data-delay="3">
+      <div class="step-circle"><span class="step-n">04</span></div>
+      <h3 class="step-title">IDENTIDAD</h3>
+      <p class="step-desc">En el día 90, no eres la misma persona que empezó. El sistema se convierte en quien eres.</p>
+    </div>
+  </div>
 </section>
 
-<section class="lux-section">
+<!-- ─── FINAL CTA ─── -->
+<section class="final-section">
+  <div class="final-bg">
+    <img id="final-img" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2400&auto=format&fit=crop" alt="Elite">
+  </div>
+  <div class="final-vignette"></div>
+  <div class="final-glow"></div>
 
-<div class="section-top fade-up">
-
-<h2 class="section-title">
-Sistema Premium
-<br>
-de Alto Rendimiento
-</h2>
-
-<p class="section-desc">
-Cada módulo se siente como una aplicación premium de lujo. Nada de cajas simples ni diseño genérico. Todo está pensado para verse cinematográfico y ultra moderno.
-</p>
-
-</div>
-
-<div class="horizontal-wrapper">
-
-<div class="horizontal-card fade-up">
-
-<img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1800&auto=format&fit=crop">
-
-<div class="horizontal-card-content">
-<h2>Productividad</h2>
-<p>
-Deep work, enfoque extremo y control total del tiempo con dashboards inmersivos.
-</p>
-</div>
-
-</div>
-
-<div class="horizontal-card fade-up">
-
-<img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1800&auto=format&fit=crop">
-
-<div class="horizontal-card-content">
-<h2>Habit System</h2>
-<p>
-Construye hábitos visuales que cambian completamente tu identidad.
-</p>
-</div>
-
-</div>
-
-<div class="horizontal-card fade-up">
-
-<img src="https://images.unsplash.com/photo-1526401485004-2fda9fdd2c49?q=80&w=1800&auto=format&fit=crop">
-
-<div class="horizontal-card-content">
-<h2>Recovery</h2>
-<p>
-Sueño, energía y recuperación optimizados para operar al máximo nivel.
-</p>
-</div>
-
-</div>
-
-</div>
-
+  <div class="final-content">
+    <div class="overline" data-anim="fade-up" data-delay="0">El momento es ahora</div>
+    <h2 class="final-title" data-anim="fade-up" data-delay="1">
+      ELITE<br><em>MODE</em>
+    </h2>
+    <p class="final-sub" data-anim="fade-up" data-delay="2">
+      No es una plantilla más. No es un planner cualquiera. Es un ecosistema visual y mental construido para personas obsesionadas con convertirse en su versión más dominante. Sin compromisos.
+    </p>
+    <div class="final-actions" data-anim="fade-up" data-delay="3">
+      <a href="#" class="btn-main">COMENZAR AHORA</a>
+      <a href="#" class="btn-ghost">VER PROGRAMA COMPLETO</a>
+    </div>
+    <p class="final-note" data-anim="fade-up" data-delay="4">ACCESO LIMITADO · PLAZAS RESTRINGIDAS · 2026</p>
+  </div>
 </section>
 
-<section class="parallax">
-
-<img class="parallax-img" src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=2400&auto=format&fit=crop">
-
-<div class="parallax-overlay"></div>
-
-<div class="parallax-content">
-
-<h2 class="fade-up">
-Tu entorno
-define tu identidad
-</h2>
-
-<p class="fade-up">
-Cuando todo se siente premium, poderoso y preciso, empiezas a actuar diferente. ASCEND SYSTEM está diseñado para provocar esa sensación.
-</p>
-
-</div>
-
-</section>
-
-<section class="final-cta">
-
-<div class="blur-orb orb-2"></div>
-
-<h2 class="fade-up">
-ELITE
-<br>
-MODE
-</h2>
-
-<p class="fade-up">
-No es una plantilla más. No es un planner cualquiera. Es un ecosistema visual y mental construido para personas obsesionadas con convertirse en su versión más dominante.
-</p>
-
-<a class="btn btn-primary fade-up">
-COMENZAR AHORA
-</a>
-
-</section>
-
+<!-- ─── FOOTER ─── -->
 <footer>
-
-<div>
-© 2026 ASCEND SYSTEM
-</div>
-
-<div>
-Built for elite performance.
-</div>
-
+  <div class="footer-brand">
+    <div class="logo" style="margin-bottom:20px;">
+      <div class="logo-mark"></div>
+      ASCEND <span>SYSTEM</span>
+    </div>
+    <p>El sistema de performance de élite diseñado para personas que no aceptan el promedio como destino.</p>
+  </div>
+  <div>
+    <div class="footer-col-title">Sistema</div>
+    <div class="footer-links">
+      <a href="#">Módulo Disciplina</a>
+      <a href="#">Módulo Focus</a>
+      <a href="#">Módulo Físico</a>
+      <a href="#">Módulo Mental</a>
+      <a href="#">Dashboard</a>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Programa</div>
+    <div class="footer-links">
+      <a href="#">Cómo Funciona</a>
+      <a href="#">90 Días</a>
+      <a href="#">Resultados</a>
+      <a href="#">Comunidad</a>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Contacto</div>
+    <div class="footer-links">
+      <a href="#">Acceso Élite</a>
+      <a href="#">Soporte</a>
+      <a href="#">Privacidad</a>
+    </div>
+  </div>
 </footer>
+<div class="footer-bottom">
+  <p>© 2026 ASCEND SYSTEM · Built for elite performance.</p>
+  <div class="footer-accent-line"></div>
+  <p>No estás aquí por motivación. Estás aquí por identidad.</p>
+</div>
 
 <script>
+// ─── CURSOR ───
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
 
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx+'px';
+  cursor.style.top = my+'px';
+});
+
+(function animRing(){
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx+'px';
+  ring.style.top = ry+'px';
+  requestAnimationFrame(animRing);
+})();
+
+// ─── NAV SCROLL ───
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, {passive:true});
+
+// ─── MANIFESTO LINES ───
+const linesEl = document.getElementById('manifestoLines');
+for(let i=0;i<12;i++){
+  const s = document.createElement('span');
+  s.style.top = (i * 8.5)+'%';
+  linesEl.appendChild(s);
+}
+
+// ─── GSAP ───
 gsap.registerPlugin(ScrollTrigger);
 
-const nav = document.querySelector('.nav');
+// Hero entry — immediate, no delay issues
+gsap.set('.hero-content > *', {opacity:1, y:0});
 
-window.addEventListener('scroll', () => {
-  if(window.scrollY > 30){
-    nav.classList.add('scrolled');
-  }else{
-    nav.classList.remove('scrolled');
+const heroItems = document.querySelectorAll('.hero-content [data-anim]');
+heroItems.forEach((el, i) => {
+  const delay = parseFloat(el.dataset.delay || 0) * 0.18;
+  gsap.from(el, {
+    opacity: 0,
+    y: 60,
+    duration: 1.2,
+    delay: 0.1 + delay,
+    ease: 'power4.out',
+    clearProps: 'all'
+  });
+});
+
+// Hero stats band
+gsap.from('.hero-stats-band [data-anim]', {
+  opacity: 0,
+  y: 40,
+  duration: 1,
+  delay: 0.8,
+  ease: 'power3.out',
+  clearProps: 'all'
+});
+
+// Hero parallax
+gsap.to('#hero-img', {
+  yPercent: 22,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: '.hero',
+    start: 'top top',
+    end: 'bottom top',
+    scrub: 1.5
   }
 });
 
-gsap.utils.toArray('.fade-up').forEach((el)=>{
-
-  gsap.fromTo(el,
-  {
-    opacity:0,
-    y:120
-  },
-  {
-    opacity:1,
-    y:0,
-    duration:1.4,
-    ease:"power4.out",
-    scrollTrigger:{
-      trigger:el,
-      start:"top 85%",
-      end:"bottom 60%",
-      toggleActions:"play none none reverse"
-    }
-  });
-
-});
-
-gsap.to('.hero-bg img',{
-  scale:1.25,
-  ease:'none',
-  scrollTrigger:{
-    trigger:'.hero',
-    start:'top top',
-    end:'bottom top',
-    scrub:true
+// Final bg parallax
+gsap.to('#final-img', {
+  yPercent: 15,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: '.final-section',
+    start: 'top bottom',
+    end: 'bottom top',
+    scrub: 1.5
   }
 });
 
-gsap.to('.parallax-img',{
-  y:180,
-  ease:'none',
-  scrollTrigger:{
-    trigger:'.parallax',
-    start:'top bottom',
-    end:'bottom top',
-    scrub:true
+// ─── SCROLL ANIMATIONS (fade-up & fade-left) ───
+function setupScrollAnim(el) {
+  const type = el.dataset.anim;
+  if(!type || type === 'pillars') return;
+
+  const fromVars = { opacity: 0, duration: 1.1, ease: 'power4.out', clearProps: 'all' };
+  if(type === 'fade-up') fromVars.y = 80;
+  if(type === 'fade-left') { fromVars.x = 80; }
+
+  // Stagger by delay within parent group
+  const delay = parseFloat(el.dataset.delay || 0) * 0.12;
+  fromVars.delay = delay;
+
+  gsap.from(el, {
+    ...fromVars,
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 88%',
+      end: 'top 50%',
+      toggleActions: 'play none none reverse'
+    }
+  });
+}
+
+// Wait a tick so hero anims run first, then setup scroll
+requestAnimationFrame(() => {
+  document.querySelectorAll('[data-anim]:not(.hero-content [data-anim]):not(.hero-stats-band [data-anim])').forEach(setupScrollAnim);
+});
+
+// ─── PILLARS ANIMATION ───
+gsap.from('.pillar', {
+  opacity: 0,
+  x: 100,
+  duration: 1.2,
+  stagger: 0.12,
+  ease: 'power4.out',
+  clearProps: 'all',
+  scrollTrigger: {
+    trigger: '.pillars-track',
+    start: 'top 85%',
+    toggleActions: 'play none none reverse'
   }
 });
 
-gsap.utils.toArray('.big-card').forEach((card, i)=>{
+// ─── SHOWCASE STAGGER ───
+gsap.from('.showcase', {
+  opacity: 0,
+  y: 80,
+  duration: 1.2,
+  stagger: 0.15,
+  ease: 'power4.out',
+  clearProps: 'all',
+  scrollTrigger: {
+    trigger: '.showcases-inner',
+    start: 'top 85%',
+    toggleActions: 'play none none reverse'
+  }
+});
 
-  gsap.from(card,{
-    opacity:0,
-    y:100,
-    duration:1.2,
-    delay:i * 0.1,
-    ease:"power4.out",
-    scrollTrigger:{
-      trigger:card,
-      start:"top 85%"
+// ─── MODULE CARDS ───
+gsap.from('.module-card', {
+  opacity: 0,
+  y: 60,
+  duration: 1,
+  stagger: 0.1,
+  ease: 'power3.out',
+  clearProps: 'all',
+  scrollTrigger: {
+    trigger: '.modules-grid',
+    start: 'top 85%',
+    toggleActions: 'play none none reverse'
+  }
+});
+
+// ─── PROCESS STEPS ───
+gsap.from('.process-step', {
+  opacity: 0,
+  y: 60,
+  duration: 1,
+  stagger: 0.15,
+  ease: 'power4.out',
+  clearProps: 'all',
+  scrollTrigger: {
+    trigger: '.process-steps',
+    start: 'top 85%',
+    toggleActions: 'play none none reverse'
+  }
+});
+
+// ─── METRIC BLOCKS ───
+gsap.from('.metric-block', {
+  opacity: 0,
+  scale: 0.92,
+  duration: .9,
+  stagger: 0.08,
+  ease: 'power3.out',
+  clearProps: 'all',
+  scrollTrigger: {
+    trigger: '.identity-metrics',
+    start: 'top 88%',
+    toggleActions: 'play none none reverse'
+  }
+});
+
+// ─── MANIFESTO PARALLAX ───
+gsap.from('.manifesto-lines span', {
+  scaleX: 0,
+  duration: 2,
+  stagger: 0.06,
+  ease: 'power3.out',
+  clearProps: 'all',
+  scrollTrigger: {
+    trigger: '.manifesto',
+    start: 'top 80%'
+  }
+});
+
+// Manifesto text split effect
+gsap.from('.manifesto-quote', {
+  opacity: 0,
+  y: 100,
+  duration: 1.6,
+  ease: 'power4.out',
+  clearProps: 'all',
+  scrollTrigger: {
+    trigger: '.manifesto',
+    start: 'top 75%',
+    toggleActions: 'play none none reverse'
+  }
+});
+
+// ─── STAT COUNTER ANIMATION ───
+function animateCounter(el, target, suffix) {
+  const isFloat = target % 1 !== 0;
+  gsap.to({val:0}, {
+    val: target,
+    duration: 2,
+    ease: 'power3.out',
+    onUpdate: function() {
+      el.textContent = (isFloat ? this.targets()[0].val.toFixed(1) : Math.round(this.targets()[0].val)) + suffix;
     }
   });
+}
 
+ScrollTrigger.create({
+  trigger: '.hero-stats-band',
+  start: 'top 90%',
+  once: true,
+  onEnter: () => {
+    // counters in stats band
+  }
 });
 
-gsap.utils.toArray('.horizontal-card').forEach((card, i)=>{
+ScrollTrigger.create({
+  trigger: '.identity-metrics',
+  start: 'top 85%',
+  once: true,
+  onEnter: () => {
+    const mn = document.querySelector('.metric-n');
+    // animate numbers
+  }
+});
 
-  gsap.from(card,{
-    opacity:0,
-    x:120,
-    duration:1.5,
-    delay:i * 0.12,
-    ease:"power4.out",
-    scrollTrigger:{
-      trigger:card,
-      start:"top 90%"
-    }
+// ─── IDENTITY IMAGE PARALLAX ───
+gsap.to('.identity-img-main', {
+  yPercent: -8,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: '.identity-section',
+    start: 'top bottom',
+    end: 'bottom top',
+    scrub: 2
+  }
+});
+
+gsap.to('.identity-img-secondary', {
+  yPercent: 12,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: '.identity-section',
+    start: 'top bottom',
+    end: 'bottom top',
+    scrub: 2
+  }
+});
+
+// ─── FOOTER REVEAL ───
+gsap.from('footer > *', {
+  opacity: 0,
+  y: 40,
+  duration: 1,
+  stagger: 0.1,
+  ease: 'power3.out',
+  clearProps: 'all',
+  scrollTrigger: {
+    trigger: 'footer',
+    start: 'top 88%',
+    toggleActions: 'play none none reverse'
+  }
+});
+
+// ─── HOVER MAGNETIC EFFECT ON BUTTONS ───
+document.querySelectorAll('.btn-main, .nav-cta').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const r = btn.getBoundingClientRect();
+    const x = e.clientX - r.left - r.width/2;
+    const y = e.clientY - r.top - r.height/2;
+    btn.style.transform = `translate(${x*0.1}px, ${y*0.15 - 6}px)`;
   });
-
-});
-
-gsap.from(".hero h1",{
-  y:100,
-  opacity:0,
-  duration:1.6,
-  ease:"power4.out"
-});
-
-gsap.from(".hero-sub",{
-  y:60,
-  opacity:0,
-  duration:1.6,
-  delay:0.25,
-  ease:"power4.out"
-});
-
-gsap.from(".hero-buttons",{
-  y:60,
-  opacity:0,
-  duration:1.6,
-  delay:0.45,
-  ease:"power4.out"
+  btn.addEventListener('mouseleave', () => {
+    btn.style.transform = '';
+  });
 });
 
 </script>
-
 </body>
 </html>
