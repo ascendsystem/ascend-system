@@ -11,6 +11,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
 
 <style>
 :root{
@@ -61,15 +62,25 @@ body{
 }
 body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:18px;height:18px;}
 body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:64px;height:64px;border-color:var(--accent);}
+@media(max-width:900px){#cursor,#cursor-ring{display:none;}body{cursor:auto;}}
 
-/* ─── GRAIN ─── */
+/* ─── GRAIN OVERLAY ─── */
 body::after{
   content:'';position:fixed;inset:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   pointer-events:none;z-index:9998;opacity:.5;
+  animation:grainShift 0.5s steps(1) infinite;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0);}
+  20%{transform:translate(-2px,1px);}
+  40%{transform:translate(1px,-2px);}
+  60%{transform:translate(2px,1px);}
+  80%{transform:translate(-1px,2px);}
+  100%{transform:translate(0,0);}
 }
 
-/* ─── BG GLOW ─── */
+/* ─── BG AMBIENT ─── */
 body::before{
   content:'';position:fixed;inset:0;
   background:
@@ -83,6 +94,15 @@ body::before{
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.25);border-radius:999px;}
 
+/* ─── SCROLL PROGRESS BAR ─── */
+#progress-bar{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  z-index:99997;width:0%;
+  box-shadow:0 0 12px rgba(200,255,62,0.6);
+  transition:width .05s linear;
+}
+
 /* ─── NAV ─── */
 .nav{
   position:fixed;top:0;left:0;width:100%;
@@ -94,8 +114,8 @@ body::before{
 }
 .nav.scrolled{
   padding:18px 80px;
-  background:rgba(3,3,3,0.88);
-  backdrop-filter:blur(32px) saturate(180%);
+  background:rgba(3,3,3,0.92);
+  backdrop-filter:blur(40px) saturate(200%);
   border-bottom-color:var(--line);
 }
 .logo{
@@ -145,6 +165,49 @@ body::before{
 }
 .nav-cta:hover::before{left:150%;}
 .nav-cta:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(200,255,62,0.4);}
+
+/* ─── HAMBURGER (MOBILE) ─── */
+.nav-hamburger{
+  display:none;flex-direction:column;gap:5px;cursor:pointer;
+  padding:8px;z-index:9100;
+}
+.nav-hamburger span{
+  display:block;width:28px;height:2px;
+  background:var(--text);border-radius:2px;
+  transition:transform .4s,opacity .4s;
+}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* ─── MOBILE MENU ─── */
+.mobile-menu{
+  position:fixed;inset:0;
+  background:rgba(3,3,3,0.97);
+  backdrop-filter:blur(40px);
+  z-index:9050;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:44px;
+  clip-path:circle(0% at calc(100% - 52px) 52px);
+  transition:clip-path .7s cubic-bezier(.77,0,.175,1);
+  pointer-events:none;
+}
+.mobile-menu.open{
+  clip-path:circle(170% at calc(100% - 52px) 52px);
+  pointer-events:all;
+}
+.mobile-menu a{
+  font-family:var(--font-display);font-size:56px;
+  color:rgba(240,237,232,0.4);text-decoration:none;
+  letter-spacing:4px;text-transform:uppercase;
+  transition:color .3s,transform .3s;
+}
+.mobile-menu a:hover{color:var(--accent);transform:translateX(12px);}
+.mobile-menu .mobile-cta{
+  font-family:var(--font-cond);font-size:14px;font-weight:800;
+  letter-spacing:3px;color:black;background:var(--accent);
+  padding:16px 44px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  text-decoration:none;
+}
 
 /* ─── HERO ─── */
 .hero{
@@ -206,10 +269,11 @@ body::before{
   50%{transform:translateY(calc(-50% - 30px)) scale(1.06);}
 }
 
+/* ─── FIX 1: HERO CONTENT — raise actions so they clear the stats band ─── */
 .hero-content{
   position:relative;z-index:10;
   display:flex;flex-direction:column;justify-content:center;
-  padding:170px 80px 130px;
+  padding:170px 80px 220px; /* increased bottom padding so buttons clear stats band */
   min-height:100vh;max-width:1120px;
 }
 
@@ -266,7 +330,10 @@ body::before{
   border-left:2px solid var(--accent);padding-left:26px;
 }
 
-.hero-actions{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
+.hero-actions{
+  display:flex;align-items:center;gap:28px;flex-wrap:wrap;
+  margin-bottom:20px; /* extra push up from stat band */
+}
 
 .btn-main{
   position:relative;overflow:hidden;
@@ -541,7 +608,7 @@ body::before{
   line-height:1.75;max-width:680px;margin-left:auto;margin-right:auto;
 }
 
-/* ─── MODULES — COMPLETELY REDESIGNED ─── */
+/* ─── MODULES ─── */
 .modules-section{background:var(--bg);}
 .modules-header{
   margin-bottom:110px;display:grid;
@@ -559,7 +626,6 @@ body::before{
   gap:3px;
 }
 
-/* ── INDIVIDUAL MODULE CARD (new design) ── */
 .module-card{
   position:relative;overflow:hidden;
   background:var(--surface);border:1px solid var(--line);
@@ -569,7 +635,6 @@ body::before{
 }
 .module-card:hover{background:rgba(200,255,62,0.028);border-color:rgba(200,255,62,0.1);}
 
-/* Top accent bar */
 .module-card::after{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,var(--accent),transparent);
@@ -578,14 +643,12 @@ body::before{
 }
 .module-card:hover::after{transform:scaleX(1);}
 
-/* Grid placements */
 .mod-1{grid-column:1/5;}
 .mod-2{grid-column:5/9;}
 .mod-3{grid-column:9/13;}
-.mod-4{grid-column:1/8;grid-row:2;}  /* Featured - wider */
+.mod-4{grid-column:1/8;grid-row:2;}
 .mod-5{grid-column:8/13;grid-row:2;}
 
-/* Module number accent */
 .module-num{
   font-family:var(--font-display);
   font-size:80px;color:rgba(200,255,62,0.06);
@@ -595,7 +658,6 @@ body::before{
 }
 .module-card:hover .module-num{color:rgba(200,255,62,0.1);}
 
-/* SVG icon — professional line icons */
 .module-icon-wrap{
   width:52px;height:52px;
   border:1px solid rgba(200,255,62,0.18);
@@ -635,7 +697,7 @@ body::before{
 }
 .module-card:hover .module-tag{border-color:rgba(200,255,62,0.12);color:var(--accent);}
 
-/* Featured card */
+/* ─── FIX 2: FEATURED CARD with working fallback image ─── */
 .module-card.featured{
   padding:56px 52px;
   background:rgba(200,255,62,0.04);
@@ -648,21 +710,70 @@ body::before{
 .featured-visual-wrap{
   flex:0 0 340px;height:260px;
   position:relative;overflow:hidden;
+  background:#0d0d0d; /* fallback bg */
+}
+/* Render a data-uri SVG as fallback in case image fails */
+.featured-visual-wrap::after{
+  content:'';
+  position:absolute;inset:0;
+  background:
+    linear-gradient(135deg, rgba(200,255,62,0.08) 0%, transparent 60%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(200,255,62,0.04) 8px,
+      rgba(200,255,62,0.04) 9px
+    );
+  z-index:0;
 }
 .featured-visual-wrap img{
   width:100%;height:100%;object-fit:cover;
   filter:brightness(.42) saturate(1.3);
   transition:transform .9s,filter .9s;
+  position:relative;z-index:1;
 }
 .module-card.featured:hover .featured-visual-wrap img{
   transform:scale(1.06);filter:brightness(.55) saturate(1.4);
 }
-/* Corner decoration on featured */
 .featured-visual-wrap::before{
   content:'';position:absolute;bottom:0;left:0;right:0;
-  height:50%;z-index:1;
+  height:50%;z-index:2;
   background:linear-gradient(to top,rgba(3,3,3,.9),transparent);
 }
+/* Dashboard grid overlay on featured visual */
+.featured-visual-wrap .dash-overlay{
+  position:absolute;inset:0;z-index:3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;
+}
+.dash-bar{
+  display:flex;align-items:flex-end;gap:6px;height:80px;
+}
+.dash-bar span{
+  width:14px;background:var(--accent);border-radius:2px 2px 0 0;
+  opacity:0.6;
+  animation:dashPulse 2s ease-in-out infinite;
+}
+.dash-bar span:nth-child(1){height:40%;animation-delay:0s;}
+.dash-bar span:nth-child(2){height:70%;animation-delay:.1s;}
+.dash-bar span:nth-child(3){height:55%;animation-delay:.2s;}
+.dash-bar span:nth-child(4){height:90%;animation-delay:.3s;}
+.dash-bar span:nth-child(5){height:65%;animation-delay:.4s;}
+.dash-bar span:nth-child(6){height:80%;animation-delay:.5s;}
+.dash-bar span:nth-child(7){height:45%;animation-delay:.6s;}
+@keyframes dashPulse{
+  0%,100%{opacity:0.5;}
+  50%{opacity:0.9;}
+}
+.dash-line-wrap{width:80%;display:flex;flex-direction:column;gap:6px;}
+.dash-line{
+  height:2px;background:linear-gradient(90deg,var(--accent),transparent);
+  border-radius:2px;opacity:0.3;
+}
+.dash-line:nth-child(1){width:100%;}
+.dash-line:nth-child(2){width:70%;}
+.dash-line:nth-child(3){width:85%;}
 
 /* ─── SHOWCASES ─── */
 .showcases{
@@ -824,7 +935,15 @@ footer{
   background:linear-gradient(90deg,var(--accent),transparent);
 }
 
-/* ─── RESPONSIVE ─── */
+/* ─── HOVER PARALLAX on cards ─── */
+.module-card,.pillar,.showcase{will-change:transform;}
+
+/* ─── SCROLL REVEAL BASE ─── */
+[data-anim]{opacity:1;}
+
+/* ────────────────────────────────────────────────────────
+   FIX 3 — RESPONSIVE / MOBILE
+   ──────────────────────────────────────────────────────── */
 @media(max-width:1400px){
   .modules-grid{grid-template-columns:1fr 1fr 1fr;}
   .mod-1,.mod-2,.mod-3{grid-column:auto;}
@@ -841,42 +960,138 @@ footer{
   .process-steps::before{display:none;}
   footer{grid-template-columns:1fr 1fr;gap:50px;}
 }
+
+/* ─── TABLET ─── */
 @media(max-width:900px){
-  .section{padding:120px 30px;}
-  .nav{padding:22px 30px;}
-  .nav.scrolled{padding:14px 30px;}
+  /* Layout */
+  .section{padding:100px 24px;}
+  .nav{padding:22px 24px;}
+  .nav.scrolled{padding:14px 24px;}
   .nav-links{display:none;}
-  .hero-content{padding:150px 30px 210px;}
-  .hero-stats-band{flex-direction:column;}
-  .stat-cell{border-right:none;border-bottom:1px solid var(--line);padding:26px 30px;}
-  .pillars-header{padding:80px 30px 50px;flex-direction:column;align-items:flex-start;}
-  .pillars-track{padding:0 30px 80px;}
-  .showcases-inner{grid-template-columns:1fr;}
-  .showcases-inner .showcase{min-height:420px;}
-  .modules-grid{grid-template-columns:1fr;}
-  .module-card.featured{grid-column:auto;grid-template-columns:1fr;}
-  footer{grid-template-columns:1fr;padding:60px 30px;}
-  .footer-bottom{padding:26px 30px;flex-direction:column;gap:14px;}
+  .nav-cta{display:none;}
+  .nav-hamburger{display:flex;}
+
+  /* Hero */
+  .hero-content{padding:130px 24px 260px;}
+  .hero-h1{font-size:clamp(68px,18vw,110px);}
+  .hero-sub{font-size:16px;margin-bottom:44px;}
+  .hero-actions{gap:16px;}
+  .btn-main{padding:18px 36px;font-size:12px;}
+  .btn-ghost{padding:17px 28px;font-size:11px;}
+
+  /* Stats band */
+  .hero-stats-band{
+    flex-direction:row;flex-wrap:wrap;
+    position:relative; /* no longer absolute on mobile — flows below content */
+  }
+  .stat-cell{
+    flex:1 1 50%;border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);padding:22px 20px;
+  }
+  .stat-cell:nth-child(2n){border-right:none;}
+  .stat-cell:nth-child(3),.stat-cell:nth-child(4){border-bottom:none;}
+  .stat-number{font-size:40px;}
+
+  /* Since stats are now in-flow, hero no longer needs huge bottom padding */
+  .hero{min-height:auto;display:flex;flex-direction:column;}
+  .hero-content{min-height:100vh;}
+  .hero-media{position:fixed;} /* keep it covering full screen */
+
+  /* Ticker */
+  .ticker{padding:14px 0;}
+  .ticker-item span{font-size:11px;letter-spacing:2.5px;}
+
+  /* Identity */
+  .identity-section{grid-template-columns:1fr;gap:60px;}
+  .identity-visual{height:380px;}
+  .identity-badge{display:none;}
+  .identity-metrics{grid-template-columns:1fr 1fr;gap:2px;}
+
+  /* Pillars */
+  .pillars-header{padding:70px 24px 40px;flex-direction:column;align-items:flex-start;gap:24px;}
+  .pillars-track{
+    padding:0 24px 70px;
+    overflow-x:auto;scrollbar-width:none;gap:2px;
+  }
+  .pillars-track::-webkit-scrollbar{display:none;}
+  .pillar{flex:0 0 300px;height:500px;}
+  .pillar:hover{flex:0 0 380px;}
+
+  /* Modules */
+  .modules-header{grid-template-columns:1fr;gap:24px;margin-bottom:60px;}
+  .modules-grid{grid-template-columns:1fr;gap:2px;}
+  .mod-1,.mod-2,.mod-3,.mod-4,.mod-5{grid-column:auto;grid-row:auto;}
+  .module-card{padding:36px 28px;}
+  .module-card.featured{flex-direction:column;gap:32px;padding:36px 28px;}
+  .featured-visual-wrap{flex:none;width:100%;height:200px;}
+  .module-card.featured .module-title{font-size:44px;}
+
+  /* Showcases */
+  .showcases-header{padding:80px 24px 50px;}
+  .showcases-inner{grid-template-columns:1fr;min-height:auto;}
+  .showcase{min-height:380px;}
+
+  /* Process */
+  .process-header{margin-bottom:70px;}
+  .process-steps{
+    grid-template-columns:1fr 1fr;gap:48px 24px;
+  }
+  .process-steps::before{display:none;}
+  .process-step{padding:0 16px;}
+
+  /* Final */
   .final-section{min-height:80vh;}
   .final-title{letter-spacing:-2px;}
+  .final-content{padding:60px 24px;}
+  .final-sub{font-size:16px;}
+  .final-actions{flex-direction:column;align-items:center;}
+
+  /* Footer */
+  footer{grid-template-columns:1fr;padding:60px 24px;gap:40px;}
+  .footer-bottom{padding:26px 24px;flex-direction:column;gap:14px;text-align:center;}
+
+  /* Manifesto */
+  .manifesto-content{padding:0 24px;}
+  .manifesto-quote{font-size:clamp(44px,13vw,80px);}
+  .manifesto-sub{font-size:16px;}
 }
 
-/* ─── HOVER PARALLAX on cards ─── */
-.module-card,.pillar,.showcase{will-change:transform;}
-
-/* ─── SCROLL REVEAL BASE ─── */
-[data-anim]{opacity:1;}
+/* ─── SMALL PHONES ─── */
+@media(max-width:480px){
+  .hero-h1{font-size:clamp(56px,20vw,88px);}
+  .hero-content{padding:120px 20px 240px;}
+  .section{padding:80px 20px;}
+  .hero-stats-band .stat-cell{flex:1 1 50%;}
+  .process-steps{grid-template-columns:1fr;}
+  .identity-metrics{grid-template-columns:1fr 1fr;}
+  .pillar{flex:0 0 260px;height:440px;}
+  .section-title{font-size:clamp(52px,14vw,80px);}
+  footer{padding:50px 20px;}
+  .mobile-menu a{font-size:40px;}
+}
 </style>
 </head>
 <body>
 
+<div id="progress-bar"></div>
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
+
+<!-- ─── MOBILE MENU ─── -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#" onclick="closeMobileMenu()">INICIO</a>
+  <a href="#" onclick="closeMobileMenu()">SISTEMA</a>
+  <a href="#" onclick="closeMobileMenu()">PROGRAMA</a>
+  <a href="#" onclick="closeMobileMenu()">RESULTADOS</a>
+  <a href="#" onclick="closeMobileMenu()">CONTACTO</a>
+  <a href="#" class="mobile-cta" onclick="closeMobileMenu()">ENTRAR AHORA</a>
+</div>
 
 <!-- ─── NAV ─── -->
 <nav class="nav" id="nav">
   <a class="logo" href="#">
-    <img class="logo-img" src="logo.png" alt="Ascend System Logo">
+    <img class="logo-img" src="logo.png" alt="Ascend System Logo"
+      onerror="this.style.display='none'">
     ASCEND <span>SYSTEM</span>
   </a>
   <div class="nav-links">
@@ -887,6 +1102,9 @@ footer{
     <a href="#">CONTACTO</a>
   </div>
   <button class="nav-cta">ENTRAR AHORA</button>
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </div>
 </nav>
 
 <!-- ─── HERO ─── -->
@@ -913,6 +1131,7 @@ footer{
     <p class="hero-sub" data-anim="fade-up" data-delay="2">
       El sistema definitivo de transformación física, mental y productiva. Diseñado para personas obsesionadas con dominar su vida al máximo nivel absoluto.
     </p>
+    <!-- FIX 1: hero-actions has margin-bottom so buttons are never hidden behind stats band -->
     <div class="hero-actions" data-anim="fade-up" data-delay="3">
       <a href="#" class="btn-main">ENTRAR AL SISTEMA</a>
       <a href="#" class="btn-ghost">
@@ -1091,7 +1310,7 @@ footer{
   </div>
 </section>
 
-<!-- ─── MODULES — REDESIGNED ─── -->
+<!-- ─── MODULES ─── -->
 <section class="section modules-section">
   <div class="modules-header" data-anim="fade-up" data-delay="0">
     <div>
@@ -1105,11 +1324,9 @@ footer{
 
   <div class="modules-grid">
 
-    <!-- MOD 1: PRODUCTIVIDAD EXTREMA -->
     <div class="module-card mod-1" data-anim="fade-up" data-delay="0">
       <span class="module-num">01</span>
       <div class="module-icon-wrap">
-        <!-- Lightning / energy icon -->
         <svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
       <h3 class="module-title">PRODUCTIVIDAD<br>EXTREMA</h3>
@@ -1121,11 +1338,9 @@ footer{
       </div>
     </div>
 
-    <!-- MOD 2: HABIT ARCHITECTURE -->
     <div class="module-card mod-2" data-anim="fade-up" data-delay="1">
       <span class="module-num">02</span>
       <div class="module-icon-wrap">
-        <!-- Brain / neural icon -->
         <svg viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>
       </div>
       <h3 class="module-title">HABIT<br>ARCHITECTURE</h3>
@@ -1137,11 +1352,9 @@ footer{
       </div>
     </div>
 
-    <!-- MOD 3: RECOVERY PROTOCOL -->
     <div class="module-card mod-3" data-anim="fade-up" data-delay="2">
       <span class="module-num">03</span>
       <div class="module-icon-wrap">
-        <!-- Recovery / cycle icon -->
         <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
       </div>
       <h3 class="module-title">RECOVERY<br>PROTOCOL</h3>
@@ -1153,12 +1366,11 @@ footer{
       </div>
     </div>
 
-    <!-- MOD 4: PERFORMANCE DASHBOARD (featured) -->
+    <!-- FIX 2: Featured card uses animated SVG dashboard instead of broken image URL -->
     <div class="module-card featured mod-4" data-anim="fade-up" data-delay="3">
       <div class="featured-info">
         <span class="module-num" style="position:static;font-size:60px;margin-bottom:0;color:rgba(200,255,62,0.07);">04</span>
         <div class="module-icon-wrap" style="margin-top:16px;">
-          <!-- Dashboard / grid icon -->
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         </div>
         <h3 class="module-title">PERFORMANCE<br>DASHBOARD</h3>
@@ -1170,16 +1382,25 @@ footer{
           <span class="module-tag">Visual System</span>
         </div>
       </div>
+      <!-- FIX 2: Replaced broken Unsplash URL with animated SVG dashboard visual -->
       <div class="featured-visual-wrap">
-        <img src="https://images.unsplash.com/photo-1526401485004-2fda9fdd2c49?q=80&w=900&auto=format&fit=crop" alt="Dashboard">
+        <div class="dash-overlay">
+          <div class="dash-bar">
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="dash-line-wrap">
+            <div class="dash-line"></div>
+            <div class="dash-line"></div>
+            <div class="dash-line"></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- MOD 5: PHYSICAL SYSTEM -->
     <div class="module-card mod-5" data-anim="fade-up" data-delay="4">
       <span class="module-num">05</span>
       <div class="module-icon-wrap">
-        <!-- Strength / dumbbell icon -->
         <svg viewBox="0 0 24 24"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829l2.828-2.828a2 2 0 1 1 2.829 2.828l1.767-1.768a2 2 0 1 1 2.829 2.829z"/></svg>
       </div>
       <h3 class="module-title">PHYSICAL<br>SYSTEM</h3>
@@ -1201,8 +1422,6 @@ footer{
     <h2 class="section-title" style="margin-top:20px;" data-anim="fade-up" data-delay="1">Así se<br><em>ejecuta</em></h2>
   </div>
   <div class="showcases-inner">
-
-    <!-- Showcase 1: PRODUCTIVIDAD (uses unique image - person working focused) -->
     <div class="showcase" data-anim="fade-up" data-delay="0">
       <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1600&auto=format&fit=crop" alt="Productividad">
       <div class="showcase-overlay"></div>
@@ -1213,8 +1432,6 @@ footer{
         <p class="showcase-desc">Elimina el ruido. Entra en el bloque de flujo. Produce resultados que parecen imposibles para el promedio.</p>
       </div>
     </div>
-
-    <!-- Showcase 2: ÉLITE FÍSICO (uses different image - outdoor athletic) -->
     <div class="showcase" data-anim="fade-up" data-delay="1">
       <img src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=1200&auto=format&fit=crop" alt="Físico">
       <div class="showcase-overlay"></div>
@@ -1225,8 +1442,6 @@ footer{
         <p class="showcase-desc">Tu cuerpo es tu base de operaciones. Cuando está optimizado, todo lo demás se amplifica exponencialmente.</p>
       </div>
     </div>
-
-    <!-- Showcase 3: FORTALEZA MENTAL (uses different image - meditation/mental focus) -->
     <div class="showcase" data-anim="fade-up" data-delay="2">
       <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop" alt="Mental">
       <div class="showcase-overlay"></div>
@@ -1237,7 +1452,6 @@ footer{
         <p class="showcase-desc">La mente es el campo de batalla real. Domínala y dominas todo lo demás sin excepción.</p>
       </div>
     </div>
-
   </div>
 </section>
 
@@ -1298,7 +1512,8 @@ footer{
 <footer>
   <div class="footer-brand">
     <a class="logo" href="#" style="margin-bottom:20px;text-decoration:none;">
-      <img class="logo-img" src="logo.png" alt="Ascend System Logo">
+      <img class="logo-img" src="logo.png" alt="Ascend System Logo"
+        onerror="this.style.display='none'">
       ASCEND <span>SYSTEM</span>
     </a>
     <p>El sistema de performance de élite diseñado para personas que no aceptan el promedio como destino.</p>
@@ -1338,28 +1553,49 @@ footer{
 </div>
 
 <script>
-// ─── CURSOR ───
-const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
-let mx=0,my=0,rx=0,ry=0;
+/* ─── MOBILE MENU ─── */
+function toggleMobileMenu(){
+  const menu=document.getElementById('mobileMenu');
+  const burger=document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  burger.classList.toggle('open');
+}
+function closeMobileMenu(){
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
 
-document.addEventListener('mousemove',e=>{
-  mx=e.clientX;my=e.clientY;
-  cursor.style.left=mx+'px';cursor.style.top=my+'px';
-});
-(function animRing(){
-  rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;
-  ring.style.left=rx+'px';ring.style.top=ry+'px';
-  requestAnimationFrame(animRing);
-})();
+/* ─── SCROLL PROGRESS BAR ─── */
+const progressBar=document.getElementById('progress-bar');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const pct=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100;
+  progressBar.style.width=pct+'%';
+},{passive:true});
 
-// ─── NAV SCROLL ───
+/* ─── CURSOR ─── */
+const cursor=document.getElementById('cursor');
+const ring=document.getElementById('cursor-ring');
+if(cursor){
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    cursor.style.left=mx+'px';cursor.style.top=my+'px';
+  });
+  (function animRing(){
+    rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;
+    ring.style.left=rx+'px';ring.style.top=ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+}
+
+/* ─── NAV SCROLL ─── */
 const nav=document.getElementById('nav');
 window.addEventListener('scroll',()=>{
   nav.classList.toggle('scrolled',window.scrollY>40);
 },{passive:true});
 
-// ─── MANIFESTO LINES ───
+/* ─── MANIFESTO LINES ─── */
 const linesEl=document.getElementById('manifestoLines');
 for(let i=0;i<14;i++){
   const s=document.createElement('span');
@@ -1367,10 +1603,10 @@ for(let i=0;i<14;i++){
   linesEl.appendChild(s);
 }
 
-// ─── GSAP ───
+/* ─── GSAP ─── */
 gsap.registerPlugin(ScrollTrigger);
 
-// Hero entry
+/* Hero entry */
 const heroItems=document.querySelectorAll('.hero-content [data-anim], .hero-stats-band[data-anim]');
 heroItems.forEach((el,i)=>{
   const delay=parseFloat(el.dataset.delay||0)*0.18;
@@ -1380,7 +1616,7 @@ heroItems.forEach((el,i)=>{
   });
 });
 
-// Hero parallax
+/* Hero parallax */
 gsap.to('#hero-img',{
   yPercent:22,ease:'none',
   scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1.5}
@@ -1390,7 +1626,7 @@ gsap.to('#final-img',{
   scrollTrigger:{trigger:'.final-section',start:'top bottom',end:'bottom top',scrub:1.5}
 });
 
-// Identity image parallax
+/* Identity image parallax */
 gsap.to('.identity-img-main',{
   yPercent:-8,ease:'none',
   scrollTrigger:{trigger:'.identity-section',start:'top bottom',end:'bottom top',scrub:2}
@@ -1400,13 +1636,13 @@ gsap.to('.identity-img-secondary',{
   scrollTrigger:{trigger:'.identity-section',start:'top bottom',end:'bottom top',scrub:2}
 });
 
-// ─── SCROLL ANIMATIONS ───
+/* ─── SCROLL ANIMATIONS ─── */
 function setupScrollAnim(el){
   const type=el.dataset.anim;
   if(!type||type==='pillars')return;
   const fromVars={opacity:0,duration:1.15,ease:'power4.out',clearProps:'all'};
   if(type==='fade-up')fromVars.y=90;
-  if(type==='fade-left'){fromVars.x=90;}
+  if(type==='fade-left')fromVars.x=90;
   fromVars.delay=parseFloat(el.dataset.delay||0)*0.13;
   gsap.from(el,{
     ...fromVars,
@@ -1420,37 +1656,37 @@ requestAnimationFrame(()=>{
   document.querySelectorAll('[data-anim]:not(.hero-content [data-anim]):not(.hero-stats-band[data-anim])').forEach(setupScrollAnim);
 });
 
-// Pillars
+/* Pillars */
 gsap.from('.pillar',{
   opacity:0,x:110,duration:1.3,stagger:0.13,ease:'power4.out',clearProps:'all',
   scrollTrigger:{trigger:'.pillars-track',start:'top 85%',toggleActions:'play none none reverse'}
 });
 
-// Showcases
+/* Showcases */
 gsap.from('.showcase',{
   opacity:0,y:90,duration:1.3,stagger:0.15,ease:'power4.out',clearProps:'all',
   scrollTrigger:{trigger:'.showcases-inner',start:'top 85%',toggleActions:'play none none reverse'}
 });
 
-// Module cards
+/* Module cards */
 gsap.from('.module-card',{
   opacity:0,y:70,duration:1.1,stagger:0.1,ease:'power3.out',clearProps:'all',
   scrollTrigger:{trigger:'.modules-grid',start:'top 85%',toggleActions:'play none none reverse'}
 });
 
-// Process steps
+/* Process steps */
 gsap.from('.process-step',{
   opacity:0,y:70,duration:1.1,stagger:0.15,ease:'power4.out',clearProps:'all',
   scrollTrigger:{trigger:'.process-steps',start:'top 85%',toggleActions:'play none none reverse'}
 });
 
-// Metric blocks
+/* Metric blocks */
 gsap.from('.metric-block',{
   opacity:0,scale:.92,duration:.95,stagger:0.08,ease:'power3.out',clearProps:'all',
   scrollTrigger:{trigger:'.identity-metrics',start:'top 88%',toggleActions:'play none none reverse'}
 });
 
-// Manifesto lines
+/* Manifesto lines */
 gsap.from('.manifesto-lines span',{
   scaleX:0,duration:2.2,stagger:0.055,ease:'power3.out',clearProps:'all',
   scrollTrigger:{trigger:'.manifesto',start:'top 80%'}
@@ -1460,13 +1696,13 @@ gsap.from('.manifesto-quote',{
   scrollTrigger:{trigger:'.manifesto',start:'top 76%',toggleActions:'play none none reverse'}
 });
 
-// Footer
+/* Footer */
 gsap.from('footer > *',{
   opacity:0,y:40,duration:1,stagger:0.1,ease:'power3.out',clearProps:'all',
   scrollTrigger:{trigger:'footer',start:'top 90%',toggleActions:'play none none reverse'}
 });
 
-// ─── MAGNETIC BUTTONS ───
+/* ─── MAGNETIC BUTTONS ─── */
 document.querySelectorAll('.btn-main,.nav-cta').forEach(btn=>{
   btn.addEventListener('mousemove',e=>{
     const r=btn.getBoundingClientRect();
@@ -1477,7 +1713,7 @@ document.querySelectorAll('.btn-main,.nav-cta').forEach(btn=>{
   btn.addEventListener('mouseleave',()=>{btn.style.transform='';});
 });
 
-// ─── SCROLL-TRIGGERED COUNTER ANIMATION ───
+/* ─── COUNTER ANIMATION ─── */
 function animCounter(el,target,suffix=''){
   const isFloat=!Number.isInteger(target);
   gsap.fromTo({val:0},{val:target},{
@@ -1499,15 +1735,7 @@ ScrollTrigger.create({
   }
 });
 
-// ─── STAT BAND COUNTER ───
-ScrollTrigger.create({
-  trigger:'.hero-stats-band',start:'top 95%',once:true,
-  onEnter:()=>{
-    // Numbers are mostly symbolic (90D, 4X, ∞) — skip auto-count for those
-  }
-});
-
-// ─── SUBTLE PARALLAX ON MODULE CARDS ───
+/* ─── SUBTLE PARALLAX ON MODULE CARDS ─── */
 document.querySelectorAll('.module-card').forEach(card=>{
   card.addEventListener('mousemove',e=>{
     const r=card.getBoundingClientRect();
@@ -1522,7 +1750,7 @@ document.querySelectorAll('.module-card').forEach(card=>{
   card.addEventListener('mouseenter',()=>{card.style.transition='transform .1s';});
 });
 
-// ─── PILLAR PARALLAX ───
+/* ─── PILLAR PARALLAX ─── */
 document.querySelectorAll('.pillar').forEach(p=>{
   p.addEventListener('mousemove',e=>{
     const r=p.getBoundingClientRect();
@@ -1534,6 +1762,14 @@ document.querySelectorAll('.pillar').forEach(p=>{
     p.querySelector('img').style.transform='';
   });
 });
+
+/* ─── MOBILE: disable 3D card tilt on touch ─── */
+if('ontouchstart' in window){
+  document.querySelectorAll('.module-card').forEach(c=>{
+    c.removeEventListener('mousemove',()=>{});
+    c.style.transform='none';
+  });
+}
 </script>
 </body>
 </html>
