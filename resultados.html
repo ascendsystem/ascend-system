@@ -1148,6 +1148,7 @@ footer{
   </div>
 </div>
 
+   
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html" onclick="closeMobileMenu()">INICIO</a>
@@ -1897,75 +1898,88 @@ const lbCloseBtn = document.getElementById('lbCloseBtn');
 const lbPrevBtn = document.getElementById('lbPrevBtn');
 const lbNextBtn = document.getElementById('lbNextBtn');
 
-function openLightbox(index){
+function openLightbox(index) {
   currentLB = index;
   updateLightboxContent();
   lightbox.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 
-function closeLightbox(){
+function closeLightbox() {
   lightbox.classList.remove('active');
   document.body.style.overflow = '';
 }
 
-function lbNavigate(dir){
+function lbNavigate(dir) {
   currentLB = (currentLB + dir + lightboxData.length) % lightboxData.length;
-  // Animate out → in
-  lightboxInner.style.opacity = '0';
-  lightboxInner.style.transform = `scale(.94) translateX(${dir*30}px)`;
-  lightboxInner.style.transition = 'opacity .25s,transform .25s';
+  updateLightboxContent();
+
+  // Animación de transición más simple y efectiva
+  lightboxInner.style.transform = `scale(0.96) translateX(${dir * 20}px)`;
+  lightboxInner.style.transition = 'transform 0.2s ease';
   setTimeout(() => {
-    updateLightboxContent();
-    lightboxInner.style.transform = `scale(.94) translateX(${-dir*30}px)`;
-    setTimeout(() => {
-      lightboxInner.style.opacity = '1';
-      lightboxInner.style.transform = 'scale(1) translateX(0)';
-      lightboxInner.style.transition = 'opacity .4s cubic-bezier(.16,1,.3,1),transform .4s cubic-bezier(.16,1,.3,1)';
-    }, 20);
-  }, 260);
+    lightboxInner.style.transform = 'scale(1) translateX(0)';
+  }, 150);
 }
 
-function updateLightboxContent(){
+function updateLightboxContent() {
   const d = lightboxData[currentLB];
-  if(!d) return;
-  const numStr = String(currentLB + 1).padStart(2,'0');
+  if (!d) return;
+  const numStr = String(currentLB + 1).padStart(2, '0');
+
   document.getElementById('lbLabel').textContent = d.label;
   document.getElementById('lbNum').textContent = numStr;
-  document.getElementById('lbPlaceholderLabel').textContent = `Imagen Ejemplo ${currentLB+1}`;
+  document.getElementById('lbPlaceholderLabel').textContent = `Imagen Ejemplo ${currentLB + 1}`;
   document.getElementById('lbName').textContent = d.name;
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
-  document.getElementById('lbM1').nextElementSibling.textContent = d.m1l;
+  
+  // Actualizar los labels de métricas
+  const m1Label = document.getElementById('lbM1').nextElementSibling;
+  const m2Label = document.getElementById('lbM2').nextElementSibling;
+  const m3Label = document.getElementById('lbM3').nextElementSibling;
+  if (m1Label) m1Label.textContent = d.m1l;
+  if (m2Label) m2Label.textContent = d.m2l;
+  if (m3Label) m3Label.textContent = d.m3l;
+  
   document.getElementById('lbM2').textContent = d.m2;
-  document.getElementById('lbM2').nextElementSibling.textContent = d.m2l;
   document.getElementById('lbM3').textContent = d.m3;
-  document.getElementById('lbM3').nextElementSibling.textContent = d.m3l;
   document.getElementById('lbCurrent').textContent = currentLB + 1;
   document.getElementById('lbTotal').textContent = lightboxData.length;
 }
 
-// Cerrar al hacer clic en el overlay (fondo)
+// Cerrar con la X - IMPORTANTE: usar stopPropagation
+lbCloseBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  closeLightbox();
+});
+
+// Cerrar si se hace clic fuera del contenido (overlay)
 lightbox.addEventListener('click', function(e) {
   if (e.target === lightbox) {
     closeLightbox();
   }
 });
 
-// Cerrar con botón de cierre
-lbCloseBtn.addEventListener('click', closeLightbox);
-
 // Navegación con botones
-lbPrevBtn.addEventListener('click', () => lbNavigate(-1));
-lbNextBtn.addEventListener('click', () => lbNavigate(1));
+lbPrevBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  lbNavigate(-1);
+});
+
+lbNextBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  lbNavigate(1);
+});
 
 // Keyboard navigation
-document.addEventListener('keydown', e => {
-  if(!lightbox.classList.contains('active')) return;
-  if(e.key === 'ArrowRight') lbNavigate(1);
-  if(e.key === 'ArrowLeft')  lbNavigate(-1);
-  if(e.key === 'Escape')     closeLightbox();
+document.addEventListener('keydown', function(e) {
+  if (!lightbox.classList.contains('active')) return;
+  if (e.key === 'ArrowRight') lbNavigate(1);
+  if (e.key === 'ArrowLeft') lbNavigate(-1);
+  if (e.key === 'Escape') closeLightbox();
 });
+
 /* ─ GSAP ─ */
 gsap.registerPlugin(ScrollTrigger);
 
@@ -2018,6 +2032,7 @@ ScrollTrigger.create({
   }
 });
 
+   
 // Scroll animations
 function setupAnim(el){
   const delay = parseFloat(el.dataset.delay || 0) * 0.15;
