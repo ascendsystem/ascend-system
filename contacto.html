@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contacto — AscendSystem</title>
+
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,700&family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<style>
+/* ══════════════════════════════════════
+   TOKENS — same as main site
+══════════════════════════════════════ */
+:root{
+  --bg:#030303;
+  --bg2:#070707;
+  --bg3:#0d0d0d;
+  --surface:rgba(255,255,255,0.025);
+  --surface2:rgba(255,255,255,0.045);
+  --text:#f0ede8;
+  --muted:#6a6662;
+  --muted2:#9a9692;
+  --accent:#c8ff3e;
+  --accent2:#aaff00;
+  --accent-glow:rgba(200,255,62,0.22);
+  --accent-dim:rgba(200,255,62,0.1);
+  --line:rgba(255,255,255,0.06);
+  --line2:rgba(255,255,255,0.1);
+  --font-display:'Bebas Neue',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  --font-cond:'Barlow Condensed',sans-serif;
+  --error:#ff4d4d;
+  --success:#c8ff3e;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  cursor:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+/* ── CURSOR ── */
+#cursor{
+  position:fixed;width:10px;height:10px;
+  background:var(--accent);border-radius:50%;
+  pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,opacity .2s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;width:40px;height:40px;
+  border:1px solid rgba(200,255,62,0.45);
+  border-radius:50%;pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1),border-color .3s;
+}
+body:has(a:hover) #cursor,body:has(button:hover) #cursor,body:has(input:hover) #cursor,body:has(textarea:hover) #cursor{width:18px;height:18px;}
+body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:64px;height:64px;border-color:var(--accent);}
+@media(max-width:900px){#cursor,#cursor-ring{display:none;}body{cursor:auto;}}
+
+/* ── GRAIN ── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9998;opacity:.5;
+  animation:grainShift 0.5s steps(1) infinite;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0);}20%{transform:translate(-2px,1px);}
+  40%{transform:translate(1px,-2px);}60%{transform:translate(2px,1px);}
+  80%{transform:translate(-1px,2px);}100%{transform:translate(0,0);}
+}
+
+/* ── BG AMBIENT ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 10% 0%, rgba(200,255,62,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 35% at 90% 100%, rgba(200,255,62,0.05) 0%, transparent 60%);
+  pointer-events:none;z-index:-1;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.25);border-radius:999px;}
+
+/* ── PROGRESS BAR ── */
+#progress-bar{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  z-index:99997;width:0%;
+  box-shadow:0 0 12px rgba(200,255,62,0.6);
+  transition:width .05s linear;
+}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+.nav{
+  position:fixed;top:0;left:0;width:100%;
+  padding:36px 80px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:9000;
+  transition:padding .5s ease,background .5s ease,border-color .5s ease;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{
+  padding:18px 80px;
+  background:rgba(3,3,3,0.92);
+  backdrop-filter:blur(40px) saturate(200%);
+  border-bottom-color:var(--line);
+}
+.logo{
+  font-family:var(--font-display);
+  font-size:24px;letter-spacing:6px;
+  color:white;display:flex;align-items:center;gap:12px;
+  text-decoration:none;
+}
+.logo-img{height:34px;width:auto;object-fit:contain;filter:drop-shadow(0 0 8px rgba(200,255,62,0.4));}
+.logo span{color:var(--accent);}
+
+.nav-links{display:flex;gap:44px;align-items:center;}
+.nav-links a{
+  text-decoration:none;color:rgba(240,237,232,0.55);
+  font-family:var(--font-cond);font-size:12px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;position:relative;transition:color .3s;
+}
+.nav-links a::after{
+  content:'';position:absolute;left:0;bottom:-6px;
+  width:0;height:1px;background:var(--accent);
+  transition:width .4s cubic-bezier(.16,1,.3,1);
+}
+.nav-links a:hover{color:white;}
+.nav-links a:hover::after{width:100%;}
+.nav-links a.active{color:var(--accent);}
+.nav-links a.active::after{width:100%;}
+
+.nav-cta{
+  font-family:var(--font-cond);font-size:12px;font-weight:800;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:black;background:var(--accent);
+  padding:13px 30px;border:none;cursor:pointer;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden;
+}
+.nav-cta::before{
+  content:'';position:absolute;top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);
+  transform:skewX(-25deg);transition:left .6s;
+}
+.nav-cta:hover::before{left:150%;}
+.nav-cta:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(200,255,62,0.4);}
+
+/* Hamburger */
+.nav-hamburger{
+  display:none;flex-direction:column;gap:5px;cursor:pointer;
+  padding:8px;z-index:9100;
+}
+.nav-hamburger span{
+  display:block;width:28px;height:2px;
+  background:var(--text);border-radius:2px;
+  transition:transform .4s,opacity .4s;
+}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* Mobile menu */
+.mobile-menu{
+  position:fixed;inset:0;
+  background:rgba(3,3,3,0.97);backdrop-filter:blur(40px);
+  z-index:9050;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:44px;
+  clip-path:circle(0% at calc(100% - 52px) 52px);
+  transition:clip-path .7s cubic-bezier(.77,0,.175,1);pointer-events:none;
+}
+.mobile-menu.open{clip-path:circle(170% at calc(100% - 52px) 52px);pointer-events:all;}
+.mobile-menu a{
+  font-family:var(--font-display);font-size:56px;
+  color:rgba(240,237,232,0.4);text-decoration:none;
+  letter-spacing:4px;text-transform:uppercase;transition:color .3s,transform .3s;
+}
+.mobile-menu a:hover{color:var(--accent);transform:translateX(12px);}
+.mobile-menu .mobile-cta{
+  font-family:var(--font-cond);font-size:14px;font-weight:800;
+  letter-spacing:3px;color:black;background:var(--accent);
+  padding:16px 44px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  text-decoration:none;
+}
+
+/* ══════════════════════════════════════
+   HERO — PARTICLE CANVAS
+══════════════════════════════════════ */
+.contact-hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+#particle-canvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  z-index:1;
+}
+
+.hero-grid{
+  position:absolute;inset:0;z-index:2;
+  background-image:
+    linear-gradient(rgba(200,255,62,0.028) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,255,62,0.028) 1px,transparent 1px);
+  background-size:90px 90px;
+  animation:gridMove 28s linear infinite;
+  pointer-events:none;
+}
+@keyframes gridMove{0%{background-position:0 0;}100%{background-position:90px 90px;}}
+
+.hero-scan{
+  position:absolute;inset:0;z-index:3;
+  background:linear-gradient(transparent 0%,rgba(200,255,62,0.022) 50%,transparent 100%);
+  background-size:100% 300px;
+  animation:scanDown 10s linear infinite;pointer-events:none;
+}
+@keyframes scanDown{0%{background-position:0 -300px;}100%{background-position:0 110vh;}}
+
+.hero-content{
+  position:relative;z-index:10;
+  text-align:center;
+  padding:0 24px;
+}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:16px;margin-bottom:32px;
+}
+.eyebrow-line{width:44px;height:2px;background:var(--accent);position:relative;overflow:hidden;}
+.eyebrow-line::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;background:white;
+  animation:lineSweep 2.4s ease-in-out infinite;
+}
+@keyframes lineSweep{0%{left:-100%;}60%,100%{left:220%;}}
+.eyebrow-text{font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:4.5px;color:var(--accent);text-transform:uppercase;}
+
+.hero-h1{
+  font-family:var(--font-display);
+  font-size:clamp(90px,15vw,180px);
+  line-height:.84;letter-spacing:-3px;
+  color:white;margin-bottom:28px;
+}
+.hero-h1 .line-accent{
+  color:var(--accent);display:block;
+  text-shadow:0 0 80px rgba(200,255,62,0.2),0 0 200px rgba(200,255,62,0.08);
+}
+.hero-h1 .line-stroke{
+  display:block;
+  -webkit-text-stroke:1.5px rgba(255,255,255,0.28);color:transparent;
+}
+.hero-sub{
+  font-size:18px;color:rgba(240,237,232,0.52);
+  max-width:520px;margin:0 auto 48px;line-height:1.8;
+}
+
+.hero-scroll-hint{
+  position:absolute;bottom:48px;left:50%;transform:translateX(-50%);
+  z-index:10;display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.scroll-line{
+  width:1px;height:60px;
+  background:linear-gradient(to bottom,var(--accent),transparent);
+  animation:scrollDrop 2.2s ease-in-out infinite;
+}
+@keyframes scrollDrop{0%{opacity:0;transform:scaleY(0);transform-origin:top;}40%{opacity:1;}100%{opacity:0;transform:scaleY(1);transform-origin:top;}}
+.scroll-label{font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:4px;color:var(--muted);text-transform:uppercase;}
+
+/* ══════════════════════════════════════
+   TICKER
+══════════════════════════════════════ */
+.ticker{
+  background:var(--accent);overflow:hidden;
+  white-space:nowrap;padding:17px 0;position:relative;z-index:20;
+}
+.ticker-inner{display:inline-flex;animation:tickerMove 24s linear infinite;}
+.ticker-item{display:inline-flex;align-items:center;gap:28px;padding:0 32px;}
+.ticker-item span{font-family:var(--font-cond);font-size:12px;font-weight:800;letter-spacing:3.5px;color:black;text-transform:uppercase;}
+.ticker-dot{width:4px;height:4px;background:black;border-radius:50%;opacity:.35;}
+@keyframes tickerMove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+/* ══════════════════════════════════════
+   CONTACT SECTION
+══════════════════════════════════════ */
+.contact-section{
+  padding:160px 80px;position:relative;
+  display:grid;grid-template-columns:1fr 1.3fr;gap:120px;align-items:start;
+}
+
+/* ── LEFT INFO PANEL ── */
+.contact-info{position:sticky;top:140px;}
+.overline{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
+  display:flex;align-items:center;gap:16px;margin-bottom:26px;
+}
+.overline::before{content:'';width:28px;height:1px;background:var(--accent);}
+
+.contact-info h2{
+  font-family:var(--font-display);
+  font-size:clamp(64px,7vw,100px);
+  line-height:.88;letter-spacing:-1px;color:white;margin-bottom:36px;
+}
+.contact-info h2 em{font-style:normal;color:var(--accent);}
+
+.contact-info p{
+  font-size:17px;line-height:1.85;color:rgba(240,237,232,0.52);
+  margin-bottom:64px;max-width:380px;
+}
+
+.contact-channels{display:flex;flex-direction:column;gap:3px;}
+.channel-item{
+  display:flex;align-items:center;gap:22px;
+  padding:22px 28px;
+  background:var(--surface);border:1px solid var(--line);
+  transition:background .4s,border-color .4s;position:relative;overflow:hidden;
+  text-decoration:none;
+}
+.channel-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(to bottom,var(--accent),var(--accent2));
+  transform:scaleY(0);transform-origin:bottom;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.channel-item:hover{background:rgba(200,255,62,0.04);border-color:rgba(200,255,62,0.1);}
+.channel-item:hover::before{transform:scaleY(1);}
+.channel-icon{
+  width:44px;height:44px;flex-shrink:0;
+  background:rgba(200,255,62,0.08);border:1px solid rgba(200,255,62,0.15);
+  display:flex;align-items:center;justify-content:center;
+  transition:background .4s;
+}
+.channel-item:hover .channel-icon{background:rgba(200,255,62,0.15);}
+.channel-icon svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.channel-text{}
+.channel-label{font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:4px;}
+.channel-value{font-size:14px;font-weight:600;color:var(--text);}
+
+.response-badge{
+  margin-top:32px;display:inline-flex;align-items:center;gap:12px;
+  padding:14px 22px;
+  background:rgba(200,255,62,0.06);border:1px solid rgba(200,255,62,0.15);
+}
+.badge-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:badgePulse 2s ease-in-out infinite;}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(200,255,62,0.4);}50%{box-shadow:0 0 0 6px rgba(200,255,62,0);}}
+.badge-text{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;}
+
+/* ── RIGHT FORM PANEL ── */
+.contact-form-wrap{position:relative;}
+
+.form-header{margin-bottom:52px;}
+.form-header h3{
+  font-family:var(--font-display);font-size:52px;
+  color:white;line-height:.92;margin-bottom:16px;
+}
+.form-header p{font-size:14px;color:var(--muted2);line-height:1.7;}
+
+/* Form */
+.contact-form{display:flex;flex-direction:column;gap:3px;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+
+.field-wrap{position:relative;}
+
+.field-label{
+  display:block;
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:3.5px;color:var(--muted);text-transform:uppercase;
+  margin-bottom:10px;transition:color .3s;
+}
+.field-wrap:focus-within .field-label{color:var(--accent);}
+
+.field-input,.field-textarea,.field-select{
+  width:100%;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  color:var(--text);
+  font-family:var(--font-body);font-size:15px;font-weight:500;
+  padding:18px 22px;
+  outline:none;
+  transition:background .35s,border-color .35s,box-shadow .35s;
+  appearance:none;-webkit-appearance:none;
+}
+.field-input:focus,.field-textarea:focus,.field-select:focus{
+  background:rgba(200,255,62,0.04);
+  border-color:rgba(200,255,62,0.3);
+  box-shadow:0 0 0 1px rgba(200,255,62,0.1),inset 0 0 24px rgba(200,255,62,0.03);
+}
+.field-input::placeholder,.field-textarea::placeholder{color:rgba(240,237,232,0.2);}
+.field-textarea{resize:none;min-height:160px;line-height:1.75;}
+
+/* Select custom arrow */
+.field-select-wrap{position:relative;}
+.field-select-wrap::after{
+  content:'';position:absolute;right:18px;top:50%;transform:translateY(-50%);
+  width:0;height:0;
+  border-left:5px solid transparent;border-right:5px solid transparent;
+  border-top:5px solid var(--muted);pointer-events:none;
+  transition:border-top-color .3s;
+}
+.field-select-wrap:focus-within::after{border-top-color:var(--accent);}
+.field-select option{background:var(--bg3);color:var(--text);}
+
+/* Validation states */
+.field-wrap.has-error .field-input,
+.field-wrap.has-error .field-textarea,
+.field-wrap.has-error .field-select{border-color:rgba(255,77,77,0.4);background:rgba(255,77,77,0.04);}
+.field-error-msg{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:2px;color:var(--error);text-transform:uppercase;
+  margin-top:8px;display:none;
+}
+.field-wrap.has-error .field-error-msg{display:block;}
+
+/* Honeypot */
+.honey-field{position:absolute;left:-9999px;opacity:0;pointer-events:none;tabindex:-1;}
+
+/* Checkbox */
+.field-check-wrap{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:20px 22px;
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);
+  cursor:pointer;transition:background .3s,border-color .3s;
+}
+.field-check-wrap:hover{background:rgba(200,255,62,0.03);border-color:rgba(200,255,62,0.1);}
+.custom-check{
+  flex-shrink:0;width:18px;height:18px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .3s,background .3s;margin-top:2px;
+}
+.field-check-wrap input:checked ~ .custom-check{
+  border-color:var(--accent);background:var(--accent);
+}
+.field-check-wrap input{position:absolute;opacity:0;width:0;height:0;}
+.custom-check svg{width:10px;height:10px;stroke:black;fill:none;stroke-width:2.5;display:none;}
+.field-check-wrap input:checked ~ .custom-check svg{display:block;}
+.check-label{font-size:13px;color:rgba(240,237,232,0.5);line-height:1.6;}
+.check-label a{color:var(--accent);text-decoration:none;}
+
+/* Counter for textarea */
+.char-counter{
+  text-align:right;
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+  margin-top:8px;transition:color .3s;
+}
+.char-counter.warn{color:var(--error);}
+
+/* Submit button */
+.btn-submit{
+  position:relative;overflow:hidden;
+  font-family:var(--font-cond);font-size:13px;font-weight:800;
+  letter-spacing:3px;text-transform:uppercase;
+  color:black;background:var(--accent);
+  border:none;padding:24px 52px;cursor:pointer;
+  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s,opacity .3s;
+  width:100%;display:flex;align-items:center;justify-content:center;gap:14px;
+}
+.btn-submit::before{
+  content:'';position:absolute;top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);
+  transform:skewX(-25deg);transition:left .7s;
+}
+.btn-submit:not(:disabled):hover::before{left:150%;}
+.btn-submit:not(:disabled):hover{
+  transform:translateY(-6px) scale(1.01);
+  box-shadow:0 30px 90px rgba(200,255,62,.45),0 0 0 1px rgba(200,255,62,0.3);
+}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;}
+
+/* Spinner */
+.spinner{
+  width:18px;height:18px;
+  border:2px solid rgba(0,0,0,0.25);
+  border-top-color:black;border-radius:50%;
+  animation:spin .7s linear infinite;display:none;flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.btn-submit.loading .btn-text{display:none;}
+.btn-submit.loading .spinner{display:block;}
+
+/* Toast notifications */
+.toast{
+  position:fixed;bottom:40px;right:40px;z-index:99000;
+  padding:22px 32px;max-width:420px;
+  display:flex;align-items:center;gap:18px;
+  border:1px solid;
+  transform:translateY(120%);opacity:0;
+  transition:transform .6s cubic-bezier(.16,1,.3,1),opacity .6s;
+  pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{background:rgba(3,3,3,0.96);border-color:rgba(200,255,62,0.3);backdrop-filter:blur(40px);}
+.toast.error{background:rgba(3,3,3,0.96);border-color:rgba(255,77,77,0.3);backdrop-filter:blur(40px);}
+.toast-icon{flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;}
+.toast.success .toast-icon{background:rgba(200,255,62,0.1);border:1px solid rgba(200,255,62,0.2);}
+.toast.error .toast-icon{background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.2);}
+.toast-icon svg{width:18px;height:18px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.toast.success .toast-icon svg{stroke:var(--accent);}
+.toast.error .toast-icon svg{stroke:var(--error);}
+.toast-body{}
+.toast-title{font-family:var(--font-cond);font-size:12px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:4px;}
+.toast.success .toast-title{color:var(--accent);}
+.toast.error .toast-title{color:var(--error);}
+.toast-msg{font-size:13px;color:rgba(240,237,232,0.58);line-height:1.6;}
+.toast-close{
+  position:absolute;top:12px;right:14px;
+  background:none;border:none;cursor:pointer;
+  font-family:var(--font-cond);font-size:16px;color:var(--muted);
+  line-height:1;padding:4px;
+}
+
+/* ── FORM FOOTER ROW ── */
+.form-bottom-row{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+}
+.form-security-note{
+  display:flex;align-items:center;gap:10px;
+}
+.form-security-note svg{width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.form-security-note span{font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+
+/* ══════════════════════════════════════
+   MAP / LOCATION SECTION
+══════════════════════════════════════ */
+.location-section{
+  padding:0 80px 160px;
+  display:grid;grid-template-columns:1fr 1fr;gap:3px;
+}
+.location-card{
+  padding:64px 52px;
+  background:var(--surface);border:1px solid var(--line);
+  position:relative;overflow:hidden;transition:background .4s;
+}
+.location-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .65s cubic-bezier(.16,1,.3,1);
+}
+.location-card:hover::after{transform:scaleX(1);}
+.location-card:hover{background:rgba(200,255,62,0.025);}
+.loc-tag{font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:3.5px;color:var(--accent);text-transform:uppercase;margin-bottom:24px;display:block;}
+.loc-title{font-family:var(--font-display);font-size:54px;color:white;line-height:.9;margin-bottom:24px;}
+.loc-desc{font-size:14px;color:rgba(240,237,232,0.5);line-height:1.8;}
+.loc-num{position:absolute;top:16px;right:24px;font-family:var(--font-display);font-size:100px;color:rgba(200,255,62,0.05);line-height:1;}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer{
+  background:var(--bg2);border-top:1px solid var(--line);
+  padding:90px 80px;
+  display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:60px;
+}
+.footer-brand .logo{font-size:21px;margin-bottom:22px;gap:10px;}
+.footer-brand .logo-img{height:28px;}
+.footer-brand p{font-size:13px;line-height:1.85;color:var(--muted);max-width:270px;}
+.footer-col-title{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:3.5px;color:rgba(240,237,232,0.35);text-transform:uppercase;margin-bottom:26px;}
+.footer-links{display:flex;flex-direction:column;gap:13px;}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .3s;font-weight:500;}
+.footer-links a:hover{color:var(--text);}
+.footer-bottom{border-top:1px solid var(--line);padding:32px 80px;display:flex;justify-content:space-between;align-items:center;}
+.footer-bottom p{font-size:11px;color:var(--muted);font-family:var(--font-cond);letter-spacing:1px;}
+.footer-accent-line{width:80px;height:1px;background:linear-gradient(90deg,var(--accent),transparent);}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media(max-width:1200px){
+  .contact-section{grid-template-columns:1fr;gap:80px;padding:120px 60px;}
+  .contact-info{position:static;}
+  .location-section{grid-template-columns:1fr;padding:0 60px 120px;}
+  footer{grid-template-columns:1fr 1fr;gap:50px;}
+}
+@media(max-width:900px){
+  .nav{padding:22px 24px;}
+  .nav.scrolled{padding:14px 24px;}
+  .nav-links,.nav-cta{display:none;}
+  .nav-hamburger{display:flex;}
+  .contact-section{padding:120px 24px 80px;}
+  .form-row{grid-template-columns:1fr;}
+  .location-section{padding:0 24px 100px;}
+  footer{grid-template-columns:1fr;padding:60px 24px;gap:40px;}
+  .footer-bottom{padding:26px 24px;flex-direction:column;gap:14px;text-align:center;}
+  .toast{right:20px;left:20px;bottom:20px;}
+  .form-bottom-row{flex-direction:column;align-items:flex-start;}
+  .hero-h1{font-size:clamp(72px,20vw,120px);}
+}
+@media(max-width:480px){
+  .contact-section{padding:100px 20px 60px;}
+  .location-section{padding:0 20px 80px;}
+  .loc-title{font-size:44px;}
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Toast -->
+<div class="toast success" id="toastSuccess" role="alert">
+  <div class="toast-icon">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <div class="toast-body">
+    <div class="toast-title">Mensaje Enviado</div>
+    <div class="toast-msg">Lo hemos recibido. Respondemos en menos de 24 horas.</div>
+  </div>
+  <button class="toast-close" onclick="closeToast('toastSuccess')">✕</button>
+</div>
+<div class="toast error" id="toastError" role="alert">
+  <div class="toast-icon">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+  </div>
+  <div class="toast-body">
+    <div class="toast-title">Error de Envío</div>
+    <div class="toast-msg" id="toastErrorMsg">Algo fue mal. Inténtalo de nuevo o escríbenos directamente.</div>
+  </div>
+  <button class="toast-close" onclick="closeToast('toastError')">✕</button>
+</div>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="closeMobileMenu()">INICIO</a>
+  <a href="#" onclick="closeMobileMenu()">SISTEMA</a>
+  <a href="#" onclick="closeMobileMenu()">PROGRAMA</a>
+  <a href="#" onclick="closeMobileMenu()">RESULTADOS</a>
+  <a href="contacto.html" onclick="closeMobileMenu()">CONTACTO</a>
+  <a href="#contacto" class="mobile-cta" onclick="closeMobileMenu()">ENTRAR AHORA</a>
+</div>
+
+<!-- Nav -->
+<nav class="nav" id="nav">
+  <a class="logo" href="index.html">
+    <img class="logo-img" src="logo.png" alt="Ascend System Logo" onerror="this.style.display='none'">
+    ASCEND <span>SYSTEM</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">INICIO</a>
+    <a href="#">SISTEMA</a>
+    <a href="#">PROGRAMA</a>
+    <a href="#">RESULTADOS</a>
+    <a href="contacto.html" class="active">CONTACTO</a>
+  </div>
+  <button class="nav-cta">ENTRAR AHORA</button>
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="contact-hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="hero-grid"></div>
+  <div class="hero-scan"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow" id="heroEyebrow">
+      <div class="eyebrow-line"></div>
+      <span class="eyebrow-text">Hablemos</span>
+      <div class="eyebrow-line"></div>
+    </div>
+    <h1 class="hero-h1" id="heroH1">
+      <span class="line-stroke">ENTRA EN</span>
+      <span class="line-accent">CONTACTO</span>
+    </h1>
+    <p class="hero-sub" id="heroSub">
+      Respuesta en menos de 24 horas. Sin filtros, sin bots. Personas reales, nivel máximo.
+    </p>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- Ticker -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="ticker-item"><span>CONTACTO DIRECTO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>RESPUESTA EN 24H</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>SIN FILTROS</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>NIVEL MÁXIMO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ELITE SUPPORT</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ACCESO DIRECTO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>CONTACTO DIRECTO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>RESPUESTA EN 24H</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>SIN FILTROS</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>NIVEL MÁXIMO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ELITE SUPPORT</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ACCESO DIRECTO</span><div class="ticker-dot"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CONTACT
+══════════════════════════════════════ -->
+<section class="contact-section" id="contacto">
+
+  <!-- Left info -->
+  <div class="contact-info">
+    <div class="overline">Canales Directos</div>
+    <h2>Escríbenos.<br><em>Ahora.</em></h2>
+    <p>Selecciona el canal o usa el formulario. Cada mensaje es revisado por el equipo. Cero automatización en la respuesta.</p>
+
+    <div class="contact-channels">
+      <a class="channel-item" href="mailto:hola@ascendsystem.com">
+        <div class="channel-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg>
+        </div>
+        <div class="channel-text">
+          <span class="channel-label">Email</span>
+          <span class="channel-value">hola@ascendsystem.com</span>
+        </div>
+      </a>
+      <a class="channel-item" href="#">
+        <div class="channel-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 2H3v16h5v4l4-4h9V2z"/></svg>
+        </div>
+        <div class="channel-text">
+          <span class="channel-label">Telegram</span>
+          <span class="channel-value">@AscendSystem</span>
+        </div>
+      </a>
+      <a class="channel-item" href="#">
+        <div class="channel-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </div>
+        <div class="channel-text">
+          <span class="channel-label">Instagram</span>
+          <span class="channel-value">@AscendSystem</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="response-badge">
+      <div class="badge-dot"></div>
+      <span class="badge-text">Equipo Activo · &lt;24h Respuesta</span>
+    </div>
+  </div>
+
+  <!-- Right form -->
+  <div class="contact-form-wrap">
+    <div class="form-header">
+      <h3>ENVÍA TU<br>MENSAJE</h3>
+      <p>Todos los campos marcados son obligatorios. Sin spam, sin newsletters por defecto.</p>
+    </div>
+
+    <form class="contact-form" id="contactForm" novalidate>
+
+      <!-- Honeypot anti-spam -->
+      <input class="honey-field" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <!-- Timestamp anti-spam -->
+      <input type="hidden" name="_timestamp" id="formTimestamp">
+
+      <div class="form-row">
+        <div class="field-wrap" id="wrap-nombre">
+          <label class="field-label" for="nombre">Nombre *</label>
+          <input class="field-input" type="text" id="nombre" name="nombre" placeholder="Tu nombre" autocomplete="given-name">
+          <div class="field-error-msg">Campo obligatorio</div>
+        </div>
+        <div class="field-wrap" id="wrap-email">
+          <label class="field-label" for="email">Email *</label>
+          <input class="field-input" type="email" id="email" name="email" placeholder="tu@email.com" autocomplete="email">
+          <div class="field-error-msg" id="email-error">Email no válido</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-wrap" id="wrap-telefono">
+          <label class="field-label" for="telefono">Teléfono</label>
+          <input class="field-input" type="tel" id="telefono" name="telefono" placeholder="+34 600 000 000" autocomplete="tel">
+          <div class="field-error-msg">Formato no válido</div>
+        </div>
+        <div class="field-wrap" id="wrap-asunto">
+          <label class="field-label" for="asunto">Asunto *</label>
+          <div class="field-select-wrap">
+            <select class="field-input field-select" id="asunto" name="asunto">
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option value="acceso">Acceso al Sistema</option>
+              <option value="programa">Información del Programa</option>
+              <option value="soporte">Soporte Técnico</option>
+              <option value="colaboracion">Colaboración</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="field-error-msg">Selecciona un asunto</div>
+        </div>
+      </div>
+
+      <div class="field-wrap" id="wrap-mensaje">
+        <label class="field-label" for="mensaje">Mensaje *</label>
+        <textarea class="field-textarea" id="mensaje" name="mensaje" placeholder="Cuéntanos en qué podemos ayudarte..." maxlength="1000"></textarea>
+        <div class="char-counter" id="charCounter">0 / 1000</div>
+        <div class="field-error-msg">Mínimo 20 caracteres</div>
+      </div>
+
+      <label class="field-check-wrap">
+        <input type="checkbox" id="privacidad" name="privacidad">
+        <div class="custom-check">
+          <svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+        </div>
+        <span class="check-label">
+          He leído y acepto la <a href="#">Política de Privacidad</a>. Entiendo que mis datos serán utilizados únicamente para gestionar mi consulta.
+        </span>
+      </label>
+      <div class="field-wrap" id="wrap-privacidad" style="margin-top:-2px;">
+        <div class="field-error-msg" id="priv-error">Debes aceptar la política de privacidad</div>
+      </div>
+
+      <div class="form-bottom-row">
+        <div class="form-security-note">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span>Formulario protegido · Anti-spam activo</span>
+        </div>
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span class="btn-text">ENVIAR MENSAJE</span>
+          <div class="spinner"></div>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</section>
+
+<!-- Location cards -->
+<div class="location-section">
+  <div class="location-card">
+    <span class="loc-num">01</span>
+    <span class="loc-tag">Comunidad</span>
+    <h3 class="loc-title">ACCESO<br>GLOBAL</h3>
+    <p class="loc-desc">ASCEND SYSTEM opera 100% en formato digital. Accede desde cualquier lugar del mundo, en cualquier momento. Sin fronteras, sin excusas.</p>
+  </div>
+  <div class="location-card">
+    <span class="loc-num">02</span>
+    <span class="loc-tag">Soporte</span>
+    <h3 class="loc-title">SOPORTE<br>ÉLITE</h3>
+    <p class="loc-desc">Nuestro equipo responde en menos de 24 horas. Para miembros activos del sistema, el tiempo de respuesta se reduce a menos de 4 horas en horario habitual.</p>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-brand">
+    <a class="logo" href="index.html" style="margin-bottom:20px;text-decoration:none;">
+      <img class="logo-img" src="logo.png" alt="Ascend System Logo" onerror="this.style.display='none'">
+      ASCEND <span>SYSTEM</span>
+    </a>
+    <p>El sistema de performance de élite diseñado para personas que no aceptan el promedio como destino.</p>
+  </div>
+  <div>
+    <div class="footer-col-title">Sistema</div>
+    <div class="footer-links">
+      <a href="#">Módulo Disciplina</a>
+      <a href="#">Módulo Focus</a>
+      <a href="#">Módulo Físico</a>
+      <a href="#">Módulo Mental</a>
+      <a href="#">Dashboard</a>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Programa</div>
+    <div class="footer-links">
+      <a href="#">Cómo Funciona</a>
+      <a href="#">90 Días</a>
+      <a href="#">Resultados</a>
+      <a href="#">Comunidad</a>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Contacto</div>
+    <div class="footer-links">
+      <a href="contacto.html">Formulario</a>
+      <a href="#">Soporte</a>
+      <a href="#">Privacidad</a>
+    </div>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2026 ASCEND SYSTEM · Built for elite performance.</p>
+  <div class="footer-accent-line"></div>
+  <p>No estás aquí por motivación. Estás aquí por identidad.</p>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════ -->
+<script>
+/* ═══════════════════════════════════════
+   ⚠️  EMAILJS CONFIG — FILL THESE IN
+═══════════════════════════════════════ */
+const EMAILJS_PUBLIC_KEY  = 'TU_PUBLIC_KEY';   // Paso 1
+const EMAILJS_SERVICE_ID  = 'TU_SERVICE_ID';   // Paso 2
+const EMAILJS_TEMPLATE_ID = 'TU_TEMPLATE_ID';  // Paso 3
+
+/* Init EmailJS */
+(function(){
+  try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+  catch(e){ console.warn('EmailJS not loaded yet'); }
+})();
+
+/* ══════════════════════════════════════
+   ANTI-DEVTOOLS
+══════════════════════════════════════ */
+// Disable right-click
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// Disable common keyboard shortcuts
+document.addEventListener('keydown', e => {
+  const blocked = [
+    e.key === 'F12',
+    e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase()),
+    e.ctrlKey && e.key.toUpperCase() === 'U',
+    e.ctrlKey && e.key.toUpperCase() === 'S',
+    e.ctrlKey && e.key.toUpperCase() === 'A' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName),
+  ];
+  if(blocked.some(Boolean)) e.preventDefault();
+});
+
+// Devtools detection via window size delta
+(function devtoolsCheck(){
+  const threshold = 160;
+  function detect(){
+    if(
+      window.outerWidth - window.innerWidth > threshold ||
+      window.outerHeight - window.innerHeight > threshold
+    ){
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#030303;font-family:\'Barlow Condensed\',sans-serif;font-size:28px;letter-spacing:6px;color:rgba(200,255,62,0.7);text-transform:uppercase;text-align:center;">ACCESO<br>DENEGADO</div>';
+    }
+  }
+  setInterval(detect, 1000);
+})();
+
+/* ══════════════════════════════════════
+   CURSOR
+══════════════════════════════════════ */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+if(cursor){
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+  });
+  (function animRing(){
+    rx += (mx-rx)*0.1; ry += (my-ry)*0.1;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}, { passive:true });
+
+function toggleMobileMenu(){
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+function closeMobileMenu(){
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+/* ══════════════════════════════════════
+   PARTICLE CANVAS — ANTIGRAVITY STYLE
+   Dots form a shape on hover / proximity
+══════════════════════════════════════ */
+(function ParticleSystem(){
+  const canvas = document.getElementById('particle-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  let W, H, mouse = { x: -9999, y: -9999 }, mouseActive = false;
+  let particles = [];
+  let shapePoints = [];
+  let frame = 0;
+
+  const CONFIG = {
+    count: 1800,
+    baseColor: '180,180,170',
+    accentColor: '200,255,62',
+    dotSize: 1.4,
+    mouseRadius: 160,
+    shapeRadius: 200,
+    returnSpeed: 0.055,
+    repelForce: 6,
+    attractRadius: 220,
+  };
+
+  /* Build bracket/curly-brace shape for hover effect */
+  function buildShape(cx, cy, size){
+    const pts = [];
+    const s   = size;
+
+    // Left bracket {
+    const lx = cx - s * 0.55;
+    // Right bracket }
+    const rx = cx + s * 0.55;
+
+    for(let t=0; t<=1; t+=0.008){
+      const y = cy - s * 0.7 + t * s * 1.4;
+      // left side
+      let loff = 0;
+      const nt = (t - 0.5) * 2; // -1 to 1
+      if(Math.abs(nt) > 0.85) loff = (Math.abs(nt) - 0.85) / 0.15 * s * 0.18;
+      else if(Math.abs(nt) < 0.08) loff = (0.08 - Math.abs(nt)) / 0.08 * s * 0.16;
+      pts.push({ x: lx - loff, y });
+      // right side mirror
+      pts.push({ x: rx + loff, y });
+    }
+    return pts;
+  }
+
+  function resize(){
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    shapePoints = buildShape(W / 2, H / 2, Math.min(W, H) * 0.36);
+  }
+
+  class Particle {
+    constructor(index){
+      this.originX = Math.random() * W;
+      this.originY = Math.random() * H;
+      this.x = this.originX;
+      this.y = this.originY;
+      this.vx = 0;
+      this.vy = 0;
+      this.size = CONFIG.dotSize * (0.5 + Math.random() * 0.9);
+      this.opacity = 0.08 + Math.random() * 0.22;
+      this.baseOpacity = this.opacity;
+      this.accent = false;
+      // Assign to shape point if index < shapePoints.length
+      this.shapeTarget = null;
+    }
+
+    update(){
+      const dx   = mouse.x - this.x;
+      const dy   = mouse.y - this.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      if(mouseActive && dist < CONFIG.mouseRadius){
+        // Repel from cursor
+        const force = (CONFIG.mouseRadius - dist) / CONFIG.mouseRadius;
+        this.vx -= (dx / dist) * force * CONFIG.repelForce;
+        this.vy -= (dy / dist) * force * CONFIG.repelForce;
+        this.accent  = true;
+        this.opacity = Math.min(1, this.baseOpacity + force * 0.7);
+      } else if(mouseActive && dist < CONFIG.attractRadius && this.shapeTarget){
+        // Attract toward shape
+        const tx = this.shapeTarget.x;
+        const ty = this.shapeTarget.y;
+        this.vx += (tx - this.x) * 0.07;
+        this.vy += (ty - this.y) * 0.07;
+        this.accent  = true;
+        this.opacity = 0.85;
+      } else {
+        // Return to origin
+        this.vx += (this.originX - this.x) * CONFIG.returnSpeed;
+        this.vy += (this.originY - this.y) * CONFIG.returnSpeed;
+        this.accent  = false;
+        this.opacity += (this.baseOpacity - this.opacity) * 0.08;
+      }
+
+      this.vx *= 0.82;
+      this.vy *= 0.82;
+      this.x  += this.vx;
+      this.y  += this.vy;
+    }
+
+    draw(){
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      if(this.accent){
+        ctx.fillStyle = `rgba(${CONFIG.accentColor},${this.opacity.toFixed(2)})`;
+      } else {
+        ctx.fillStyle = `rgba(${CONFIG.baseColor},${this.opacity.toFixed(2)})`;
+      }
+      ctx.fill();
+    }
+  }
+
+  function init(){
+    particles = [];
+    for(let i=0; i<CONFIG.count; i++){
+      const p = new Particle(i);
+      // Assign shape target
+      if(i < shapePoints.length){
+        p.shapeTarget = shapePoints[i];
+      }
+      particles.push(p);
+    }
+  }
+
+  function loop(){
+    ctx.clearRect(0, 0, W, H);
+    frame++;
+
+    // Breathing ambient motion
+    if(!mouseActive){
+      particles.forEach((p, i) => {
+        p.originX += Math.sin(frame * 0.004 + i * 0.07) * 0.12;
+        p.originY += Math.cos(frame * 0.004 + i * 0.05) * 0.12;
+      });
+    }
+
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(loop);
+  }
+
+  // Mouse tracking on hero section
+  const hero = document.querySelector('.contact-hero');
+  hero.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - r.left;
+    mouse.y = e.clientY - r.top;
+    mouseActive = true;
+  });
+  hero.addEventListener('mouseleave', () => {
+    mouseActive = false;
+    mouse.x = -9999; mouse.y = -9999;
+  });
+  hero.addEventListener('touchmove', e => {
+    const r = canvas.getBoundingClientRect();
+    mouse.x = e.touches[0].clientX - r.left;
+    mouse.y = e.touches[0].clientY - r.top;
+    mouseActive = true;
+  }, { passive:true });
+
+  window.addEventListener('resize', () => { resize(); init(); });
+
+  resize();
+  init();
+  loop();
+})();
+
+/* ══════════════════════════════════════
+   GSAP ANIMATIONS
+══════════════════════════════════════ */
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero entry
+gsap.from(['#heroEyebrow','#heroH1','#heroSub'], {
+  opacity:0, y:80, duration:1.4,
+  stagger:0.18, delay:0.3,
+  ease:'power4.out', clearProps:'all'
+});
+
+// Scroll animations
+const scrollItems = document.querySelectorAll('.contact-info > *, .form-header, .channel-item, .location-card');
+scrollItems.forEach(el => {
+  gsap.from(el, {
+    opacity:0, y:60, duration:1.1, ease:'power4.out', clearProps:'all',
+    scrollTrigger:{ trigger:el, start:'top 88%', toggleActions:'play none none reverse' }
+  });
+});
+
+gsap.from('.contact-form-wrap', {
+  opacity:0, x:60, duration:1.2, ease:'power4.out', clearProps:'all',
+  scrollTrigger:{ trigger:'.contact-form-wrap', start:'top 85%', toggleActions:'play none none reverse' }
+});
+
+// Magnetic button
+const submitBtn = document.getElementById('submitBtn');
+if(submitBtn){
+  submitBtn.addEventListener('mousemove', e => {
+    const r = submitBtn.getBoundingClientRect();
+    const x = e.clientX - r.left - r.width/2;
+    const y = e.clientY - r.top  - r.height/2;
+    submitBtn.style.transform = `translate(${x*0.08}px,${y*0.1-5}px)`;
+  });
+  submitBtn.addEventListener('mouseleave', () => { submitBtn.style.transform = ''; });
+}
+
+/* ══════════════════════════════════════
+   CHAR COUNTER
+══════════════════════════════════════ */
+const msgField  = document.getElementById('mensaje');
+const charCount = document.getElementById('charCounter');
+if(msgField){
+  msgField.addEventListener('input', () => {
+    const len = msgField.value.length;
+    charCount.textContent = len + ' / 1000';
+    charCount.classList.toggle('warn', len > 900);
+  });
+}
+
+/* ══════════════════════════════════════
+   CUSTOM CHECKBOX
+══════════════════════════════════════ */
+const checkInput = document.getElementById('privacidad');
+if(checkInput){
+  checkInput.closest('.field-check-wrap').addEventListener('click', () => {
+    checkInput.checked = !checkInput.checked;
+  });
+}
+
+/* ══════════════════════════════════════
+   TOAST HELPERS
+══════════════════════════════════════ */
+function showToast(type, msg){
+  closeToast('toastSuccess');
+  closeToast('toastError');
+  if(type === 'error' && msg){
+    document.getElementById('toastErrorMsg').textContent = msg;
+  }
+  const el = document.getElementById(type === 'success' ? 'toastSuccess' : 'toastError');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 6000);
+}
+function closeToast(id){
+  document.getElementById(id).classList.remove('show');
+}
+
+/* ══════════════════════════════════════
+   FORM VALIDATION
+══════════════════════════════════════ */
+function validateField(id, condition){
+  const wrap = document.getElementById('wrap-' + id);
+  if(!wrap) return condition;
+  if(condition){ wrap.classList.remove('has-error'); }
+  else          { wrap.classList.add('has-error'); }
+  return condition;
+}
+
+function validateForm(){
+  let valid = true;
+
+  const nombre  = document.getElementById('nombre').value.trim();
+  const email   = document.getElementById('email').value.trim();
+  const asunto  = document.getElementById('asunto').value;
+  const mensaje = document.getElementById('mensaje').value.trim();
+  const priv    = document.getElementById('privacidad').checked;
+
+  if(!validateField('nombre', nombre.length >= 2)) valid = false;
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!validateField('email', emailRe.test(email))){
+    document.getElementById('email-error').textContent = email ? 'Email no válido' : 'Campo obligatorio';
+    valid = false;
+  }
+
+  if(!validateField('asunto', asunto !== '')) valid = false;
+  if(!validateField('mensaje', mensaje.length >= 20)) valid = false;
+
+  // Privacy
+  const privWrap = document.getElementById('wrap-privacidad');
+  const privErr  = document.getElementById('priv-error');
+  if(!priv){ privErr.style.display = 'block'; valid = false; }
+  else      { privErr.style.display = 'none'; }
+
+  return valid;
+}
+
+/* ══════════════════════════════════════
+   ANTI-SPAM TIMESTAMP
+══════════════════════════════════════ */
+document.getElementById('formTimestamp').value = Date.now();
+
+/* ══════════════════════════════════════
+   FORM SUBMIT
+══════════════════════════════════════ */
+const form = document.getElementById('contactForm');
+if(form){
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+
+    // Honeypot check
+    if(this._honey && this._honey.value !== '') return;
+
+    // Timestamp check — must be > 3 seconds since page load (bot check)
+    const elapsed = Date.now() - parseInt(document.getElementById('formTimestamp').value || 0);
+    if(elapsed < 3000) return;
+
+    if(!validateForm()) return;
+
+    // Rate limiting: prevent double submit within 60s
+    const lastSent = parseInt(sessionStorage.getItem('ascend_last_sent') || 0);
+    if(Date.now() - lastSent < 60000){
+      showToast('error', 'Espera un momento antes de enviar otro mensaje.');
+      return;
+    }
+
+    // Set loading state
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    const templateParams = {
+      from_name : document.getElementById('nombre').value.trim(),
+      from_email: document.getElementById('email').value.trim(),
+      phone     : document.getElementById('telefono').value.trim() || 'No indicado',
+      subject   : document.getElementById('asunto').value,
+      message   : document.getElementById('mensaje').value.trim(),
+      reply_to  : document.getElementById('email').value.trim(),
+    };
+
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+      sessionStorage.setItem('ascend_last_sent', Date.now());
+      showToast('success');
+      form.reset();
+      charCount.textContent = '0 / 1000';
+      document.getElementById('priv-error').style.display = 'none';
+      // Clear error states
+      document.querySelectorAll('.field-wrap.has-error').forEach(w => w.classList.remove('has-error'));
+    } catch(err){
+      console.error('EmailJS error:', err);
+      showToast('error', 'Error al enviar. Escríbenos directamente a hola@ascendsystem.com');
+    } finally {
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+    }
+  });
+}
+</script>
+</body>
+</html>
