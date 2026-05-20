@@ -1081,11 +1081,11 @@ footer{
 <!-- ─── MOBILE MENU ─── -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="#" onclick="closeMobileMenu()">INICIO</a>
-  <a href="#" onclick="closeMobileMenu()">SISTEMA</a>
-  <a href="#" onclick="closeMobileMenu()">PROGRAMA</a>
-  <a href="#" onclick="closeMobileMenu()">RESULTADOS</a>
-  <a href="#" onclick="closeMobileMenu()">CONTACTO</a>
-  <a href="#" class="mobile-cta" onclick="closeMobileMenu()">ENTRAR AHORA</a>
+  <a href="sistema.html" onclick="closeMobileMenu()">SISTEMA</a>
+  <a href="programa.html" onclick="closeMobileMenu()">PROGRAMA</a>
+  <a href="resultados.html" onclick="closeMobileMenu()">RESULTADOS</a>
+  <a href="contacto.html" onclick="closeMobileMenu()">CONTACTO</a>
+  <a href="pay.html" class="mobile-cta" onclick="closeMobileMenu()">ENTRAR AHORA</a>
 </div>
 
 <!-- ─── NAV ─── -->
@@ -1095,14 +1095,19 @@ footer{
       onerror="this.style.display='none'">
     ASCEND <span>SYSTEM</span>
   </a>
+
   <div class="nav-links">
     <a href="#">INICIO</a>
-    <a href="#">SISTEMA</a>
-    <a href="#">PROGRAMA</a>
-    <a href="#">RESULTADOS</a>
-    <a href="#">CONTACTO</a>
+    <a href="sistema.html">SISTEMA</a>
+    <a href="programa.html">PROGRAMA</a>
+    <a href="resultados.html">RESULTADOS</a>
+    <a href="contacto.html">CONTACTO</a>
   </div>
-  <button class="nav-cta">ENTRAR AHORA</button>
+
+  <button class="nav-cta" onclick="window.location.href='pay.html'">
+    ENTRAR AHORA
+  </button>
+
   <div class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
   </div>
