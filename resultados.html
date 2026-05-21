@@ -1935,9 +1935,25 @@ function updateLightboxContent() {
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
   
-  // AÑADIR LA IMAGEN DE FONDO (esto reemplaza el código anterior)
+  // FORZAR QUE SE VEA LA IMAGEN
   const lbPlaceholder = document.getElementById('lbPlaceholder');
+  
+  // Limpiar el contenido actual pero mantener la estructura
+  const lbGrid = lbPlaceholder.querySelector('.lb-placeholder-grid');
+  const lbNum = document.getElementById('lbNum');
+  const lbLabel = document.getElementById('lbPlaceholderLabel');
+  
+  // Vaciar pero mantener los elementos
   lbPlaceholder.style.background = `url('img/transformacion-${currentLB+1}.png') center/cover no-repeat`;
+  lbPlaceholder.style.backgroundColor = '#0d0d0d';
+  lbPlaceholder.style.position = 'relative';
+  
+  // Asegurar que el texto sea visible encima
+  if (lbNum) lbNum.style.position = 'relative';
+  if (lbNum) lbNum.style.zIndex = '2';
+  if (lbLabel) lbLabel.style.position = 'relative';
+  if (lbLabel) lbLabel.style.zIndex = '2';
+  if (lbGrid) lbGrid.style.zIndex = '0';
   
   // Actualizar los labels de métricas
   const m1Label = document.getElementById('lbM1').nextElementSibling;
@@ -1952,7 +1968,6 @@ function updateLightboxContent() {
   document.getElementById('lbCurrent').textContent = currentLB + 1;
   document.getElementById('lbTotal').textContent = lightboxData.length;
 }
-
 
    
 // Cerrar con la X - IMPORTANTE: usar stopPropagation
