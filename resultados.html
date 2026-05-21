@@ -1935,7 +1935,6 @@ function lbNavigate(dir) {
 function updateLightboxContent() {
   const d = lightboxData[currentLB];
   if (!d) return;
-  const numStr = String(currentLB + 1).padStart(2, '0');
 
   // Actualizar textos
   document.getElementById('lbLabel').textContent = d.label;
@@ -1943,11 +1942,21 @@ function updateLightboxContent() {
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
   
+  // CAMBIA MANUALMENTE CADA IMAGEN (con GUION)
+  let imagenPath = '';
+  if (currentLB === 0) imagenPath = 'img/transformacion-01.png';
+  else if (currentLB === 1) imagenPath = 'img/transformacion-02.png';
+  else if (currentLB === 2) imagenPath = 'img/transformacion-03.png';
+  else if (currentLB === 3) imagenPath = 'img/transformacion-04.png';
+  else if (currentLB === 4) imagenPath = 'img/transformacion-05.png';
+  else if (currentLB === 5) imagenPath = 'img/transformacion-06.png';
+  else if (currentLB === 6) imagenPath = 'img/transformacion-07.png';
+  else if (currentLB === 7) imagenPath = 'img/transformacion-08.png';
+  else if (currentLB === 8) imagenPath = 'img/transformacion-09.png';
+  
   // Poner la imagen
   const lbPlaceholder = document.getElementById('lbPlaceholder');
-  lbPlaceholder.innerHTML = `
-    <img src="img/transformacion-${currentLB+1}.png" style="width:100%; height:auto; max-height:70vh; object-fit:contain; display:block;">
-  `;
+  lbPlaceholder.innerHTML = `<img src="${imagenPath}" style="width:100%; height:100%; object-fit:cover; display:block;">`;
   
   // Actualizar métricas
   const m1Label = document.getElementById('lbM1').nextElementSibling;
