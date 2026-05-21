@@ -1937,16 +1937,16 @@ function updateLightboxContent() {
   if (!d) return;
   const numStr = String(currentLB + 1).padStart(2, '0');
 
-  // Solo actualizar textos de información (parte de abajo)
+  // Actualizar textos
   document.getElementById('lbLabel').textContent = d.label;
   document.getElementById('lbName').textContent = d.name;
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
   
-  // BORRAR TODO EL CONTENIDO DEL PLACEHOLDER Y PONER SOLO LA FOTO
+  // Poner la imagen
   const lbPlaceholder = document.getElementById('lbPlaceholder');
   lbPlaceholder.innerHTML = `
-    <img src="img/transformacion-${currentLB+1}.png" style="width:100%; height:100%; object-fit:cover; display:block;">
+    <img src="img/transformacion-${currentLB+1}.png" style="width:100%; height:auto; max-height:70vh; object-fit:contain; display:block;">
   `;
   
   // Actualizar métricas
