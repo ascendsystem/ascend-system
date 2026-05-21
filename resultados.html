@@ -1924,30 +1924,6 @@ function lbNavigate(dir) {
   }, 150);
 }
 
-function openLightbox(index) {
-  currentLB = index;
-  updateLightboxContent();
-  lightbox.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeLightbox() {
-  lightbox.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-function lbNavigate(dir) {
-  currentLB = (currentLB + dir + lightboxData.length) % lightboxData.length;
-  updateLightboxContent();
-
-  // Animación de transición más simple y efectiva
-  lightboxInner.style.transform = `scale(0.96) translateX(${dir * 20}px)`;
-  lightboxInner.style.transition = 'transform 0.2s ease';
-  setTimeout(() => {
-    lightboxInner.style.transform = 'scale(1) translateX(0)';
-  }, 150);
-}
-
 function updateLightboxContent() {
   const d = lightboxData[currentLB];
   if (!d) return;
@@ -1959,7 +1935,7 @@ function updateLightboxContent() {
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
   
-  // Mostrar imagen real en el lightbox
+  // 👇 ESTA ES LA PARTE NUEVA - Mostrar tu imagen en el lightbox
   const lbPlaceholder = document.getElementById('lbPlaceholder');
   lbPlaceholder.innerHTML = `
     <img src="img/transformacion-${currentLB+1}.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1;">
@@ -1981,30 +1957,6 @@ function updateLightboxContent() {
   document.getElementById('lbCurrent').textContent = currentLB + 1;
   document.getElementById('lbTotal').textContent = lightboxData.length;
 }
-
-// Cerrar con la X - IMPORTANTE: usar stopPropagation
-lbCloseBtn.addEventListener('click', function(e) {
-  e.stopPropagation();
-  closeLightbox();
-});
-
-// Cerrar si se hace clic fuera del contenido (overlay)
-lightbox.addEventListener('click', function(e) {
-  if (e.target === lightbox) {
-    closeLightbox();
-  }
-});
-
-// Navegación con botones
-lbPrevBtn.addEventListener('click', function(e) {
-  e.stopPropagation();
-  lbNavigate(-1);
-});
-
-lbNextBtn.addEventListener('click', function(e) {
-  e.stopPropagation();
-  lbNavigate(1);
-});
 
 // Cerrar con la X - IMPORTANTE: usar stopPropagation
 lbCloseBtn.addEventListener('click', function(e) {
