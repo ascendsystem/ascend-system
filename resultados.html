@@ -1935,16 +1935,9 @@ function updateLightboxContent() {
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
   
-  // AÑADIR LA IMAGEN
+  // AÑADIR LA IMAGEN DE FONDO (esto reemplaza el código anterior)
   const lbPlaceholder = document.getElementById('lbPlaceholder');
-  let lbImage = document.getElementById('lbImage');
-  if (!lbImage) {
-    lbImage = document.createElement('img');
-    lbImage.id = 'lbImage';
-    lbImage.style.cssText = 'width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1;';
-    lbPlaceholder.insertBefore(lbImage, lbPlaceholder.firstChild);
-  }
-  lbImage.src = `img/transformacion-${currentLB+1}.png`;
+  lbPlaceholder.style.background = `url('img/transformacion-${currentLB+1}.png') center/cover no-repeat`;
   
   // Actualizar los labels de métricas
   const m1Label = document.getElementById('lbM1').nextElementSibling;
