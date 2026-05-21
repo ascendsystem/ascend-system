@@ -48,22 +48,22 @@ body{
    CURSOR
 ══════════════════════════════════════════ */
 #cursor{
-  position:fixed;width:8px;height:8px;
+  position:fixed;width:10px;height:10px;
   background:var(--accent);border-radius:50%;
   pointer-events:none;z-index:99999;
   transform:translate(-50%,-50%);
-  transition:width .15s,height .15s,transform .1s;
+  transition:width .2s,height .2s,transform .1s;
   mix-blend-mode:difference;
 }
 #cursor-ring{
-  position:fixed;width:36px;height:36px;
-  border:1px solid rgba(200,255,62,0.4);
+  position:fixed;width:40px;height:40px;
+  border:1px solid rgba(200,255,62,0.45);
   border-radius:50%;pointer-events:none;z-index:99998;
   transform:translate(-50%,-50%);
-  transition:width .5s cubic-bezier(.16,1,.3,1),height .5s cubic-bezier(.16,1,.3,1),border-color .3s,background .3s;
+  transition:width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1),border-color .3s,background .3s;
 }
-body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:60px;height:60px;border-color:var(--accent);background:rgba(200,255,62,0.04);}
-body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:14px;height:14px;}
+body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:64px;height:64px;border-color:var(--accent);background:rgba(200,255,62,0.04);}
+body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:18px;height:18px;}
 @media(max-width:900px){#cursor,#cursor-ring{display:none;}}
 
 /* ══════════════════════════════════════════
@@ -109,29 +109,29 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:14px;height:14px;
 /* ══════════════════════════════════════════
    SCROLLBAR
 ══════════════════════════════════════════ */
-::-webkit-scrollbar{width:2px;}
+::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.3);border-radius:999px;}
 
 /* ══════════════════════════════════════════
-   NAV
+   NAV — matched exactly to index.html
 ══════════════════════════════════════════ */
 .nav{
   position:fixed;top:0;left:0;width:100%;
-  padding:32px 80px;
+  padding:36px 80px;
   display:flex;align-items:center;justify-content:space-between;
   z-index:9000;
   transition:padding .5s,background .5s,border-color .5s,backdrop-filter .5s;
   border-bottom:1px solid transparent;
 }
 .nav.scrolled{
-  padding:16px 80px;
-  background:rgba(3,3,3,0.9);
-  backdrop-filter:blur(40px) saturate(180%);
+  padding:18px 80px;
+  background:rgba(3,3,3,0.92);
+  backdrop-filter:blur(40px) saturate(200%);
   border-bottom-color:var(--line);
 }
 .logo{
-  font-family:var(--font-display);font-size:22px;letter-spacing:6px;
+  font-family:var(--font-display);font-size:24px;letter-spacing:6px;
   color:white;display:flex;align-items:center;gap:12px;text-decoration:none;
   position:relative;
 }
@@ -142,17 +142,17 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:14px;height:14px;
   transition:transform .4s cubic-bezier(.16,1,.3,1);
 }
 .logo:hover::after{transform:scaleX(1);}
-.logo-img{height:32px;width:auto;object-fit:contain;filter:drop-shadow(0 0 8px rgba(200,255,62,0.4));}
+.logo-img{height:34px;width:auto;object-fit:contain;filter:drop-shadow(0 0 8px rgba(200,255,62,0.4));}
 .logo span{color:var(--accent);}
-.nav-links{display:flex;gap:40px;align-items:center;}
+.nav-links{display:flex;gap:44px;align-items:center;}
 .nav-links a{
-  text-decoration:none;color:rgba(240,237,232,0.45);
-  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  text-decoration:none;color:rgba(240,237,232,0.55);
+  font-family:var(--font-cond);font-size:12px;font-weight:700;
   letter-spacing:2.5px;text-transform:uppercase;
   position:relative;transition:color .3s;
 }
 .nav-links a::after{
-  content:'';position:absolute;left:0;bottom:-5px;
+  content:'';position:absolute;left:0;bottom:-6px;
   width:0;height:1px;background:var(--accent);
   transition:width .4s cubic-bezier(.16,1,.3,1);
 }
@@ -161,17 +161,25 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:14px;height:14px;
 .nav-links a.active{color:var(--accent);}
 .nav-links a.active::after{width:100%;}
 .nav-cta{
-  font-family:var(--font-cond);font-size:11px;font-weight:800;
+  font-family:var(--font-cond);font-size:12px;font-weight:800;
   letter-spacing:2.5px;text-transform:uppercase;
   color:black;background:var(--accent);
-  padding:12px 28px;border:none;cursor:pointer;
+  padding:13px 30px;border:none;cursor:pointer;
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
   transition:transform .3s,box-shadow .3s,background .3s;
   text-decoration:none;display:inline-block;
+  position:relative;overflow:hidden;
 }
-.nav-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(200,255,62,0.4);}
+.nav-cta::before{
+  content:'';position:absolute;top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);
+  transform:skewX(-25deg);transition:left .6s;
+}
+.nav-cta:hover::before{left:150%;}
+.nav-cta:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(200,255,62,0.4);}
 @media(max-width:900px){
-  .nav{padding:20px 24px;}
+  .nav{padding:22px 24px;}
   .nav.scrolled{padding:14px 24px;}
   .nav-links{display:none;}
   .nav-cta{padding:10px 18px;font-size:10px;}
@@ -585,7 +593,7 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:14px;height:14px;
 }
 
 /* ══════════════════════════════════════════
-   INTER-MODULE DIVIDERS (the visual gap between mods)
+   INTER-MODULE DIVIDERS
 ══════════════════════════════════════════ */
 .mod-sep{
   height:1px;
@@ -722,96 +730,6 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:14px;height:14px;
   .extras-grid{grid-template-columns:1fr;}
   .extra-card:nth-child(3){grid-column:1;grid-row:auto;}
   .extra-card:nth-child(n){grid-column:1;grid-row:auto;}
-}
-
-/* ══════════════════════════════════════════
-   90-DAY JOURNEY SECTION
-══════════════════════════════════════════ */
-.journey-section{
-  padding:160px 80px;
-  position:relative;
-  background:var(--bg2);
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-  overflow:hidden;
-}
-.journey-section::before{
-  content:'90';
-  position:absolute;right:-40px;top:50%;transform:translateY(-50%);
-  font-family:var(--font-display);font-size:clamp(300px,50vw,700px);
-  color:rgba(200,255,62,0.018);letter-spacing:-20px;
-  pointer-events:none;user-select:none;line-height:1;
-}
-.journey-inner{max-width:1200px;margin:0 auto;position:relative;z-index:2;}
-.journey-header{margin-bottom:100px;}
-.journey-title{
-  font-family:var(--font-display);
-  font-size:clamp(60px,9vw,120px);
-  line-height:.88;margin-top:16px;
-}
-.journey-title em{font-style:normal;color:var(--accent);}
-
-.journey-phases{
-  position:relative;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
-}
-/* Connecting line between phases */
-.journey-phases::before{
-  content:'';position:absolute;
-  top:60px;
-  left:calc(12.5% + 32px);right:calc(12.5% + 32px);
-  height:1px;
-  background:linear-gradient(90deg,var(--accent) 0%,rgba(200,255,62,0.4) 50%,var(--accent) 100%);
-  z-index:0;
-}
-.phase{
-  padding:0 24px;text-align:center;
-  position:relative;z-index:1;
-  opacity:0;transform:translateY(50px);
-  transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);
-}
-.phase.visible{opacity:1;transform:translateY(0);}
-.phase:nth-child(1){transition-delay:.0s;}
-.phase:nth-child(2){transition-delay:.12s;}
-.phase:nth-child(3){transition-delay:.24s;}
-.phase:nth-child(4){transition-delay:.36s;}
-
-.phase-node{
-  width:60px;height:60px;border-radius:50%;
-  background:var(--bg2);
-  border:1.5px solid rgba(200,255,62,0.3);
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 32px;
-  box-shadow:0 0 0 10px var(--bg2);
-  transition:border-color .4s,box-shadow .4s,background .4s;
-}
-.phase:hover .phase-node{
-  border-color:var(--accent);
-  background:rgba(200,255,62,0.06);
-  box-shadow:0 0 0 10px var(--bg2),0 0 40px rgba(200,255,62,0.25);
-}
-.phase-num{font-family:var(--font-display);font-size:20px;color:var(--accent);}
-.phase-days{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:2px;color:var(--accent);text-transform:uppercase;
-  margin-bottom:12px;display:block;
-}
-.phase-title{
-  font-family:var(--font-display);font-size:34px;
-  color:white;margin-bottom:14px;line-height:.95;
-}
-.phase-desc{
-  font-size:12px;line-height:1.8;
-  color:rgba(240,237,232,0.42);
-}
-
-@media(max-width:900px){
-  .journey-section{padding:100px 24px;}
-  .journey-phases{grid-template-columns:1fr 1fr;gap:40px;}
-  .journey-phases::before{display:none;}
-}
-@media(max-width:600px){
-  .journey-phases{grid-template-columns:1fr;}
 }
 
 /* ══════════════════════════════════════════
@@ -1002,8 +920,8 @@ footer{
   padding-bottom:80px;
   border-bottom:1px solid var(--line);
 }
-.footer-brand .logo{font-size:20px;margin-bottom:20px;gap:10px;}
-.footer-brand .logo-img{height:26px;}
+.footer-brand .logo{font-size:21px;margin-bottom:20px;gap:10px;}
+.footer-brand .logo-img{height:28px;}
 .footer-brand p{font-size:13px;line-height:1.85;color:var(--muted);max-width:260px;margin-top:18px;}
 .footer-col-title{
   font-family:var(--font-cond);font-size:9px;font-weight:700;
@@ -1040,7 +958,7 @@ footer{
 [data-reveal][data-delay="5"]{transition-delay:.5s;}
 
 /* ══════════════════════════════════════════
-   HORIZONTAL SCAN LINES (cinematic fx)
+   HORIZONTAL SCAN LINES
 ══════════════════════════════════════════ */
 .scanlines{
   position:fixed;inset:0;pointer-events:none;z-index:9996;
@@ -1075,9 +993,7 @@ footer{
   <a href="pay.html" class="nav-cta">ENTRAR AHORA</a>
 </nav>
 
-<!-- ══════════════════════════════════════════
-     HERO
-══════════════════════════════════════════ -->
+<!-- ══ HERO ══ -->
 <section class="hero">
   <canvas id="hero-canvas"></canvas>
   <div class="hero-vignette"></div>
@@ -1124,42 +1040,43 @@ footer{
 <div class="ticker" aria-hidden="true">
   <div class="ticker-inner">
     <div class="ticker-item"><span>DISCIPLINA ABSOLUTA</span><div class="ticker-sep"></div></div>
-    <div class="ticker-item"><span>NEUROCIENCIA APLICADA</span><div class="ticker-sep"></div></div>
-    <div class="ticker-item"><span>DEEP WORK SYSTEM</span><div class="ticker-sep"></div></div>
+    <div class="ticker-item"><span>DEEP FOCUS SYSTEM</span><div class="ticker-sep"></div></div>
+    <div class="ticker-item"><span>CUERPO ELITE</span><div class="ticker-sep"></div></div>
+    <div class="ticker-item"><span>SISTEMAS MENTALES</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>IDENTIDAD ELITE</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>BIOHACKING PROTOCOLOS</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>ARQUITECTURA MENTAL</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>EJECUCIÓN EXTREMA</span><div class="ticker-sep"></div></div>
-    <div class="ticker-item"><span>CUERPO ELITE</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>DISCIPLINA ABSOLUTA</span><div class="ticker-sep"></div></div>
-    <div class="ticker-item"><span>NEUROCIENCIA APLICADA</span><div class="ticker-sep"></div></div>
-    <div class="ticker-item"><span>DEEP WORK SYSTEM</span><div class="ticker-sep"></div></div>
+    <div class="ticker-item"><span>DEEP FOCUS SYSTEM</span><div class="ticker-sep"></div></div>
+    <div class="ticker-item"><span>CUERPO ELITE</span><div class="ticker-sep"></div></div>
+    <div class="ticker-item"><span>SISTEMAS MENTALES</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>IDENTIDAD ELITE</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>BIOHACKING PROTOCOLOS</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>ARQUITECTURA MENTAL</span><div class="ticker-sep"></div></div>
     <div class="ticker-item"><span>EJECUCIÓN EXTREMA</span><div class="ticker-sep"></div></div>
-    <div class="ticker-item"><span>CUERPO ELITE</span><div class="ticker-sep"></div></div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════
-     SYSTEM — PIPELINE
+     SYSTEM — PIPELINE (4 MÓDULOS BASE)
 ══════════════════════════════════════════ -->
 <section class="system-section">
   <div class="system-header">
-    <div class="overline center" data-reveal>Los 4 Módulos Fundacionales</div>
-    <p class="system-header-sub" data-reveal>Cuatro módulos que actúan en sincronía perfecta. Cada uno amplifica a los demás. La ausencia de uno colapsa el sistema completo.</p>
+    <div class="overline center" data-reveal>Los 4 Módulos Base — Pilares Fundacionales</div>
+    <h2 class="system-header-title" data-reveal>Los <em>4 Pilares</em></h2>
+    <p class="system-header-sub" data-reveal>Cuatro módulos que actúan en sincronía perfecta. Cada uno amplifica a los demás. La ausencia de uno colapsa el sistema completo. Todo o nada.</p>
   </div>
 
   <div class="pipeline-wrap">
     <div class="pipeline-axis"></div>
     <div class="pipeline-axis-live" id="pipelineLive"></div>
 
-    <!-- ── MOD 01 ── -->
+    <!-- ── PILAR I: DISCIPLINA ABSOLUTA ── -->
     <div class="mod-row" id="mod1">
       <div class="mod-left" id="mod1L">
         <span class="mod-ghost-num">01</span>
-        <span class="mod-tag-label">Módulo 01 · Fundacional</span>
+        <span class="mod-tag-label">Pilar I · Fundacional</span>
         <h3 class="mod-title">DISCIPLINA<br>ABSOLUTA</h3>
         <p class="mod-desc">La disciplina no es fuerza de voluntad. Es identidad + sistema + automatismo. Cuando los tres elementos se alinean, la disciplina deja de ser un esfuerzo y se convierte en tu forma de existir.</p>
         <div class="pill-row">
@@ -1184,7 +1101,7 @@ footer{
       <div class="mod-right" id="mod1R">
         <span class="mod-ghost-num">01</span>
         <div class="features">
-          <div class="feature"><div class="feat-dot"></div><span>Morning & Night Protocol de élite con 7 reglas absolutas no negociables</span></div>
+          <div class="feature"><div class="feat-dot"></div><span>Morning &amp; Night Protocol de élite con 7 reglas absolutas no negociables</span></div>
           <div class="feature"><div class="feat-dot"></div><span>Sistema 5D anti-procrastinación con protocolo de emergencia activable</span></div>
           <div class="feature"><div class="feat-dot"></div><span>Identity Score System — tracking diario de coherencia identitaria</span></div>
           <div class="feature"><div class="feat-dot"></div><span>Habit Stacking matutino automatizado en semana 6-8</span></div>
@@ -1198,7 +1115,7 @@ footer{
 
     <div class="mod-sep"></div>
 
-    <!-- ── MOD 02 ── -->
+    <!-- ── PILAR II: DEEP FOCUS ── -->
     <div class="mod-row" id="mod2">
       <div class="mod-left" id="mod2L">
         <span class="mod-ghost-num">02</span>
@@ -1221,8 +1138,8 @@ footer{
       </div>
       <div class="mod-right" id="mod2R">
         <span class="mod-ghost-num">02</span>
-        <span class="mod-tag-label">Módulo 02 · Deep Work</span>
-        <h3 class="mod-title">PRODUCTIVIDAD<br>EXTREMA</h3>
+        <span class="mod-tag-label">Pilar II · Deep Work</span>
+        <h3 class="mod-title">DEEP<br>FOCUS</h3>
         <p class="mod-desc">Deep Work no es trabajar más horas. Es operar en un estado de concentración tan intensa que tu output por hora supera en 4-10x al de cualquier persona en modo reactivo.</p>
         <div class="pill-row">
           <span class="pill">Deep Work</span>
@@ -1241,11 +1158,11 @@ footer{
 
     <div class="mod-sep"></div>
 
-    <!-- ── MOD 03 ── -->
+    <!-- ── PILAR III: CUERPO ELITE ── -->
     <div class="mod-row" id="mod3">
       <div class="mod-left" id="mod3L">
         <span class="mod-ghost-num">03</span>
-        <span class="mod-tag-label">Módulo 03 · Físico & Recovery</span>
+        <span class="mod-tag-label">Pilar III · Físico &amp; Recovery</span>
         <h3 class="mod-title">CUERPO<br>ELITE</h3>
         <p class="mod-desc">Tu cuerpo es el hardware que ejecuta el sistema. Sin optimización física, el rendimiento cognitivo colapsa. Entrenamiento científico, nutrición de precisión y recuperación biohackeada en un solo protocolo.</p>
         <div class="pill-row">
@@ -1284,7 +1201,7 @@ footer{
 
     <div class="mod-sep"></div>
 
-    <!-- ── MOD 04 ── -->
+    <!-- ── PILAR IV: SISTEMAS MENTALES ── -->
     <div class="mod-row" id="mod4">
       <div class="mod-left" id="mod4L">
         <span class="mod-ghost-num">04</span>
@@ -1306,7 +1223,7 @@ footer{
       </div>
       <div class="mod-right" id="mod4R">
         <span class="mod-ghost-num">04</span>
-        <span class="mod-tag-label">Módulo 04 · El Núcleo</span>
+        <span class="mod-tag-label">Pilar IV · El Núcleo</span>
         <h3 class="mod-title">SISTEMAS<br>MENTALES</h3>
         <p class="mod-desc">La diferencia entre quien ejecuta y quien sueña no es información ni talento. Es arquitectura mental. Este módulo reconstruye tu sistema operativo interno desde los cimientos neurológicos.</p>
         <div class="pill-row">
@@ -1328,7 +1245,7 @@ footer{
 </section>
 
 <!-- ══════════════════════════════════════════
-     EXTRAS PREMIUM
+     EXTRAS PREMIUM — MÓDULOS 5 AL 9
 ══════════════════════════════════════════ -->
 <section class="extras-section">
   <div class="extras-bg-word">EXTRA</div>
@@ -1340,39 +1257,39 @@ footer{
       </div>
       <p class="extras-header-right" data-reveal>
         El sistema base transforma. Los extras te llevan a otro nivel.<br><br>
-        <strong>Cinco módulos adicionales</strong> diseñados para quien quiere dominar cada dimensión del rendimiento humano. Entrenamiento avanzado, nutrición molecular, y los sistemas de élite que completan el programa. Disponibles en el <strong>Pack Premium</strong>.
+        <strong>Cinco módulos adicionales</strong> diseñados para quien quiere dominar cada dimensión del rendimiento humano. Productividad extrema, hábitos, recuperación, performance y sistema físico completo. Disponibles en el <strong>Pack Premium</strong>.
       </p>
     </div>
 
     <div class="extras-grid">
 
-      <!-- Extra 01: Physical System -->
+      <!-- Extra 05: Productividad Extrema -->
       <div class="extra-card" id="ex1">
         <div class="extra-num">05</div>
         <span class="extra-badge">Premium</span>
-        <h3 class="extra-title">PHYSICAL<br>SYSTEM</h3>
-        <p class="extra-desc">El módulo físico más completo del mercado hispanohablante. Entrenamiento científico de élite, nutrición de precisión molecular y recuperación optimizada fusionados en un protocolo de rendimiento total.</p>
+        <h3 class="extra-title">PRODUCTIVIDAD<br>EXTREMA</h3>
+        <p class="extra-desc">Deep work, bloques de flujo y control total del tiempo. Convierte cada hora en una unidad de salida máxima. El módulo de ejecución más avanzado del programa.</p>
         <div class="extra-items">
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><span class="extra-item-text">Protocolo Avanzado Hipertrofia</span><span class="extra-item-badge">Premium</span></div>
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><span class="extra-item-text">Nutrición Molecular & Timing</span><span class="extra-item-badge">Premium</span></div>
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span class="extra-item-text">HRV & Biometrics Optimization</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><span class="extra-item-text">Deep Work &amp; Time Blocking</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="extra-item-text">Flow States Activation</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div><span class="extra-item-text">KPIs &amp; Productivity Score</span><span class="extra-item-badge">Premium</span></div>
         </div>
       </div>
 
-      <!-- Extra 02: Finance System -->
+      <!-- Extra 06: Habit Architecture -->
       <div class="extra-card" id="ex2">
         <div class="extra-num">06</div>
         <span class="extra-badge">Premium</span>
-        <h3 class="extra-title">FINANCE<br>SYSTEM</h3>
-        <p class="extra-desc">El dinero es un sistema. No una suerte ni un talento heredado. Este módulo instala los protocolos de arquitectura financiera que usan quienes construyen riqueza real y duradera.</p>
+        <h3 class="extra-title">HABIT<br>ARCHITECTURE</h3>
+        <p class="extra-desc">Construye hábitos que cambian tu identidad a nivel neurológico. No disciplina superficial. Automatización profunda de comportamiento de alto rendimiento.</p>
         <div class="extra-items">
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><span class="extra-item-text">Arquitectura Financiera Elite</span><span class="extra-item-badge">Premium</span></div>
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span class="extra-item-text">Inversión & Activos Productivos</span><span class="extra-item-badge">Premium</span></div>
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><span class="extra-item-text">Flujo de Caja & Libertad</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg></div><span class="extra-item-text">Neuroplasticidad Aplicada</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><span class="extra-item-text">Identity-Based Habit Loops</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><span class="extra-item-text">Automatización 66 días</span><span class="extra-item-badge">Premium</span></div>
         </div>
       </div>
 
-      <!-- Extra 03 LARGE: Performance Dashboard -->
+      <!-- Extra 07 LARGE: Performance Dashboard -->
       <div class="extra-card" id="ex3">
         <div class="extra-num">07</div>
         <span class="extra-badge">Premium</span>
@@ -1380,34 +1297,34 @@ footer{
         <p class="extra-desc">El sistema de medición y análisis que te convierte en tu propio director de performance. Tracking en tiempo real de las 4 dimensiones del sistema. KPIs de élite, sistemas de puntuación y protocolo de mejora continua.</p>
         <div class="extra-items">
           <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><span class="extra-item-text">Dashboard Integrado Tiempo Real</span><span class="extra-item-badge">Premium</span></div>
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><span class="extra-item-text">KPIs & Scoring System Elite</span><span class="extra-item-badge">Premium</span></div>
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="extra-item-text">Weekly & Monthly Reviews</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div><span class="extra-item-text">KPIs &amp; Scoring System Elite</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span class="extra-item-text">Weekly &amp; Monthly Reviews</span><span class="extra-item-badge">Premium</span></div>
           <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div><span class="extra-item-text">Análisis de Progresión 90 días</span><span class="extra-item-badge">Premium</span></div>
           <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><span class="extra-item-text">Accountability Checkpoint System</span><span class="extra-item-badge">Premium</span></div>
         </div>
       </div>
 
-      <!-- Extra 04: Social Mastery -->
+      <!-- Extra 08: Recovery Protocol -->
       <div class="extra-card" id="ex4">
         <div class="extra-num">08</div>
         <span class="extra-badge">Premium</span>
-        <h3 class="extra-title">SOCIAL<br>MASTERY</h3>
-        <p class="extra-desc">El éxito aislado tiene un techo. Este módulo instala los sistemas de influencia, comunicación de alto impacto y construcción de red que multiplican tu capacidad de ejecución.</p>
+        <h3 class="extra-title">RECOVERY<br>PROTOCOL</h3>
+        <p class="extra-desc">Sueño, energía y recuperación optimizados con protocolo de biohacking para operar al máximo nivel cada día. Porque la recuperación es entrenamiento.</p>
         <div class="extra-items">
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="extra-item-text">Red de Alto Valor</span><span class="extra-item-badge">Premium</span></div>
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><span class="extra-item-text">Comunicación de Impacto</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div><span class="extra-item-text">Sleep Science &amp; Optimización</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><span class="extra-item-text">HRV &amp; Biometrics Tracking</span><span class="extra-item-badge">Premium</span></div>
         </div>
       </div>
 
-      <!-- Extra 05: Deep Learning -->
+      <!-- Extra 09: Physical System -->
       <div class="extra-card" id="ex5">
         <div class="extra-num">09</div>
         <span class="extra-badge">Premium</span>
-        <h3 class="extra-title">DEEP<br>LEARNING</h3>
-        <p class="extra-desc">Aprende el doble en la mitad del tiempo. El sistema de aprendizaje acelerado que combina técnicas de neurociencia cognitiva con metodología de práctica deliberada de élite.</p>
+        <h3 class="extra-title">PHYSICAL<br>SYSTEM</h3>
+        <p class="extra-desc">Protocolo de entrenamiento y nutrición de élite diseñado para maximizar fuerza, composición corporal y rendimiento cognitivo en un solo sistema integrado.</p>
         <div class="extra-items">
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><span class="extra-item-text">Aprendizaje Acelerado</span><span class="extra-item-badge">Premium</span></div>
-          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><span class="extra-item-text">Práctica Deliberada Elite</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"/></svg></div><span class="extra-item-text">Hipertrofia Científica Avanzada</span><span class="extra-item-badge">Premium</span></div>
+          <div class="extra-item"><div class="extra-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><span class="extra-item-text">Nutrición Molecular &amp; Timing</span><span class="extra-item-badge">Premium</span></div>
         </div>
       </div>
 
@@ -1476,10 +1393,10 @@ footer{
     <div>
       <div class="footer-col-title">Sistema</div>
       <div class="footer-links">
-        <a href="#">Módulo Disciplina</a>
-        <a href="#">Módulo Productividad</a>
-        <a href="#">Módulo Físico</a>
-        <a href="#">Módulo Mental</a>
+        <a href="#">Pilar I — Disciplina</a>
+        <a href="#">Pilar II — Deep Focus</a>
+        <a href="#">Pilar III — Cuerpo Elite</a>
+        <a href="#">Pilar IV — Sistemas Mentales</a>
       </div>
     </div>
     <div>
@@ -1680,9 +1597,6 @@ window.addEventListener('scroll', () => {
 /* ══════════════════════════════════════════
    INTERSECTION OBSERVER — reveal animations
 ══════════════════════════════════════════ */
-const observerOpts = { threshold: 0.15, rootMargin: '0px 0px -60px 0px' };
-
-// Generic data-reveal
 const revealObs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('is-visible'); }
@@ -1712,7 +1626,6 @@ function observeMod(leftId, rightId, orbId, orbOuterId, connId) {
       orbOut && orbOut.classList.toggle('live', visible);
       conn && conn.classList.toggle('live', visible);
 
-      // Trigger metric fills
       if (visible) {
         [left, right].forEach(el => {
           if (!el) return;
@@ -1752,18 +1665,6 @@ const extraObs = new IntersectionObserver((entries) => {
     el.style.transitionDelay = (i * 0.1) + 's';
     extraObs.observe(el);
   }
-});
-
-// Journey phases
-const phaseObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) e.target.classList.add('visible');
-    else e.target.classList.remove('visible');
-  });
-}, { threshold: 0.1 });
-['ph1','ph2','ph3','ph4'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) phaseObs.observe(el);
 });
 
 // Stat cards
