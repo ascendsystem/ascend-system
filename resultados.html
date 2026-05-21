@@ -1931,10 +1931,20 @@ function updateLightboxContent() {
 
   document.getElementById('lbLabel').textContent = d.label;
   document.getElementById('lbNum').textContent = numStr;
-  document.getElementById('lbPlaceholderLabel').textContent = `Imagen Ejemplo ${currentLB + 1}`;
   document.getElementById('lbName').textContent = d.name;
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
+  
+  // AÑADIR LA IMAGEN
+  const lbPlaceholder = document.getElementById('lbPlaceholder');
+  let lbImage = document.getElementById('lbImage');
+  if (!lbImage) {
+    lbImage = document.createElement('img');
+    lbImage.id = 'lbImage';
+    lbImage.style.cssText = 'width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1;';
+    lbPlaceholder.insertBefore(lbImage, lbPlaceholder.firstChild);
+  }
+  lbImage.src = `img/transformacion-${currentLB+1}.png`;
   
   // Actualizar los labels de métricas
   const m1Label = document.getElementById('lbM1').nextElementSibling;
@@ -1949,6 +1959,9 @@ function updateLightboxContent() {
   document.getElementById('lbCurrent').textContent = currentLB + 1;
   document.getElementById('lbTotal').textContent = lightboxData.length;
 }
+
+
+   
 // Cerrar con la X - IMPORTANTE: usar stopPropagation
 lbCloseBtn.addEventListener('click', function(e) {
   e.stopPropagation();
