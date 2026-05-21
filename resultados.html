@@ -215,7 +215,6 @@ body::before{
 }
 @keyframes scanDown{0%{background-position:0 -300px;}100%{background-position:0 110vh;}}
 
-/* Vertical accent lines */
 .hero-vlines{
   position:absolute;inset:0;z-index:1;pointer-events:none;
 }
@@ -291,7 +290,6 @@ body::before{
   letter-spacing:3px;color:var(--muted);text-transform:uppercase;
 }
 
-/* Bottom border line */
 .hero-bottom-line{
   position:absolute;bottom:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(200,255,62,0.15),rgba(200,255,62,0.3),rgba(200,255,62,0.15),transparent);
@@ -312,7 +310,7 @@ body::before{
 @keyframes tickerMove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
 /* ═══════════════════════════════════════
-   NUMBERS BAND — LIVE COUNTERS
+   NUMBERS BAND
 ═══════════════════════════════════════ */
 .numbers-band{
   display:grid;grid-template-columns:repeat(4,1fr);
@@ -361,7 +359,7 @@ body::before{
 .section-title em{font-style:normal;color:var(--accent);}
 
 /* ═══════════════════════════════════════
-   TRANSFORMATION INTRO — EDITORIAL STRIP
+   EDITORIAL STRIP
 ═══════════════════════════════════════ */
 .editorial-strip{
   padding:160px 80px;
@@ -398,7 +396,6 @@ body::before{
 }
 
 .ed-visual{position:relative;}
-/* Stacked timeline graphic */
 .timeline-stack{
   display:flex;flex-direction:column;gap:3px;
   position:relative;
@@ -468,7 +465,7 @@ body::before{
 }
 
 /* ═══════════════════════════════════════
-   FEATURED TRANSFORMATION — FULL WIDTH
+   FEATURED TRANSFORMATION
 ═══════════════════════════════════════ */
 .featured-transform{
   position:relative;min-height:90vh;
@@ -533,7 +530,6 @@ body::before{
   letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;
 }
 
-/* Right side image stack on featured */
 .ft-image-stack{
   position:absolute;right:80px;top:50%;transform:translateY(-50%);
   z-index:10;width:420px;height:560px;
@@ -573,7 +569,10 @@ body::before{
 .ft-corner-badge-inner span{font-family:var(--font-cond);font-size:9px;font-weight:800;letter-spacing:1.5px;color:rgba(0,0,0,0.7);text-transform:uppercase;}
 
 /* ═══════════════════════════════════════
-   RESULTS GALLERY — MAGAZINE GRID
+   GALLERY — PROFESSIONAL FIXED GRID
+   Todas las imágenes son ~3:2 (759x503)
+   excepto transformacion-07 (~3:2 vertical)
+   y transformacion-08 (~1:1)
 ═══════════════════════════════════════ */
 .gallery-section{
   padding:160px 80px;
@@ -588,127 +587,107 @@ body::before{
 }
 .gallery-header-desc strong{color:var(--text);}
 
-/* The main magazine-style grid */
+/* ── NUEVO GRID PROFESIONAL ── */
+/*
+  Layout en 3 filas:
+  Fila 1: 2 cards grandes (col 6 cada una) — imágenes 01, 02
+  Fila 2: 3 cards medianas (col 4 cada una) — imágenes 03, 04, 05
+  Fila 3: card ancha (col 8) + card cuadrada (col 4) — imágenes 06+09, 07
+  Fila 4: card ancha (col 7) + card (col 5) — imágenes 08 (cuadrada), 09
+  
+  Simplificado: usamos un grid limpio en 2 y 3 columnas
+*/
 .gallery-grid{
   display:grid;
   grid-template-columns:repeat(12,1fr);
-  gap:4px;
+  gap:6px;
 }
 
-/* Each result card */
+/* Card base */
 .result-card{
   position:relative;overflow:hidden;
   background:var(--bg3);
   cursor:pointer;
-}
-/* Layout variants */
-.result-card.sz-wide   {grid-column:span 7;aspect-ratio:16/10;}
-.result-card.sz-tall   {grid-column:span 5;aspect-ratio:5/7;}
-.result-card.sz-square {grid-column:span 4;aspect-ratio:1/1;}
-.result-card.sz-med    {grid-column:span 5;aspect-ratio:4/3;}
-.result-card.sz-full   {grid-column:span 12;aspect-ratio:21/8;}
-.result-card.sz-third  {grid-column:span 4;aspect-ratio:3/4;}
-
-/* Placeholder visuals for the result images */
-.result-img-placeholder{
-  width:100%;height:100%;
-  display:flex;align-items:center;justify-content:center;
-  position:relative;overflow:hidden;
-  background:var(--bg3);
+  border:1px solid var(--line);
 }
 
-/* Each placeholder gets unique gradient atmosphere */
-.result-card:nth-child(1) .result-img-placeholder{background:linear-gradient(135deg,#0a0a0a 0%,#111407 50%,#0a0c05 100%);}
-.result-card:nth-child(2) .result-img-placeholder{background:linear-gradient(160deg,#080808 0%,#0c1208 50%,#070909 100%);}
-.result-card:nth-child(3) .result-img-placeholder{background:linear-gradient(110deg,#090909 0%,#0e1408 50%,#080a04 100%);}
-.result-card:nth-child(4) .result-img-placeholder{background:linear-gradient(145deg,#0a0a0a 0%,#131806 50%,#090b04 100%);}
-.result-card:nth-child(5) .result-img-placeholder{background:linear-gradient(125deg,#080808 0%,#0f1507 50%,#080904 100%);}
-.result-card:nth-child(6) .result-img-placeholder{background:linear-gradient(155deg,#0b0b0b 0%,#121607 50%,#0a0c05 100%);}
-.result-card:nth-child(7) .result-img-placeholder{background:linear-gradient(135deg,#090909 0%,#101508 50%,#080a04 100%);}
-.result-card:nth-child(8) .result-img-placeholder{background:linear-gradient(150deg,#0a0a0a 0%,#131708 50%,#090b04 100%);}
+/* Tamaños — usando aspect-ratio fijo 3:2 para la mayoría */
+.result-card.sz-wide  { grid-column:span 6; aspect-ratio:3/2; }
+.result-card.sz-tall  { grid-column:span 6; aspect-ratio:3/2; }
+.result-card.sz-third { grid-column:span 4; aspect-ratio:3/2; }
+.result-card.sz-full  { grid-column:span 8; aspect-ratio:3/2; }
+.result-card.sz-side  { grid-column:span 4; aspect-ratio:3/2; }
+/* Para la imagen cuadrada (08) */
+.result-card.sz-square{ grid-column:span 4; aspect-ratio:1/1; }
+/* Fila especial: img grande + img cuadrada */
+.result-card.sz-wide-featured { grid-column:span 8; aspect-ratio:16/9; }
 
-/* Inner placeholder content */
-.placeholder-frame{
-  position:absolute;inset:16px;
-  border:1px solid rgba(200,255,62,0.07);
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:12px;
+/* Imagen real — llena el card completamente sin distorsión */
+.result-img-wrapper{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
 }
-.placeholder-num{
-  font-family:var(--font-display);
-  font-size:clamp(60px,8vw,120px);
-  color:rgba(200,255,62,0.06);
-  line-height:1;letter-spacing:-2px;
+.result-img-wrapper img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+  display:block;
+  transition:transform .9s cubic-bezier(.16,1,.3,1);
 }
-.placeholder-label{
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:3px;color:rgba(200,255,62,0.18);text-transform:uppercase;
-}
-/* Faint grid lines inside placeholder */
-.placeholder-frame::before{
-  content:'';position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(200,255,62,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(200,255,62,0.04) 1px,transparent 1px);
-  background-size:30px 30px;
-}
-/* Animated corner accent */
-.placeholder-corner{
-  position:absolute;top:24px;left:24px;
-  width:28px;height:28px;
-  border-top:2px solid rgba(200,255,62,0.3);
-  border-left:2px solid rgba(200,255,62,0.3);
-}
-.placeholder-corner-br{
-  position:absolute;bottom:24px;right:24px;
-  width:28px;height:28px;
-  border-bottom:2px solid rgba(200,255,62,0.3);
-  border-right:2px solid rgba(200,255,62,0.3);
-}
-/* Diagonal scan line */
-.placeholder-scan{
-  position:absolute;top:-100%;left:0;right:0;height:50%;
-  background:linear-gradient(to bottom,transparent,rgba(200,255,62,0.035),transparent);
-  animation:scanVertical 4s ease-in-out infinite;
-}
-@keyframes scanVertical{
-  0%{top:-100%;}100%{top:200%;}
+.result-card:hover .result-img-wrapper img{
+  transform:scale(1.05);
 }
 
-/* Result card overlay */
+/* Overlay degradado sobre la imagen */
 .result-overlay{
   position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(3,3,3,.98) 0%,rgba(3,3,3,.3) 40%,transparent 65%);
-  z-index:2;transition:background .6s;
+  background:linear-gradient(
+    to top,
+    rgba(3,3,3,0.92) 0%,
+    rgba(3,3,3,0.4) 35%,
+    rgba(3,3,3,0.08) 60%,
+    transparent 100%
+  );
+  z-index:2;
+  transition:background .5s;
 }
 .result-card:hover .result-overlay{
-  background:linear-gradient(to top,rgba(3,3,3,.98) 0%,rgba(3,3,3,.5) 50%,rgba(3,3,3,.1) 100%);
+  background:linear-gradient(
+    to top,
+    rgba(3,3,3,0.96) 0%,
+    rgba(3,3,3,0.55) 45%,
+    rgba(3,3,3,0.15) 70%,
+    transparent 100%
+  );
 }
+
+/* Contenido inferior */
 .result-content{
   position:absolute;bottom:0;left:0;right:0;
-  padding:32px 36px;z-index:3;
+  padding:28px 30px;z-index:3;
 }
 .result-client-tag{
   font-family:var(--font-cond);font-size:9px;font-weight:700;
   letter-spacing:3.5px;color:var(--accent);text-transform:uppercase;
-  margin-bottom:10px;display:block;
-  opacity:.85;
+  margin-bottom:8px;display:block;opacity:.85;
 }
 .result-name{
   font-family:var(--font-display);
-  font-size:clamp(24px,3.5vw,46px);
-  color:white;line-height:.92;margin-bottom:10px;
+  font-size:clamp(22px,2.8vw,38px);
+  color:white;line-height:.92;margin-bottom:8px;
   text-shadow:0 2px 20px rgba(0,0,0,0.8);
 }
 .result-stats-row{
-  display:flex;gap:22px;flex-wrap:wrap;
-  margin-bottom:14px;
+  display:flex;gap:18px;flex-wrap:wrap;
+  margin-bottom:10px;
 }
 .result-stat{
-  display:flex;align-items:baseline;gap:5px;
+  display:flex;align-items:baseline;gap:4px;
 }
 .result-stat-n{
-  font-family:var(--font-display);font-size:clamp(18px,2.5vw,28px);
+  font-family:var(--font-display);font-size:clamp(16px,2vw,24px);
   color:var(--accent);line-height:1;
 }
 .result-stat-l{
@@ -717,14 +696,14 @@ body::before{
 }
 .result-desc{
   font-size:12px;line-height:1.6;
-  color:rgba(240,237,232,0.45);
+  color:rgba(240,237,232,0.5);
   max-height:0;overflow:hidden;
   transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .4s;
   opacity:0;
 }
 .result-card:hover .result-desc{max-height:80px;opacity:1;}
 
-/* Hover reveal: top accent line */
+/* Línea superior accent en hover */
 .result-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;z-index:4;
   background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));
@@ -733,24 +712,31 @@ body::before{
 }
 .result-card:hover::before{transform:scaleX(1);}
 
-/* Image hover scale */
-.result-card .result-img-placeholder{
-  transition:transform .9s cubic-bezier(.16,1,.3,1);
-}
-.result-card:hover .result-img-placeholder{transform:scale(1.04);}
-
-/* Number tag top-right */
+/* Número decorativo esquina */
 .result-num-tag{
-  position:absolute;top:20px;right:20px;z-index:4;
-  font-family:var(--font-display);font-size:80px;
-  color:rgba(200,255,62,0.07);line-height:1;
-  letter-spacing:-3px;
+  position:absolute;top:16px;right:16px;z-index:4;
+  font-family:var(--font-display);font-size:clamp(40px,5vw,70px);
+  color:rgba(200,255,62,0.08);line-height:1;
+  letter-spacing:-2px;
   transition:color .5s;
+  pointer-events:none;
 }
-.result-card:hover .result-num-tag{color:rgba(200,255,62,0.14);}
+.result-card:hover .result-num-tag{color:rgba(200,255,62,0.16);}
+
+/* Badge "ANTES / DESPUÉS" overlay en esquina superior izquierda */
+.result-badge{
+  position:absolute;top:16px;left:16px;z-index:4;
+  font-family:var(--font-cond);font-size:8px;font-weight:800;
+  letter-spacing:2.5px;text-transform:uppercase;
+  background:rgba(200,255,62,0.12);
+  border:1px solid rgba(200,255,62,0.25);
+  color:var(--accent);
+  padding:5px 10px;
+  backdrop-filter:blur(4px);
+}
 
 /* ═══════════════════════════════════════
-   LIGHTBOX — CINEMATIC VIEWER
+   LIGHTBOX
 ═══════════════════════════════════════ */
 .lightbox{
   position:fixed;inset:0;z-index:99000;
@@ -796,28 +782,13 @@ body::before{
   border:1px solid rgba(200,255,62,0.1);
   overflow:hidden;
   display:flex;align-items:center;justify-content:center;
-  min-height:500px;
 }
-.lb-placeholder{
-  width:100%;height:100%;min-height:500px;
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:20px;
-  position:relative;overflow:hidden;
-}
-.lb-placeholder-num{
-  font-family:var(--font-display);font-size:160px;
-  color:rgba(200,255,62,0.05);line-height:1;letter-spacing:-6px;
-}
-.lb-placeholder-label{
-  font-family:var(--font-cond);font-size:11px;font-weight:700;
-  letter-spacing:4px;color:rgba(200,255,62,0.2);text-transform:uppercase;
-}
-.lb-placeholder-grid{
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(200,255,62,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(200,255,62,0.03) 1px,transparent 1px);
-  background-size:40px 40px;
+.lb-visual img{
+  width:100%;
+  height:auto;
+  max-height:65vh;
+  object-fit:contain;
+  display:block;
 }
 .lb-bottom{
   display:flex;justify-content:space-between;align-items:flex-end;
@@ -901,7 +872,7 @@ body::before{
 .method-desc{font-size:14px;line-height:1.8;color:rgba(240,237,232,0.5);}
 
 /* ═══════════════════════════════════════
-   SOCIAL PROOF — TESTIMONIALS
+   TESTIMONIALS
 ═══════════════════════════════════════ */
 .testimonials{padding:160px 80px;}
 .testimonials-header{margin-bottom:100px;}
@@ -1070,14 +1041,15 @@ footer{
   .nb-cell{padding:44px 32px;}
   .nb-n{font-size:52px;}
   .editorial-strip{padding:80px 24px;}
-  .gallery-section{padding:100px 24px;}
-  .gallery-grid{grid-template-columns:1fr 1fr;gap:3px;}
+  .gallery-section{padding:80px 24px;}
+  .gallery-grid{grid-template-columns:1fr 1fr;gap:4px;}
   .result-card.sz-wide,
   .result-card.sz-tall,
-  .result-card.sz-square,
-  .result-card.sz-med,
+  .result-card.sz-third,
   .result-card.sz-full,
-  .result-card.sz-third{grid-column:span 1;aspect-ratio:4/5;}
+  .result-card.sz-side,
+  .result-card.sz-square,
+  .result-card.sz-wide-featured{ grid-column:span 1; aspect-ratio:3/2; }
   .featured-transform{min-height:auto;}
   .ft-content{padding:100px 24px;}
   .method-strip{padding:100px 24px;}
@@ -1095,8 +1067,14 @@ footer{
   .hero-h1{font-size:clamp(52px,20vw,80px);}
   .numbers-band{grid-template-columns:1fr 1fr;}
   .nb-cell{padding:36px 24px;}
-  .gallery-grid{grid-template-columns:1fr;}
-  .result-card.sz-wide,.result-card.sz-tall,.result-card.sz-square,.result-card.sz-med,.result-card.sz-full,.result-card.sz-third{grid-column:span 1;aspect-ratio:3/4;}
+  .gallery-grid{grid-template-columns:1fr;gap:4px;}
+  .result-card.sz-wide,
+  .result-card.sz-tall,
+  .result-card.sz-third,
+  .result-card.sz-full,
+  .result-card.sz-side,
+  .result-card.sz-square,
+  .result-card.sz-wide-featured{ grid-column:span 1; aspect-ratio:3/2; }
 }
 </style>
 </head>
@@ -1118,11 +1096,7 @@ footer{
     </div>
     <div class="lb-visual">
       <button class="lb-nav lb-nav-prev" id="lbPrevBtn">←</button>
-      <div class="lb-placeholder" id="lbPlaceholder">
-        <div class="lb-placeholder-grid"></div>
-        <div class="lb-placeholder-num" id="lbNum">01</div>
-        <div class="lb-placeholder-label" id="lbPlaceholderLabel">IMAGEN EJEMPLO 1</div>
-      </div>
+      <img id="lbImg" src="" alt="Transformación" style="width:100%;height:auto;max-height:65vh;object-fit:contain;display:block;">
       <button class="lb-nav lb-nav-next" id="lbNextBtn">→</button>
     </div>
     <div class="lb-bottom">
@@ -1133,22 +1107,21 @@ footer{
       <div class="lb-metrics" id="lbMetrics">
         <div class="lb-m">
           <div class="lb-m-n" id="lbM1">90D</div>
-          <div class="lb-m-l">Duración</div>
+          <div class="lb-m-l" id="lbM1L">Duración</div>
         </div>
         <div class="lb-m">
           <div class="lb-m-n" id="lbM2">−18kg</div>
-          <div class="lb-m-l">Resultado</div>
+          <div class="lb-m-l" id="lbM2L">Resultado</div>
         </div>
         <div class="lb-m">
           <div class="lb-m-n" id="lbM3">4X</div>
-          <div class="lb-m-l">Productividad</div>
+          <div class="lb-m-l" id="lbM3L">Productividad</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-   
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html" onclick="closeMobileMenu()">INICIO</a>
@@ -1178,9 +1151,7 @@ footer{
   </div>
 </nav>
 
-<!-- ═══════════════════════════════════════
-     HERO
-═══════════════════════════════════════ -->
+<!-- HERO -->
 <section class="hero">
   <div class="hero-bg-text">ELITE</div>
   <div class="hero-grid"></div>
@@ -1188,7 +1159,6 @@ footer{
   <div class="hero-vlines">
     <span></span><span></span><span></span><span></span>
   </div>
-
   <div class="hero-content">
     <div class="hero-left">
       <div class="hero-eyebrow" id="heroEyebrow">
@@ -1244,9 +1214,7 @@ footer{
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     NUMBERS BAND
-═══════════════════════════════════════ -->
+<!-- NUMBERS BAND -->
 <div class="numbers-band">
   <div class="nb-cell">
     <span class="nb-n counter" data-target="12000" data-suffix="+" data-format="k">0</span>
@@ -1266,9 +1234,7 @@ footer{
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     EDITORIAL STRIP
-═══════════════════════════════════════ -->
+<!-- EDITORIAL STRIP -->
 <section class="editorial-strip">
   <div class="ed-text">
     <div class="overline" data-anim="fade-up">La Filosofía</div>
@@ -1319,7 +1285,6 @@ footer{
         </div>
       </div>
     </div>
-
     <div class="progress-bars" id="progressBars">
       <div class="pb-row">
         <span class="pb-label">Disciplina</span>
@@ -1345,9 +1310,7 @@ footer{
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════
-     FEATURED TRANSFORMATION
-═══════════════════════════════════════ -->
+<!-- FEATURED TRANSFORMATION -->
 <section class="featured-transform">
   <div class="ft-bg-img">
     <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2400&auto=format&fit=crop" alt="">
@@ -1377,13 +1340,12 @@ footer{
       </div>
     </div>
   </div>
-
   <div class="ft-image-stack">
     <div class="ft-img-frame ft-img-main">
-        <img src="img/despues.png" alt="Después - Resultado final">
+      <img src="img/despues.png" alt="Después - Resultado final">
     </div>
     <div class="ft-img-frame ft-img-accent">
-        <img src="img/antes.png" alt="Antes - Punto de partida">
+      <img src="img/antes.png" alt="Antes - Punto de partida">
     </div>
     <div class="ft-corner-badge">
       <div class="ft-corner-badge-inner">
@@ -1395,7 +1357,9 @@ footer{
 </section>
 
 <!-- ═══════════════════════════════════════
-     GALLERY
+     GALLERY — CASOS REALES
+     Grid profesional: respeta el formato
+     horizontal (~3:2) de todas las imágenes
 ═══════════════════════════════════════ -->
 <section class="gallery-section">
   <div class="gallery-header">
@@ -1412,20 +1376,13 @@ footer{
 
   <div class="gallery-grid" id="galleryGrid">
 
-    <!-- Card 1 — wide -->
+    <!-- FILA 1: dos columnas iguales — 01 y 02 -->
     <div class="result-card sz-wide" data-index="0" onclick="openLightbox(0)">
-      <div class="result-img-placeholder">
-             <img src="img/transformacion-01.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
-
-        <div class="placeholder-frame">
-          <div class="placeholder-scan"></div>
-          <div class="placeholder-corner"></div>
-          <div class="placeholder-corner-br"></div>
-          <div class="placeholder-num">01</div>
-          <div class="placeholder-label">Imagen Ejemplo 1</div>
-        </div>
+      <div class="result-img-wrapper">
+        <img src="img/transformacion-01.png" alt="Transformación 01 — Carlos M." loading="lazy">
       </div>
       <div class="result-overlay"></div>
+      <span class="result-badge">Antes / Después</span>
       <span class="result-num-tag">01</span>
       <div class="result-content">
         <span class="result-client-tag">Transformación 01 · 90 Días</span>
@@ -1444,19 +1401,12 @@ footer{
       </div>
     </div>
 
-    <!-- Card 2 — tall -->
     <div class="result-card sz-tall" data-index="1" onclick="openLightbox(1)">
-      <div class="result-img-placeholder">
-         <img src="img/transformacion-02.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
-        <div class="placeholder-frame">
-          <div class="placeholder-scan"></div>
-          <div class="placeholder-corner"></div>
-          <div class="placeholder-corner-br"></div>
-          <div class="placeholder-num">02</div>
-          <div class="placeholder-label">Imagen Ejemplo 2</div>
-        </div>
+      <div class="result-img-wrapper">
+        <img src="img/transformacion-02.png" alt="Transformación 02 — Ana R." loading="lazy">
       </div>
       <div class="result-overlay"></div>
+      <span class="result-badge">Antes / Después</span>
       <span class="result-num-tag">02</span>
       <div class="result-content">
         <span class="result-client-tag">Transformación 02 · 90 Días</span>
@@ -1475,19 +1425,13 @@ footer{
       </div>
     </div>
 
-    <!-- Card 3 — square -->
-    <div class="result-card sz-square" data-index="2" onclick="openLightbox(2)">
-      <div class="result-img-placeholder">
-         <img src="img/transformacion-03.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
-        <div class="placeholder-frame">
-          <div class="placeholder-scan"></div>
-          <div class="placeholder-corner"></div>
-          <div class="placeholder-corner-br"></div>
-          <div class="placeholder-num">03</div>
-          <div class="placeholder-label">Imagen Ejemplo 3</div>
-        </div>
+    <!-- FILA 2: tres columnas — 03, 04, 05 -->
+    <div class="result-card sz-third" data-index="2" onclick="openLightbox(2)">
+      <div class="result-img-wrapper">
+        <img src="img/transformacion-03.png" alt="Transformación 03 — Marc B." loading="lazy">
       </div>
       <div class="result-overlay"></div>
+      <span class="result-badge">Antes / Después</span>
       <span class="result-num-tag">03</span>
       <div class="result-content">
         <span class="result-client-tag">Transformación 03 · 90 Días</span>
@@ -1502,19 +1446,12 @@ footer{
       </div>
     </div>
 
-    <!-- Card 4 — square -->
-    <div class="result-card sz-square" data-index="3" onclick="openLightbox(3)">
-      <div class="result-img-placeholder">
-         <img src="img/transformacion-04.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
-        <div class="placeholder-frame">
-          <div class="placeholder-scan"></div>
-          <div class="placeholder-corner"></div>
-          <div class="placeholder-corner-br"></div>
-          <div class="placeholder-num">04</div>
-          <div class="placeholder-label">Imagen Ejemplo 4</div>
-        </div>
+    <div class="result-card sz-third" data-index="3" onclick="openLightbox(3)">
+      <div class="result-img-wrapper">
+        <img src="img/transformacion-04.png" alt="Transformación 04 — Laura V." loading="lazy">
       </div>
       <div class="result-overlay"></div>
+      <span class="result-badge">Antes / Después</span>
       <span class="result-num-tag">04</span>
       <div class="result-content">
         <span class="result-client-tag">Transformación 04 · 90 Días</span>
@@ -1533,19 +1470,12 @@ footer{
       </div>
     </div>
 
-    <!-- Card 5 — square -->
-    <div class="result-card sz-square" data-index="4" onclick="openLightbox(4)">
-      <div class="result-img-placeholder">
-         <img src="img/transformacion-05.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
-        <div class="placeholder-frame">
-          <div class="placeholder-scan"></div>
-          <div class="placeholder-corner"></div>
-          <div class="placeholder-corner-br"></div>
-          <div class="placeholder-num">05</div>
-          <div class="placeholder-label">Imagen Ejemplo 5</div>
-        </div>
+    <div class="result-card sz-third" data-index="4" onclick="openLightbox(4)">
+      <div class="result-img-wrapper">
+        <img src="img/transformacion-05.png" alt="Transformación 05 — David P." loading="lazy">
       </div>
       <div class="result-overlay"></div>
+      <span class="result-badge">Antes / Después</span>
       <span class="result-num-tag">05</span>
       <div class="result-content">
         <span class="result-client-tag">Transformación 05 · 90 Días</span>
@@ -1564,54 +1494,42 @@ footer{
       </div>
     </div>
 
-    <!-- Card 6 — full width -->
-    <div class="result-card sz-full" data-index="5" onclick="openLightbox(5)">
-      <div class="result-img-placeholder">
-         <img src="img/transformacion-09.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
-        <div class="placeholder-frame">
-          <div class="placeholder-scan"></div>
-          <div class="placeholder-corner"></div>
-          <div class="placeholder-corner-br"></div>
-          <div class="placeholder-num" style="font-size:clamp(80px,10vw,160px);">06</div>
-          <div class="placeholder-label">Imagen Ejemplo 6 — Panorámica</div>
-        </div>
+    <!-- FILA 3: card ancha (8 cols) + card lateral (4 cols) — 06 y 07 -->
+    <div class="result-card sz-wide-featured" data-index="5" onclick="openLightbox(5)">
+      <div class="result-img-wrapper">
+        <img src="img/transformacion-09.png" alt="Transformación 06 — Chen C." loading="lazy">
       </div>
       <div class="result-overlay"></div>
-      <span class="result-num-tag" style="font-size:120px;">06</span>
+      <span class="result-badge">Antes / Después</span>
+      <span class="result-num-tag" style="font-size:clamp(50px,6vw,90px);">06</span>
       <div class="result-content">
-        <span class="result-client-tag">Transformación 06 · 90 Días</span>
-        <h3 class="result-name" style="font-size:clamp(36px,5vw,72px);">CHEN C.</h3>
+        <span class="result-client-tag">Transformación 06 · 180 Días</span>
+        <h3 class="result-name" style="font-size:clamp(28px,3.5vw,52px);">CHEN C.</h3>
         <div class="result-stats-row">
           <div class="result-stat">
-            <span class="result-stat-n">-8kg</span>
-            <span class="result-stat-l">Masa</span>
+            <span class="result-stat-n">−8kg</span>
+            <span class="result-stat-l">Masa Grasa</span>
           </div>
           <div class="result-stat">
             <span class="result-stat-n">4.5X</span>
-            <span class="result-stat-l">Productividad Combinada</span>
+            <span class="result-stat-l">Productividad</span>
           </div>
           <div class="result-stat">
             <span class="result-stat-n">180D</span>
-            <span class="result-stat-l">Protocolo Extendido</span>
+            <span class="result-stat-l">Protocolo</span>
           </div>
         </div>
-        <p class="result-desc">Transformación completa de composición corporal en hardgainer.</p>
+        <p class="result-desc">Hardgainer. Transformación completa de composición corporal en 180 días extendidos.</p>
       </div>
     </div>
 
-    <!-- Card 7 — third -->
-    <div class="result-card sz-third" data-index="6" onclick="openLightbox(6)">
-      <div class="result-img-placeholder">
-         <img src="img/transformacion-07.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
-        <div class="placeholder-frame">
-          <div class="placeholder-scan"></div>
-          <div class="placeholder-corner"></div>
-          <div class="placeholder-corner-br"></div>
-          <div class="placeholder-num">07</div>
-          <div class="placeholder-label">Imagen Ejemplo 7</div>
-        </div>
+    <!-- transformacion-07 es vertical (732×509) — tratada como 3:2 -->
+    <div class="result-card sz-side" data-index="6" onclick="openLightbox(6)">
+      <div class="result-img-wrapper">
+        <img src="img/transformacion-07.png" alt="Transformación 07 — Miguel T." loading="lazy" style="object-position:top center;">
       </div>
       <div class="result-overlay"></div>
+      <span class="result-badge">Antes / Después</span>
       <span class="result-num-tag">07</span>
       <div class="result-content">
         <span class="result-client-tag">Transformación 07 · 90 Días</span>
@@ -1626,19 +1544,14 @@ footer{
       </div>
     </div>
 
-    <!-- Card 8 — med -->
-    <div class="result-card sz-med" data-index="7" onclick="openLightbox(7)">
-      <div class="result-img-placeholder">
-         <img src="img/transformacion-08.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
-        <div class="placeholder-frame">
-          <div class="placeholder-scan"></div>
-          <div class="placeholder-corner"></div>
-          <div class="placeholder-corner-br"></div>
-          <div class="placeholder-num">08</div>
-          <div class="placeholder-label">Imagen Ejemplo 8</div>
-        </div>
+    <!-- FILA 4: transformacion-08 (cuadrada 508×511) — ocupa 5 cols, más amplio para compensar -->
+    <div class="result-card" style="grid-column:span 5;aspect-ratio:1/1;" data-index="7" onclick="openLightbox(7)">
+      <div class="result-img-wrapper">
+        <!-- imagen cuadrada: object-fit cover funciona perfectamente -->
+        <img src="img/transformacion-08.png" alt="Transformación 08 — Elena M." loading="lazy">
       </div>
       <div class="result-overlay"></div>
+      <span class="result-badge">Antes / Después</span>
       <span class="result-num-tag">08</span>
       <div class="result-content">
         <span class="result-client-tag">Transformación 08 · 90 Días</span>
@@ -1657,15 +1570,35 @@ footer{
       </div>
     </div>
 
-    <!-- Card 9 — third -->
-   
+    <!-- Card complementaria junto a 08 — filler de texto/datos -->
+    <div class="result-card" style="grid-column:span 7;aspect-ratio:auto;min-height:300px;cursor:default;background:rgba(200,255,62,0.03);border:1px solid rgba(200,255,62,0.08);">
+      <div style="padding:52px 56px;height:100%;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2;">
+        <div class="overline" style="margin-bottom:20px;">El sistema en números</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:36px 52px;margin-top:8px;">
+          <div>
+            <div style="font-family:var(--font-display);font-size:clamp(44px,5vw,72px);color:var(--accent);line-height:1;text-shadow:0 0 40px rgba(200,255,62,0.2);">97%</div>
+            <div style="font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:6px;">Tasa de retención<br>a los 90 días</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:clamp(44px,5vw,72px);color:var(--accent);line-height:1;text-shadow:0 0 40px rgba(200,255,62,0.2);">3.8X</div>
+            <div style="font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:6px;">Mejora media de<br>rendimiento</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:clamp(44px,5vw,72px);color:white;line-height:1;">90D</div>
+            <div style="font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:6px;">Protocolo estándar<br>garantizado</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:clamp(44px,5vw,72px);color:white;line-height:1;">2.4K+</div>
+            <div style="font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:6px;">Transformaciones<br>documentadas</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════
-     METHOD
-═══════════════════════════════════════ -->
+<!-- METHOD -->
 <section class="method-strip">
   <div class="overline" data-anim="fade-up">Por Qué Funciona</div>
   <h2 class="section-title" style="margin-top:20px;max-width:700px;" data-anim="fade-up" data-delay="1">
@@ -1699,9 +1632,7 @@ footer{
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════
-     TESTIMONIALS
-═══════════════════════════════════════ -->
+<!-- TESTIMONIALS -->
 <section class="testimonials">
   <div class="testimonials-header">
     <div class="overline" data-anim="fade-up">Lo Que Dicen</div>
@@ -1755,9 +1686,7 @@ footer{
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════
-     FINAL CTA
-═══════════════════════════════════════ -->
+<!-- FINAL CTA -->
 <section class="final-cta">
   <div class="final-cta-content">
     <div class="overline" style="justify-content:center;" data-anim="fade-up">La Pregunta Es Simple</div>
@@ -1818,9 +1747,7 @@ footer{
   <p>No estás aquí por motivación. Estás aquí por identidad.</p>
 </div>
 
-<!-- ═══════════════════════════════════════
-     SCRIPTS
-═══════════════════════════════════════ -->
+<!-- SCRIPTS -->
 <script>
 /* ─ ANTI-DEVTOOLS ─ */
 document.addEventListener('contextmenu', e => e.preventDefault());
@@ -1866,14 +1793,14 @@ window.addEventListener('scroll', () => {
 
 /* ─ LIGHTBOX DATA ─ */
 const lightboxData = [
-  { label:'Transformación 01', name:'CARLOS M.', desc:'Pérdida de composición corporal, recuperación de energía y cuadruplicó su output laboral en 90 días de protocolo exacto.', m1:'90D', m1l:'Duración', m2:'−9kg', m2l:'Peso Total', m3:'4.2X', m3l:'Productividad' },
-  { label:'Transformación 02', name:'ANA R.', desc:'Emprendedora, 29 años. Redefinición total de hábitos, composición corporal y estructura de trabajo. Cerró su mejor trimestre empresarial al mismo tiempo.', m1:'90D', m1l:'Duración', m2:'−11kg', m2l:'Composición', m3:'3.8X', m3l:'Output' },
-  { label:'Transformación 03', name:'MARC B.', desc:'Desarrollador de software, 27 años. Objetivo: ganancia de masa sin perder rendimiento cognitivo. Ambos objetivos superados simultáneamente.', m1:'90D', m1l:'Duración', m2:'+7kg', m2l:'Masa Muscular', m3:'3.1X', m3l:'Deep Work' },
-  { label:'Transformación 04', name:'LAURA V.', desc:'Manager financiera, 38 años. Recuperó energía, transformó composición y construyó el sistema de productividad más sólido de su carrera.', m1:'90D', m1l:'Duración', m2:'−17kg', m2l:'Grasa Corporal', m3:'5X', m3l:'Concentración' },
-  { label:'Transformación 05', name:'DAVID P.', desc:'CEO de startup, 41 años. Combatió el burnout ejecutivo con el protocolo de recovery y salió con más energía, claridad y físico que a los 30.', m1:'90D', m1l:'Duración', m2:'−9kg', m2l:'Grasa', m3:'3.5X', m3l:'Producción Diaria' },
-  { label:'Transformación 06', name:'CHEN C.', desc:'Hardgainer. Los hardgainers son el caso más difícil. Chen siguió el protocolo de Physical System al milímetro y consiguió lo que 5 años de gym por su cuenta no le habían dado.', m1:'180D', m1l:'Duración', m2:'-8kg', m2l:'Grasa', m3:'4.5X', m3l:'Prod. Combinada' },
-  { label:'Transformación 07', name:'MIGUEL T.', desc:'Atleta amateur. Ya entrenaba pero nunca había integrado todos los módulos. El sistema transformó un aficionado en un ejecutor de élite en todas las dimensiones.', m1:'90D', m1l:'Duración', m2:'−16kg', m2l:'Grasa', m3:'4.8X', m3l:'Rendimiento' },
-  { label:'Transformación 08', name:'ELENA M.', desc:'Enfermera, 36 años. Aplicó el protocolo con rigor científico. Resultados medidos clínicamente. Declaró que es el mejor experimento de biohacking que ha realizado en su vida.', m1:'90D', m1l:'Duración', m2:'−15kg', m2l:'Composición', m3:'6X', m3l:'Energía Sostenida' },
+  { label:'Transformación 01', name:'CARLOS M.', desc:'Pérdida de composición corporal, recuperación de energía y cuadruplicó su output laboral en 90 días de protocolo exacto.', m1:'90D', m1l:'Duración', m2:'−9kg', m2l:'Peso Total', m3:'4.2X', m3l:'Productividad', img:'img/transformacion-01.png' },
+  { label:'Transformación 02', name:'ANA R.', desc:'Emprendedora, 29 años. Redefinición total de hábitos, composición corporal y estructura de trabajo. Cerró su mejor trimestre empresarial al mismo tiempo.', m1:'90D', m1l:'Duración', m2:'−11kg', m2l:'Composición', m3:'3.8X', m3l:'Output', img:'img/transformacion-02.png' },
+  { label:'Transformación 03', name:'MARC B.', desc:'Desarrollador de software, 27 años. Objetivo: ganancia de masa sin perder rendimiento cognitivo. Ambos objetivos superados simultáneamente.', m1:'90D', m1l:'Duración', m2:'+7kg', m2l:'Masa Muscular', m3:'3.1X', m3l:'Deep Work', img:'img/transformacion-03.png' },
+  { label:'Transformación 04', name:'LAURA V.', desc:'Manager financiera, 38 años. Recuperó energía, transformó composición y construyó el sistema de productividad más sólido de su carrera.', m1:'90D', m1l:'Duración', m2:'−17kg', m2l:'Grasa Corporal', m3:'5X', m3l:'Concentración', img:'img/transformacion-04.png' },
+  { label:'Transformación 05', name:'DAVID P.', desc:'CEO de startup, 41 años. Combatió el burnout ejecutivo con el protocolo de recovery y salió con más energía, claridad y físico que a los 30.', m1:'90D', m1l:'Duración', m2:'−9kg', m2l:'Grasa', m3:'3.5X', m3l:'Producción Diaria', img:'img/transformacion-05.png' },
+  { label:'Transformación 06', name:'CHEN C.', desc:'Hardgainer. Los hardgainers son el caso más difícil. Chen siguió el protocolo de Physical System al milímetro y consiguió lo que 5 años de gym por su cuenta no le habían dado.', m1:'180D', m1l:'Duración', m2:'−8kg', m2l:'Grasa', m3:'4.5X', m3l:'Prod. Combinada', img:'img/transformacion-09.png' },
+  { label:'Transformación 07', name:'MIGUEL T.', desc:'Atleta amateur. Ya entrenaba pero nunca había integrado todos los módulos. El sistema transformó un aficionado en un ejecutor de élite en todas las dimensiones.', m1:'90D', m1l:'Duración', m2:'−16kg', m2l:'Grasa', m3:'4.8X', m3l:'Rendimiento', img:'img/transformacion-07.png' },
+  { label:'Transformación 08', name:'ELENA M.', desc:'Enfermera, 36 años. Aplicó el protocolo con rigor científico. Resultados medidos clínicamente. Declaró que es el mejor experimento de biohacking que ha realizado en su vida.', m1:'90D', m1l:'Duración', m2:'−15kg', m2l:'Composición', m3:'6X', m3l:'Energía Sostenida', img:'img/transformacion-08.png' },
 ];
 
 let currentLB = 0;
@@ -1898,82 +1825,48 @@ function closeLightbox() {
 function lbNavigate(dir) {
   currentLB = (currentLB + dir + lightboxData.length) % lightboxData.length;
   updateLightboxContent();
-
-  // Animación de transición más simple y efectiva
-  lightboxInner.style.transform = `scale(0.96) translateX(${dir * 20}px)`;
   lightboxInner.style.transition = 'transform 0.2s ease';
+  lightboxInner.style.transform = `scale(0.97) translateX(${dir * 24}px)`;
   setTimeout(() => {
     lightboxInner.style.transform = 'scale(1) translateX(0)';
-  }, 150);
+  }, 140);
 }
 
 function updateLightboxContent() {
   const d = lightboxData[currentLB];
   if (!d) return;
-
-  // Actualizar textos
   document.getElementById('lbLabel').textContent = d.label;
   document.getElementById('lbName').textContent = d.name;
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
-  
-  // CAMBIA MANUALMENTE CADA IMAGEN (con GUION)
-  let imagenPath = '';
-  if (currentLB === 0) imagenPath = 'img/transformacion-01.png';
-  else if (currentLB === 1) imagenPath = 'img/transformacion-02.png';
-  else if (currentLB === 2) imagenPath = 'img/transformacion-03.png';
-  else if (currentLB === 3) imagenPath = 'img/transformacion-04.png';
-  else if (currentLB === 4) imagenPath = 'img/transformacion-05.png';
-  else if (currentLB === 5) imagenPath = 'img/transformacion-09.png';
-  else if (currentLB === 6) imagenPath = 'img/transformacion-07.png';
-  else if (currentLB === 7) imagenPath = 'img/transformacion-08.png';
-  else if (currentLB === 8) imagenPath = 'img/transformacion-09.png';
-  
-  // Poner la imagen
-  const lbPlaceholder = document.getElementById('lbPlaceholder');
-  lbPlaceholder.innerHTML = `<img src="${imagenPath}" style="width:100%; height:100%; object-fit:cover; display:block;">`;
-  
-  // Actualizar métricas
-  const m1Label = document.getElementById('lbM1').nextElementSibling;
-  const m2Label = document.getElementById('lbM2').nextElementSibling;
-  const m3Label = document.getElementById('lbM3').nextElementSibling;
-  if (m1Label) m1Label.textContent = d.m1l;
-  if (m2Label) m2Label.textContent = d.m2l;
-  if (m3Label) m3Label.textContent = d.m3l;
-  
+  document.getElementById('lbM1L').textContent = d.m1l;
   document.getElementById('lbM2').textContent = d.m2;
+  document.getElementById('lbM2L').textContent = d.m2l;
   document.getElementById('lbM3').textContent = d.m3;
+  document.getElementById('lbM3L').textContent = d.m3l;
   document.getElementById('lbCurrent').textContent = currentLB + 1;
   document.getElementById('lbTotal').textContent = lightboxData.length;
+  // Imagen: se muestra en tamaño real (contain), respetando proporciones
+  const lbImg = document.getElementById('lbImg');
+  lbImg.src = d.img;
+  lbImg.alt = d.label + ' — ' + d.name;
 }
 
-   
-
-// Cerrar con la X - IMPORTANTE: usar stopPropagation
 lbCloseBtn.addEventListener('click', function(e) {
   e.stopPropagation();
   closeLightbox();
 });
-
-// Cerrar si se hace clic fuera del contenido (overlay)
 lightbox.addEventListener('click', function(e) {
-  if (e.target === lightbox) {
-    closeLightbox();
-  }
+  if (e.target === lightbox) closeLightbox();
 });
-
-// Navegación con botones
 lbPrevBtn.addEventListener('click', function(e) {
   e.stopPropagation();
   lbNavigate(-1);
 });
-
 lbNextBtn.addEventListener('click', function(e) {
   e.stopPropagation();
   lbNavigate(1);
 });
-
-// Keyboard navigation
 document.addEventListener('keydown', function(e) {
   if (!lightbox.classList.contains('active')) return;
   if (e.key === 'ArrowRight') lbNavigate(1);
@@ -1984,14 +1877,12 @@ document.addEventListener('keydown', function(e) {
 /* ─ GSAP ─ */
 gsap.registerPlugin(ScrollTrigger);
 
-// Hero entry
 gsap.from(['#heroEyebrow','#heroH1','#heroRight'], {
   opacity:0, y:80, duration:1.4,
   stagger:0.2, delay:0.2,
   ease:'power4.out', clearProps:'all'
 });
 
-// Hero number counters — fast on load
 const heroCounters = [
   { el: document.getElementById('hs1'), target:2400, suffix:'+' },
   { el: document.getElementById('hs2'), target:97, suffix:'%' },
@@ -2010,7 +1901,6 @@ setTimeout(() => {
   });
 }, 100);
 
-// Numbers band counters
 ScrollTrigger.create({
   trigger:'.numbers-band', start:'top 85%', once:true,
   onEnter:() => {
@@ -2033,8 +1923,6 @@ ScrollTrigger.create({
   }
 });
 
-   
-// Scroll animations
 function setupAnim(el){
   const delay = parseFloat(el.dataset.delay || 0) * 0.15;
   gsap.from(el, {
@@ -2045,13 +1933,11 @@ function setupAnim(el){
 }
 document.querySelectorAll('[data-anim]').forEach(setupAnim);
 
-// Gallery cards stagger
 gsap.from('.result-card', {
-  opacity:0, y:80, duration:1.2, stagger:0.07, ease:'power4.out', clearProps:'all',
+  opacity:0, y:60, duration:1.1, stagger:0.06, ease:'power4.out', clearProps:'all',
   scrollTrigger:{ trigger:'#galleryGrid', start:'top 85%', toggleActions:'play none none reverse' }
 });
 
-// Featured section
 gsap.from('.ft-content > *', {
   opacity:0, x:-60, duration:1.2, stagger:0.15, ease:'power4.out', clearProps:'all',
   scrollTrigger:{ trigger:'.featured-transform', start:'top 75%', toggleActions:'play none none reverse' }
@@ -2061,13 +1947,11 @@ gsap.from('.ft-image-stack', {
   scrollTrigger:{ trigger:'.featured-transform', start:'top 75%', toggleActions:'play none none reverse' }
 });
 
-// Numbers band
 gsap.from('.nb-cell', {
   opacity:0, y:50, duration:1, stagger:.1, ease:'power3.out', clearProps:'all',
   scrollTrigger:{ trigger:'.numbers-band', start:'top 85%', toggleActions:'play none none reverse' }
 });
 
-// Progress bars
 ScrollTrigger.create({
   trigger:'#progressBars', start:'top 80%', once:true,
   onEnter:() => {
@@ -2075,49 +1959,44 @@ ScrollTrigger.create({
   }
 });
 
-// Method cards
 gsap.from('.method-card', {
   opacity:0, y:60, duration:1.1, stagger:.12, ease:'power3.out', clearProps:'all',
   scrollTrigger:{ trigger:'.method-grid', start:'top 85%', toggleActions:'play none none reverse' }
 });
 
-// Testimonials
 gsap.from('.testi-card', {
   opacity:0, y:60, duration:1.1, stagger:.12, ease:'power3.out', clearProps:'all',
   scrollTrigger:{ trigger:'.testimonials-grid', start:'top 85%', toggleActions:'play none none reverse' }
 });
 
-// Footer
 gsap.from('footer > *', {
   opacity:0, y:40, duration:1, stagger:.1, ease:'power3.out', clearProps:'all',
   scrollTrigger:{ trigger:'footer', start:'top 90%', toggleActions:'play none none reverse' }
 });
 
-// Hero bottom line reveal
 gsap.from('.hero-bottom-line', {
   scaleX:0, duration:2, ease:'power3.out', clearProps:'all', delay:.8,
   transformOrigin:'left'
 });
 
-// Final CTA
 gsap.from('.final-cta-content > *', {
   opacity:0, y:60, duration:1.2, stagger:.15, ease:'power4.out', clearProps:'all',
   scrollTrigger:{ trigger:'.final-cta', start:'top 80%', toggleActions:'play none none reverse' }
 });
 
-// Parallax on featured bg
 gsap.to('.ft-bg-img img', {
   yPercent:15, ease:'none',
   scrollTrigger:{ trigger:'.featured-transform', start:'top bottom', end:'bottom top', scrub:1.5 }
 });
 
-// Subtle card 3D tilt
+/* Tilt 3D en cards */
 document.querySelectorAll('.result-card').forEach(card => {
+  if(card.style.cursor === 'default') return;
   card.addEventListener('mousemove', e => {
     const r = card.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width  - .5;
     const y = (e.clientY - r.top)  / r.height - .5;
-    card.style.transform = `perspective(1200px) rotateX(${-y*4}deg) rotateY(${x*4}deg) translateZ(8px)`;
+    card.style.transform = `perspective(1200px) rotateX(${-y*3}deg) rotateY(${x*3}deg) translateZ(6px)`;
   });
   card.addEventListener('mouseleave', () => {
     card.style.transform = '';
@@ -2126,7 +2005,7 @@ document.querySelectorAll('.result-card').forEach(card => {
   card.addEventListener('mouseenter', () => { card.style.transition = 'transform .1s'; });
 });
 
-// Magnetic submit
+/* Magnetic buttons */
 document.querySelectorAll('.btn-main').forEach(btn => {
   btn.addEventListener('mousemove', e => {
     const r = btn.getBoundingClientRect();
@@ -2135,7 +2014,6 @@ document.querySelectorAll('.btn-main').forEach(btn => {
   btn.addEventListener('mouseleave', () => { btn.style.transform=''; });
 });
 
-// Touch: disable 3D tilt
 if('ontouchstart' in window){
   document.querySelectorAll('.result-card').forEach(c => { c.style.transform='none'; });
 }
