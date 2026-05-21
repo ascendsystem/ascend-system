@@ -1,19 +1,24 @@
+Perfecto! Te voy a separar el contenido en dos archivos exactamente como lo pides.
+
+## Archivo 1: `sistema.html`
+(Solo la parte superior - hero, intro, neural interlude y la arquitectura del sistema con los 4 módulos)
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Programa — AscendSystem</title>
-
+<title>Sistema — Ascend System</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,700&family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
 <style>
+/* ─── ROOT ─── */
 :root{
   --bg:#030303;
   --bg2:#070707;
@@ -77,25 +82,26 @@ body::after{
   80%{transform:translate(-1px,2px);}100%{transform:translate(0,0);}
 }
 
+/* ─── AMBIENT ─── */
 body::before{
   content:'';position:fixed;inset:0;
   background:
-    radial-gradient(ellipse 55% 45% at 10% 0%,rgba(200,255,62,0.08) 0%,transparent 60%),
-    radial-gradient(ellipse 45% 35% at 90% 100%,rgba(200,255,62,0.055) 0%,transparent 60%);
+    radial-gradient(ellipse 55% 45% at 10% 0%,rgba(200,255,62,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 35% at 90% 100%,rgba(200,255,62,0.04) 0%,transparent 60%);
   pointer-events:none;z-index:-1;
 }
 
+/* ─── SCROLLBAR ─── */
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.25);border-radius:999px;}
 
-/* ─── PROGRESS BAR ─── */
+/* ─── PROGRESS ─── */
 #progress-bar{
   position:fixed;top:0;left:0;height:2px;
   background:linear-gradient(90deg,var(--accent),var(--accent2));
   z-index:99997;width:0%;
   box-shadow:0 0 12px rgba(200,255,62,0.6);
-  transition:width .05s linear;
 }
 
 /* ─── NAV ─── */
@@ -104,7 +110,7 @@ body::before{
   padding:36px 80px;
   display:flex;align-items:center;justify-content:space-between;
   z-index:9000;
-  transition:padding .5s ease,background .5s ease,border-color .5s ease;
+  transition:padding .5s,background .5s,border-color .5s;
   border-bottom:1px solid transparent;
 }
 .nav.scrolled{
@@ -114,12 +120,14 @@ body::before{
   border-bottom-color:var(--line);
 }
 .logo{
-  font-family:var(--font-display);
-  font-size:24px;letter-spacing:6px;
-  color:white;display:flex;align-items:center;gap:12px;
-  text-decoration:none;
+  font-family:var(--font-display);font-size:24px;letter-spacing:6px;
+  color:white;display:flex;align-items:center;gap:12px;text-decoration:none;
 }
-.logo-img{height:34px;width:auto;object-fit:contain;filter:drop-shadow(0 0 8px rgba(200,255,62,0.4));}
+.logo-img{
+  height:34px;width:auto;
+  object-fit:contain;
+  filter:drop-shadow(0 0 8px rgba(200,255,62,0.4));
+}
 .logo span{color:var(--accent);}
 .nav-links{display:flex;gap:44px;align-items:center;}
 .nav-links a{
@@ -136,764 +144,464 @@ body::before{
 .nav-links a:hover{color:white;}
 .nav-links a:hover::after{width:100%;}
 .nav-links a.active{color:var(--accent);}
-.nav-links a.active::after{width:100%;}
 .nav-cta{
   font-family:var(--font-cond);font-size:12px;font-weight:800;
   letter-spacing:2.5px;text-transform:uppercase;
   color:black;background:var(--accent);
   padding:13px 30px;border:none;cursor:pointer;
   clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
-  transition:transform .3s,box-shadow .3s;
-  position:relative;overflow:hidden;
+  transition:transform .3s,box-shadow .3s;text-decoration:none;display:inline-block;
 }
-.nav-cta::before{
-  content:'';position:absolute;top:0;left:-120%;width:80%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);
-  transform:skewX(-25deg);transition:left .6s;
-}
-.nav-cta:hover::before{left:150%;}
 .nav-cta:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(200,255,62,0.4);}
-
-/* ─── HAMBURGER ─── */
-.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;z-index:9100;}
-.nav-hamburger span{display:block;width:28px;height:2px;background:var(--text);border-radius:2px;transition:transform .4s,opacity .4s;}
-.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-.nav-hamburger.open span:nth-child(2){opacity:0;}
-.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-
-/* ─── MOBILE MENU ─── */
-.mobile-menu{
-  position:fixed;inset:0;background:rgba(3,3,3,0.97);backdrop-filter:blur(40px);
-  z-index:9050;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:44px;
-  clip-path:circle(0% at calc(100% - 52px) 52px);
-  transition:clip-path .7s cubic-bezier(.77,0,.175,1);pointer-events:none;
-}
-.mobile-menu.open{clip-path:circle(170% at calc(100% - 52px) 52px);pointer-events:all;}
-.mobile-menu a{font-family:var(--font-display);font-size:56px;color:rgba(240,237,232,0.4);text-decoration:none;letter-spacing:4px;text-transform:uppercase;transition:color .3s,transform .3s;}
-.mobile-menu a:hover{color:var(--accent);transform:translateX(12px);}
-.mobile-menu .mobile-cta{font-family:var(--font-cond);font-size:14px;font-weight:800;letter-spacing:3px;color:black;background:var(--accent);padding:16px 44px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);text-decoration:none;}
-
-/* ═══════════════════════════════════════════
-   PROGRAM HERO — Creative vertical split
-   ═══════════════════════════════════════════ */
-.prog-hero{
-  position:relative;min-height:100vh;overflow:hidden;
-  display:flex;flex-direction:column;
+@media(max-width:900px){
+  .nav{padding:22px 24px;}
+  .nav.scrolled{padding:14px 24px;}
+  .nav-links{display:none;}
+  .nav-cta{padding:10px 20px;font-size:11px;}
 }
 
-/* Left architectural accent column */
-.prog-hero-col-left{
-  position:absolute;left:0;top:0;bottom:0;width:6px;
-  background:linear-gradient(to bottom,transparent,var(--accent) 30%,var(--accent2) 70%,transparent);
-  opacity:.6;z-index:20;
+/* ═══════════════════════════════════════════════
+   HERO — CINEMATIC OPENING
+═══════════════════════════════════════════════ */
+.hero-sistema{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
 }
 
-/* Vertical text label */
-.prog-hero-vertical{
-  position:absolute;left:28px;top:50%;
-  transform:translateY(-50%) rotate(-90deg);
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:5px;color:rgba(200,255,62,0.35);text-transform:uppercase;
-  white-space:nowrap;z-index:20;
-  transform-origin:center center;
+/* Animated grid canvas background */
+#hero-canvas{
+  position:absolute;inset:0;z-index:0;
+  width:100%;height:100%;
 }
 
-/* Large background number */
-.prog-hero-bg-num{
-  position:absolute;right:-40px;top:50%;
-  transform:translateY(-50%);
-  font-family:var(--font-display);
-  font-size:clamp(320px,38vw,560px);
-  color:rgba(200,255,62,0.025);
-  line-height:1;z-index:1;
-  pointer-events:none;letter-spacing:-20px;
-  white-space:nowrap;
-  animation:bgNumDrift 20s ease-in-out infinite;
-}
-@keyframes bgNumDrift{
-  0%,100%{transform:translateY(-50%) translateX(0);}
-  50%{transform:translateY(calc(-50% - 20px)) translateX(-10px);}
+.hero-vignette-s{
+  position:absolute;inset:0;z-index:1;
+  background:
+    radial-gradient(ellipse 70% 70% at center,transparent 0%,rgba(3,3,3,.85) 100%),
+    linear-gradient(to bottom,rgba(3,3,3,.7) 0%,transparent 30%,transparent 70%,rgba(3,3,3,1) 100%);
 }
 
-/* Grid overlay */
-.prog-hero-grid{
-  position:absolute;inset:0;z-index:2;
-  background-image:
-    linear-gradient(rgba(200,255,62,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(200,255,62,0.03) 1px,transparent 1px);
-  background-size:80px 80px;
-  animation:gridMove 30s linear infinite;
-}
-@keyframes gridMove{0%{background-position:0 0;}100%{background-position:80px 80px;}}
-
-/* Scan line */
-.prog-hero-scan{
-  position:absolute;inset:0;z-index:3;
-  background:linear-gradient(transparent 0%,rgba(200,255,62,0.02) 50%,transparent 100%);
-  background-size:100% 240px;
-  animation:scanDown 8s linear infinite;pointer-events:none;
-}
-@keyframes scanDown{0%{background-position:0 -240px;}100%{background-position:0 110vh;}}
-
-/* Radial glow */
-.prog-hero-glow{
-  position:absolute;width:900px;height:900px;
-  background:radial-gradient(circle,rgba(200,255,62,0.07) 0%,transparent 65%);
-  left:50%;top:50%;transform:translate(-50%,-50%);
-  z-index:2;pointer-events:none;
-  animation:glowPulse 7s ease-in-out infinite;
-}
-@keyframes glowPulse{
-  0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}
-  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
-}
-
-.prog-hero-content{
+.hero-s-content{
   position:relative;z-index:10;
-  display:flex;flex-direction:column;justify-content:center;
-  padding:160px 80px 120px 110px;
-  min-height:100vh;
+  text-align:center;
+  padding:160px 40px 100px;
+  max-width:1200px;
 }
 
-/* Eyebrow breadcrumb */
-.prog-breadcrumb{
-  display:flex;align-items:center;gap:14px;margin-bottom:52px;
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:4px;text-transform:uppercase;
-  color:rgba(200,255,62,0.5);
-}
-.prog-breadcrumb a{color:rgba(200,255,62,0.35);text-decoration:none;transition:color .3s;}
-.prog-breadcrumb a:hover{color:var(--accent);}
-.prog-breadcrumb-sep{color:rgba(200,255,62,0.2);}
-.prog-breadcrumb span{color:var(--accent);}
-
-/* Main heading — stacked with offset lines */
-.prog-hero-heading{
-  position:relative;margin-bottom:50px;
-}
-.prog-hero-heading .line-1{
-  display:block;
-  font-family:var(--font-display);
-  font-size:clamp(48px,6vw,84px);
-  color:rgba(255,255,255,0.22);
-  -webkit-text-stroke:1px rgba(255,255,255,0.15);
-  letter-spacing:2px;line-height:1;
-  margin-left:4px;
-}
-.prog-hero-heading .line-2{
-  display:block;
-  font-family:var(--font-display);
-  font-size:clamp(110px,16vw,200px);
-  color:white;line-height:.82;
-  letter-spacing:-4px;
-  position:relative;
-  text-shadow:0 0 120px rgba(200,255,62,0.07);
-}
-.prog-hero-heading .line-3{
-  display:block;
-  font-family:var(--font-display);
-  font-size:clamp(60px,8vw,108px);
-  color:var(--accent);line-height:.9;
-  letter-spacing:-1px;
-  margin-left:clamp(60px,8vw,140px);
-  text-shadow:0 0 80px rgba(200,255,62,0.25),0 0 200px rgba(200,255,62,0.1);
-}
-
-/* Horizontal divider with label */
-.prog-hero-divider{
-  display:flex;align-items:center;gap:24px;
+.hero-s-badge{
+  display:inline-flex;align-items:center;gap:16px;
   margin-bottom:40px;
-}
-.prog-hero-divider-line{
-  flex:1;height:1px;
-  background:linear-gradient(90deg,var(--accent),rgba(200,255,62,0.05));
-  max-width:260px;
-}
-.prog-hero-divider-label{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:4px;color:var(--muted);text-transform:uppercase;
-}
-
-/* Description */
-.prog-hero-desc{
-  max-width:640px;font-size:18px;line-height:1.85;
-  color:rgba(240,237,232,0.55);font-weight:400;
-  margin-bottom:56px;
-  padding-left:22px;
-  border-left:2px solid rgba(200,255,62,0.3);
-}
-.prog-hero-desc strong{color:var(--text);font-weight:600;}
-
-/* Actions */
-.prog-hero-actions{display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
-
-/* Bottom metadata bar */
-.prog-hero-meta{
-  position:absolute;bottom:0;left:0;right:0;z-index:10;
-  display:flex;align-items:stretch;
-  border-top:1px solid var(--line);
-  background:rgba(3,3,3,0.7);backdrop-filter:blur(24px);
-}
-.prog-meta-item{
-  flex:1;padding:22px 40px;
-  border-right:1px solid var(--line);
-  display:flex;align-items:center;gap:18px;
-}
-.prog-meta-item:last-child{border-right:none;}
-.prog-meta-icon{
-  width:34px;height:34px;
+  padding:10px 28px;
   border:1px solid rgba(200,255,62,0.2);
   background:rgba(200,255,62,0.05);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
+  backdrop-filter:blur(10px);
 }
-.prog-meta-icon svg{width:15px;height:15px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.prog-meta-text strong{
-  display:block;font-family:var(--font-display);font-size:24px;
-  color:var(--accent);line-height:1;
+.hero-s-badge span{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:4px;color:var(--accent);text-transform:uppercase;
 }
-.prog-meta-text span{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
+.badge-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--accent);
+  animation:pulseDot 2s ease-in-out infinite;
+}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.6);}}
+
+.hero-s-title{
+  font-family:var(--font-display);
+  font-size:clamp(70px,12vw,160px);
+  line-height:.84;letter-spacing:-2px;
+  color:white;margin-bottom:36px;
+}
+.hero-s-title .t-accent{
+  color:var(--accent);display:block;
+  text-shadow:0 0 100px rgba(200,255,62,0.3);
+}
+.hero-s-title .t-stroke{
+  -webkit-text-stroke:1px rgba(255,255,255,0.2);color:transparent;display:block;
+}
+
+.hero-s-sub{
+  max-width:700px;margin:0 auto 60px;
+  font-size:18px;line-height:1.85;
+  color:rgba(240,237,232,0.55);
+}
+
+.hero-s-scroll-hint{
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:4px;color:var(--muted);text-transform:uppercase;
+  margin-top:20px;
+}
+.scroll-line{
+  width:1px;height:60px;background:linear-gradient(to bottom,var(--accent),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+/* ═══════════════════════════════════════════════
+   INTRO STATEMENT
+═══════════════════════════════════════════════ */
+.intro-statement{
+  padding:180px 80px;
+  display:grid;grid-template-columns:1fr 1fr;gap:100px;
+  align-items:center;
+  position:relative;overflow:hidden;
+}
+.intro-statement::before{
+  content:'';position:absolute;
+  left:-200px;top:50%;transform:translateY(-50%);
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,255,62,0.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.intro-overline{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
+  display:flex;align-items:center;gap:16px;margin-bottom:28px;
+}
+.intro-overline::before{content:'';width:28px;height:1px;background:var(--accent);}
+
+.intro-title{
+  font-family:var(--font-display);
+  font-size:clamp(56px,7vw,100px);
+  line-height:.88;letter-spacing:-1px;color:white;margin-bottom:32px;
+}
+.intro-title em{font-style:normal;color:var(--accent);}
+
+.intro-desc{
+  font-size:18px;line-height:1.9;
+  color:rgba(240,237,232,0.55);
+  border-left:2px solid rgba(200,255,62,0.3);
+  padding-left:24px;
+}
+
+/* Right side — animated stats */
+.intro-right{
+  display:grid;grid-template-columns:1fr 1fr;gap:3px;
+}
+.i-stat{
+  padding:44px 36px;
+  background:var(--surface);border:1px solid var(--line);
+  position:relative;overflow:hidden;
+  transition:background .4s;
+}
+.i-stat::before{
+  content:'';position:absolute;top:0;left:0;width:2px;height:100%;
+  background:linear-gradient(to bottom,var(--accent),transparent);
+  transform:scaleY(0);transform-origin:top;
+  transition:transform .6s cubic-bezier(.16,1,.3,1);
+}
+.i-stat:hover{background:rgba(200,255,62,0.04);}
+.i-stat:hover::before{transform:scaleY(1);}
+.i-stat-n{
+  font-family:var(--font-display);font-size:56px;
+  color:var(--accent);line-height:1;display:block;margin-bottom:8px;
+}
+.i-stat-l{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
   letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;
 }
 
-/* ─── TICKER ─── */
-.ticker{
-  background:var(--accent);overflow:hidden;
-  white-space:nowrap;padding:17px 0;position:relative;z-index:20;
+@media(max-width:1000px){
+  .intro-statement{grid-template-columns:1fr;gap:60px;padding:100px 24px;}
+  .intro-right{grid-template-columns:1fr 1fr;}
 }
-.ticker-inner{display:inline-flex;animation:tickerMove 22s linear infinite;}
-.ticker-item{display:inline-flex;align-items:center;gap:28px;padding:0 32px;}
-.ticker-item span{font-family:var(--font-cond);font-size:12px;font-weight:800;letter-spacing:3.5px;color:black;text-transform:uppercase;}
-.ticker-dot{width:4px;height:4px;background:black;border-radius:50%;opacity:.35;}
-@keyframes tickerMove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
-/* ─── SECTION COMMON ─── */
-.section{padding:160px 80px;position:relative;}
+/* ═══════════════════════════════════════════════
+   SYSTEM ARCHITECTURE — THE BIG DIAGRAM
+═══════════════════════════════════════════════ */
+.system-section{
+  padding:0 0 200px;
+  position:relative;
+}
 
+.system-header{
+  text-align:center;padding:120px 40px 100px;
+  position:relative;
+}
+.system-header-title{
+  font-family:var(--font-display);
+  font-size:clamp(60px,9vw,120px);
+  line-height:.88;letter-spacing:-2px;
+  color:white;
+}
+.system-header-title em{font-style:normal;color:var(--accent);}
+.system-header-sub{
+  margin-top:28px;font-size:18px;
+  color:rgba(240,237,232,0.5);max-width:600px;margin-inline:auto;
+}
+
+/* THE VERTICAL PIPELINE */
+.pipeline{
+  max-width:1100px;margin:0 auto;
+  position:relative;padding:0 40px;
+}
+
+/* Central spine line */
+.pipeline-spine{
+  position:absolute;left:50%;top:0;bottom:0;
+  width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(200,255,62,0.15) 5%,rgba(200,255,62,0.15) 95%,transparent);
+  transform:translateX(-50%);
+}
+.pipeline-spine-glow{
+  position:absolute;left:50%;top:0;
+  width:3px;height:0%;
+  background:linear-gradient(to bottom,var(--accent),var(--accent2));
+  transform:translateX(-50%);
+  box-shadow:0 0 20px rgba(200,255,62,0.5);
+  transition:height .1s;
+}
+
+/* Module nodes */
+.module-node{
+  display:grid;
+  grid-template-columns:1fr 80px 1fr;
+  align-items:start;
+  margin-bottom:0;
+  position:relative;
+}
+
+.module-node:nth-child(even) .node-content-left{order:3;}
+.module-node:nth-child(even) .node-center{order:2;}
+.module-node:nth-child(even) .node-content-right{order:1;}
+
+/* Center orb */
+.node-center{
+  display:flex;flex-direction:column;
+  align-items:center;padding-top:60px;
+  position:relative;z-index:10;
+}
+.node-orb{
+  width:60px;height:60px;border-radius:50%;
+  background:var(--bg);
+  border:2px solid rgba(200,255,62,0.3);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  cursor:default;
+  transition:border-color .5s,box-shadow .5s;
+}
+.node-orb::before{
+  content:'';position:absolute;inset:-8px;border-radius:50%;
+  border:1px solid rgba(200,255,62,0.1);
+  transition:border-color .5s;
+}
+.node-orb::after{
+  content:'';position:absolute;inset:-16px;border-radius:50%;
+  border:1px solid rgba(200,255,62,0.05);
+  transition:border-color .5s;
+}
+.node-orb.active{
+  border-color:var(--accent);
+  box-shadow:0 0 40px rgba(200,255,62,0.3),0 0 80px rgba(200,255,62,0.1);
+}
+.node-orb.active::before{border-color:rgba(200,255,62,0.2);}
+.node-orb.active::after{border-color:rgba(200,255,62,0.1);}
+.orb-num{
+  font-family:var(--font-display);font-size:22px;
+  color:var(--accent);line-height:1;
+}
+.node-connector{
+  width:1px;flex:1;min-height:120px;
+  background:linear-gradient(to bottom,var(--accent),rgba(200,255,62,0.1));
+  opacity:0.2;
+  transition:opacity .5s;
+}
+.node-connector.active{opacity:0.6;}
+
+/* Content panels */
+.node-content-left,.node-content-right{
+  padding:60px 44px 80px;
+}
+.node-content-left{
+  text-align:right;
+  border-right:1px solid var(--line);
+}
+.node-content-right{
+  text-align:left;
+  border-left:1px solid var(--line);
+}
+
+/* Module card interior */
+.mod-tag{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:4px;color:var(--accent);text-transform:uppercase;
+  margin-bottom:18px;display:block;
+}
+.mod-title{
+  font-family:var(--font-display);
+  font-size:clamp(44px,5vw,72px);
+  line-height:.9;letter-spacing:-1px;color:white;
+  margin-bottom:24px;
+}
+.mod-desc{
+  font-size:15px;line-height:1.85;
+  color:rgba(240,237,232,0.52);
+  margin-bottom:32px;
+  max-width:380px;
+}
+.node-content-left .mod-desc{margin-left:auto;}
+
+.mod-tags-list{
+  display:flex;gap:6px;flex-wrap:wrap;
+  margin-bottom:36px;
+}
+.node-content-left .mod-tags-list{justify-content:flex-end;}
+.mod-tag-pill{
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--muted2);text-transform:uppercase;
+  padding:6px 13px;border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.02);
+  transition:all .3s;
+}
+.mod-tag-pill:hover{border-color:rgba(200,255,62,0.2);color:var(--accent);}
+
+/* Key points */
+.mod-points{display:flex;flex-direction:column;gap:12px;}
+.node-content-left .mod-points{align-items:flex-end;}
+.mod-point{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:rgba(240,237,232,0.45);
+  transition:color .3s;
+}
+.node-content-left .mod-point{flex-direction:row-reverse;}
+.mod-point-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:var(--accent);flex-shrink:0;opacity:0.5;
+}
+.mod-point:hover{color:var(--text);}
+.mod-point:hover .mod-point-dot{opacity:1;}
+
+/* Module visual accent */
+.mod-visual-accent{
+  margin-top:44px;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:0;
+  transition:opacity .8s;
+}
+.node-content-left .mod-visual-accent{
+  background:linear-gradient(90deg,var(--accent),transparent);
+}
+.node-content-right .mod-visual-accent{
+  background:linear-gradient(90deg,transparent,var(--accent));
+}
+.mod-active .mod-visual-accent{opacity:0.4;}
+
+/* Module data visualization */
+.mod-data-viz{
+  margin-top:28px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.data-row{
+  display:flex;align-items:center;gap:12px;
+}
+.node-content-left .data-row{flex-direction:row-reverse;}
+.data-label{
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+  min-width:80px;
+}
+.node-content-left .data-label{text-align:right;}
+.data-bar-wrap{flex:1;height:2px;background:rgba(255,255,255,0.06);}
+.data-bar-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  width:0%;
+  transition:width 1.4s cubic-bezier(.16,1,.3,1);
+  box-shadow:0 0 8px rgba(200,255,62,0.3);
+}
+.data-val{
+  font-family:var(--font-display);font-size:16px;
+  color:var(--accent);min-width:36px;
+  line-height:1;
+}
+.node-content-left .data-val{text-align:right;}
+
+/* OVERLINE SHARED */
 .overline{
   font-family:var(--font-cond);font-size:10px;font-weight:700;
   letter-spacing:5px;color:var(--accent);text-transform:uppercase;
   display:flex;align-items:center;gap:16px;margin-bottom:26px;
 }
 .overline::before{content:'';width:28px;height:1px;background:var(--accent);}
+.overline.center{justify-content:center;}
+.overline.center::before,.overline.center::after{content:'';width:28px;height:1px;background:var(--accent);}
 
-.section-title{
+/* Module number large background */
+.mod-num-bg{
   font-family:var(--font-display);
-  font-size:clamp(60px,8.5vw,118px);
-  line-height:.88;letter-spacing:-1px;color:white;
+  font-size:200px;
+  color:rgba(200,255,62,0.035);
+  line-height:1;letter-spacing:-8px;
+  position:absolute;
+  pointer-events:none;user-select:none;
+  transition:color .5s;
 }
-.section-title em{font-style:normal;color:var(--accent);}
+.node-content-left .mod-num-bg{right:-20px;top:20px;}
+.node-content-right .mod-num-bg{left:-20px;top:20px;}
+.mod-active .mod-num-bg{color:rgba(200,255,62,0.055);}
 
-/* ─── MODULE INTRO BAR ─── */
-.module-intro-bar{
-  display:flex;justify-content:space-between;align-items:flex-end;
-  margin-bottom:80px;gap:40px;
+/* ─── SPECIAL: Neural net section ─── */
+.neural-interlude{
+  padding:160px 80px;
+  display:flex;flex-direction:column;align-items:center;
+  position:relative;overflow:hidden;
 }
-.module-intro-bar-desc{
-  max-width:520px;font-size:17px;line-height:1.85;
+.neural-canvas-wrap{
+  width:100%;max-width:900px;
+  height:320px;position:relative;
+  margin-bottom:80px;
+}
+#neural-canvas{width:100%;height:100%;}
+
+.neural-text{
+  text-align:center;max-width:800px;
+}
+.neural-title{
+  font-family:var(--font-display);
+  font-size:clamp(52px,7vw,90px);
+  line-height:.9;letter-spacing:-2px;color:white;margin-bottom:28px;
+}
+.neural-title em{font-style:normal;color:var(--accent);}
+.neural-desc{
+  font-size:17px;line-height:1.85;
   color:rgba(240,237,232,0.5);
 }
-.module-intro-bar-desc strong{color:var(--text);}
 
-/* ═══════════════════════════════════════════
-   MODULES — Diagonal full-width cards
-   ═══════════════════════════════════════════ */
-.modules-wrap{position:relative;}
-
-.module-full{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  min-height:720px;
-  position:relative;
-  border-top:1px solid var(--line);
-  overflow:hidden;
-  cursor:default;
-}
-.module-full:last-child{border-bottom:1px solid var(--line);}
-.module-full.reverse{direction:rtl;}
-.module-full.reverse > *{direction:ltr;}
-
-/* Image side */
-.mod-img-side{
-  position:relative;overflow:hidden;
-}
-.mod-img-side img{
-  width:100%;height:100%;object-fit:cover;
-  filter:brightness(.28) saturate(1.3);
-  transition:filter 1s,transform 1.2s;
-}
-.module-full:hover .mod-img-side img{
-  filter:brightness(.42) saturate(1.5);
-  transform:scale(1.04);
-}
-.mod-img-overlay{
-  position:absolute;inset:0;z-index:1;
-  background:linear-gradient(to right,rgba(3,3,3,.6) 0%,transparent 60%);
-}
-.module-full.reverse .mod-img-overlay{
-  background:linear-gradient(to left,rgba(3,3,3,.6) 0%,transparent 60%);
-}
-
-/* Module number watermark on image */
-.mod-img-num{
-  position:absolute;top:30px;left:40px;z-index:2;
-  font-family:var(--font-display);font-size:200px;
-  color:rgba(200,255,62,0.06);line-height:1;
-  letter-spacing:-8px;
-  transition:color .6s;
-}
-.module-full:hover .mod-img-num{color:rgba(200,255,62,0.12);}
-.module-full.reverse .mod-img-num{left:auto;right:40px;}
-
-/* Metrics overlay on image */
-.mod-metrics{
-  position:absolute;bottom:40px;left:40px;z-index:2;
-  display:flex;gap:24px;
-}
-.module-full.reverse .mod-metrics{left:auto;right:40px;}
-.mod-metric{
-  padding:16px 22px;
-  background:rgba(3,3,3,0.7);backdrop-filter:blur(20px);
-  border:1px solid rgba(200,255,62,0.15);
-}
-.mod-metric strong{
-  display:block;font-family:var(--font-display);font-size:36px;
-  color:var(--accent);line-height:1;margin-bottom:4px;
-}
-.mod-metric span{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
-}
-
-/* Content side */
-.mod-content-side{
-  padding:80px 90px;
-  display:flex;flex-direction:column;justify-content:center;
-  position:relative;
-  background:var(--bg);
-}
-.mod-content-side::before{
-  content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
-  background:linear-gradient(to bottom,transparent,var(--accent) 30%,var(--accent2) 70%,transparent);
-  opacity:0;transition:opacity .6s;
-}
-.module-full:hover .mod-content-side::before{opacity:.8;}
-.module-full.reverse .mod-content-side::before{left:auto;right:0;}
-
-.mod-tag{
-  display:inline-flex;align-items:center;gap:14px;
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:4px;color:var(--accent);text-transform:uppercase;
-  margin-bottom:22px;
-}
-.mod-tag-line{width:28px;height:1px;background:var(--accent);}
-
-.mod-title{
-  font-family:var(--font-display);
-  font-size:clamp(68px,7vw,96px);
-  line-height:.86;letter-spacing:-2px;
-  color:white;margin-bottom:12px;
-}
-.mod-subtitle{
-  font-family:var(--font-display);
-  font-size:clamp(40px,4vw,54px);
-  color:var(--accent);line-height:.9;
-  margin-bottom:36px;letter-spacing:-1px;
-  text-shadow:0 0 60px rgba(200,255,62,0.2);
-}
-
-.mod-desc{
-  font-size:16px;line-height:1.9;
-  color:rgba(240,237,232,0.55);
-  margin-bottom:48px;max-width:500px;
-}
-
-/* Pills */
-.mod-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:44px;}
-.mod-pill{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:2px;color:rgba(200,255,62,0.7);text-transform:uppercase;
-  padding:6px 14px;border:1px solid rgba(200,255,62,0.18);
-  background:rgba(200,255,62,0.04);
-  transition:background .3s,border-color .3s,color .3s;
-}
-.module-full:hover .mod-pill{background:rgba(200,255,62,0.07);border-color:rgba(200,255,62,0.28);color:var(--accent);}
-
-/* Feature list */
-.mod-features{
-  display:flex;flex-direction:column;gap:0;
-  border-top:1px solid var(--line);
-}
-.mod-feature{
-  display:flex;align-items:flex-start;gap:18px;
-  padding:16px 0;border-bottom:1px solid var(--line);
-  transition:background .3s;
-}
-.mod-feature-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--accent);flex-shrink:0;
-  margin-top:7px;opacity:.7;
-  transition:opacity .3s,transform .3s;
-}
-.module-full:hover .mod-feature-dot{opacity:1;transform:scale(1.3);}
-.mod-feature p{
-  font-size:13px;line-height:1.7;
-  color:rgba(240,237,232,0.52);
-}
-.mod-feature p strong{color:rgba(240,237,232,0.8);font-weight:600;}
-
-/* Premium badge */
-.mod-premium-badge{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:8px 18px;
-  background:linear-gradient(135deg,rgba(200,255,62,0.1),rgba(200,255,62,0.04));
-  border:1px solid rgba(200,255,62,0.22);
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
-  margin-top:28px;align-self:flex-start;
-}
-.mod-premium-badge::before{
-  content:'★';font-size:11px;color:var(--accent);
-}
-
-/* ─── SEPARATOR BAND ─── */
-.separator-band{
-  padding:36px 80px;
-  background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;gap:40px;
-}
-.sep-text{
-  font-family:var(--font-display);font-size:clamp(28px,4vw,48px);
-  color:rgba(255,255,255,0.12);letter-spacing:2px;
-  -webkit-text-stroke:1px rgba(255,255,255,0.08);
-}
-.sep-text em{font-style:normal;color:rgba(200,255,62,0.3);}
-.sep-divider{flex:1;height:1px;background:var(--line);}
-
-/* ═══════════════════════════════════════════
-   90-DAY TRANSFORMATION — Timeline
-   ═══════════════════════════════════════════ */
-.transformation-section{
-  background:var(--bg2);
-  border-top:1px solid var(--line);
-}
-.transformation-header{
-  text-align:center;margin-bottom:110px;
-}
-.transformation-header .section-title{margin-top:20px;}
-
-.timeline{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:0;
-  position:relative;
-}
-
-/* connecting line */
-.timeline::before{
-  content:'';position:absolute;
-  top:55px;left:calc(12.5%);right:calc(12.5%);
-  height:1px;
-  background:linear-gradient(90deg,var(--accent) 0%,rgba(200,255,62,0.2) 50%,var(--accent) 100%);
-  z-index:1;
-}
-
-/* animated dots on line */
-.timeline::after{
-  content:'';position:absolute;
-  top:49px;left:calc(12.5%);
-  width:14px;height:14px;border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 20px rgba(200,255,62,0.6);
-  z-index:2;
-  animation:dotTravel 6s linear infinite;
-}
-@keyframes dotTravel{
-  0%{left:calc(12.5%);}
-  100%{left:calc(87.5%);}
-}
-
-.timeline-step{
-  padding:0 40px;text-align:center;position:relative;z-index:5;
-}
-
-.timeline-circle{
-  width:50px;height:50px;border-radius:50%;
-  border:1.5px solid var(--accent);
-  background:var(--bg2);
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 46px;
-  position:relative;z-index:2;
-  box-shadow:0 0 0 10px var(--bg2),0 0 20px rgba(200,255,62,0.15);
-  transition:background .4s,box-shadow .4s;
-}
-.timeline-circle:hover{
-  background:rgba(200,255,62,0.1);
-  box-shadow:0 0 0 10px var(--bg2),0 0 50px rgba(200,255,62,0.35);
-}
-.t-num{font-family:var(--font-display);font-size:22px;color:var(--accent);}
-
-.timeline-phase{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
-  margin-bottom:12px;display:block;
-}
-.timeline-title{
-  font-family:var(--font-display);font-size:36px;
-  color:white;margin-bottom:16px;line-height:.92;
-}
-.timeline-days{
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;
-  padding:5px 14px;border:1px solid var(--line);
-  background:rgba(255,255,255,0.02);
-  margin-bottom:18px;
-}
-.timeline-desc{
-  font-size:13px;line-height:1.8;
-  color:rgba(240,237,232,0.48);
-}
-
-/* ─── MODULE 5 SPECIAL — Premium ─── */
-.mod5-section{
-  padding:160px 80px;
-  background:var(--bg);
-  position:relative;overflow:hidden;
-}
-.mod5-bg-accent{
-  position:absolute;top:0;right:0;bottom:0;width:50%;
-  background:radial-gradient(ellipse 80% 60% at 80% 50%,rgba(200,255,62,0.06) 0%,transparent 70%);
-  pointer-events:none;
-}
-.mod5-inner{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:100px;align-items:center;
-  position:relative;z-index:2;
-}
-.mod5-label{
-  display:inline-flex;align-items:center;gap:14px;
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:4px;color:var(--muted);text-transform:uppercase;
-  margin-bottom:18px;padding:6px 16px;
-  border:1px solid rgba(255,255,255,0.06);
-  background:rgba(255,255,255,0.02);
-}
-.mod5-title{
-  font-family:var(--font-display);
-  font-size:clamp(80px,9vw,130px);
-  line-height:.84;letter-spacing:-3px;
-  color:white;margin-bottom:16px;
-}
-.mod5-title em{font-style:normal;color:var(--accent);}
-.mod5-desc{
-  font-size:17px;line-height:1.85;
-  color:rgba(240,237,232,0.52);
-  margin-bottom:50px;
-}
-.mod5-features{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:2px;
-}
-.mod5-feature{
-  padding:24px 26px;
-  background:var(--surface);border:1px solid var(--line);
-  position:relative;overflow:hidden;
-  transition:background .4s,border-color .4s;
-}
-.mod5-feature::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--accent),transparent);
-  transform:scaleX(0);transform-origin:left;
-  transition:transform .55s cubic-bezier(.16,1,.3,1);
-}
-.mod5-feature:hover{background:rgba(200,255,62,0.04);border-color:rgba(200,255,62,0.12);}
-.mod5-feature:hover::before{transform:scaleX(1);}
-.mod5-feature-label{
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;
-  margin-bottom:6px;display:block;
-}
-.mod5-feature p{font-size:12px;line-height:1.6;color:var(--muted2);}
-.premium-tag{
-  display:inline-flex;align-items:center;gap:6px;
-  font-family:var(--font-cond);font-size:8px;font-weight:700;
-  letter-spacing:2px;color:black;text-transform:uppercase;
-  padding:3px 10px;background:var(--accent);
-  position:absolute;top:14px;right:14px;
-}
-
-/* Mod5 visual side */
-.mod5-visual{
-  position:relative;height:660px;
-}
-.mod5-img-main{
-  position:absolute;right:0;top:0;width:82%;height:78%;
-  object-fit:cover;
-  filter:brightness(.38) saturate(1.3);
-}
-.mod5-img-secondary{
-  position:absolute;bottom:0;left:0;
-  width:50%;height:50%;
-  object-fit:cover;
-  filter:brightness(.35) saturate(1.3);
-  border:3px solid var(--bg);
-}
-.mod5-badge{
-  position:absolute;bottom:35%;right:-20px;
-  width:110px;height:110px;
-  background:var(--accent);border-radius:50%;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:10;animation:rotateBadge 20s linear infinite;
-}
-@keyframes rotateBadge{to{transform:rotate(360deg);}}
-.mod5-badge-inner{text-align:center;animation:rotateBadge 20s linear infinite reverse;}
-.mod5-badge-inner strong{display:block;font-family:var(--font-display);font-size:32px;color:black;line-height:1;}
-.mod5-badge-inner span{font-family:var(--font-cond);font-size:9px;font-weight:800;letter-spacing:2px;color:rgba(0,0,0,0.65);text-transform:uppercase;}
-
-/* ─── FINAL CTA ─── */
-.final-section{
-  position:relative;overflow:hidden;min-height:90vh;
-  display:flex;align-items:center;justify-content:center;text-align:center;
-}
-.final-bg{position:absolute;inset:0;z-index:0;}
-.final-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(.18) saturate(1.45);transform-origin:center;}
-.final-vignette{
-  position:absolute;inset:0;z-index:1;
-  background:radial-gradient(ellipse 80% 60% at center,rgba(3,3,3,0.2) 0%,rgba(3,3,3,.94) 70%),
-    linear-gradient(to top,var(--bg),transparent 28%),
-    linear-gradient(to bottom,var(--bg),transparent 28%);
-}
-.final-glow{
-  position:absolute;width:1000px;height:1000px;
-  background:radial-gradient(circle,rgba(200,255,62,0.17) 0%,transparent 70%);
-  left:50%;top:50%;transform:translate(-50%,-50%);
-  z-index:2;animation:glowPulse 5s ease-in-out infinite;
-}
-.final-content{position:relative;z-index:5;padding:80px 40px;}
-.final-content .overline{justify-content:center;}
-.final-title{
-  font-family:var(--font-display);
-  font-size:clamp(88px,15vw,190px);
-  line-height:.83;letter-spacing:-4px;margin:28px 0 44px;
-}
-.final-title em{font-style:normal;color:var(--accent);display:block;}
-.final-sub{max-width:780px;margin:0 auto 72px;font-size:19px;line-height:1.85;color:rgba(240,237,232,0.58);}
-.final-actions{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;}
-.final-note{
-  margin-top:44px;font-family:var(--font-cond);font-size:11px;font-weight:600;
-  letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;
-  display:flex;align-items:center;justify-content:center;gap:14px;
-}
-.final-note::before,.final-note::after{content:'';width:28px;height:1px;background:var(--muted);}
-
-/* ─── BUTTONS ─── */
-.btn-main{
-  position:relative;overflow:hidden;
-  font-family:var(--font-cond);font-size:13px;font-weight:800;
-  letter-spacing:3px;text-transform:uppercase;
-  color:black;background:var(--accent);
-  border:none;padding:22px 52px;cursor:pointer;
-  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
-  transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;
-  text-decoration:none;display:inline-block;
-}
-.btn-main::before{
-  content:'';position:absolute;top:0;left:-120%;width:80%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);
-  transform:skewX(-25deg);transition:left .7s;
-}
-.btn-main:hover::before{left:150%;}
-.btn-main:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 30px 90px rgba(200,255,62,.45),0 0 0 1px rgba(200,255,62,0.3);}
-
-.btn-ghost{
-  font-family:var(--font-cond);font-size:12px;font-weight:700;
-  letter-spacing:2.5px;text-transform:uppercase;
-  color:rgba(240,237,232,0.65);background:transparent;
-  border:1px solid rgba(255,255,255,0.1);
-  padding:21px 44px;cursor:pointer;
-  text-decoration:none;display:inline-flex;align-items:center;gap:12px;
-  transition:all .4s;position:relative;overflow:hidden;
-}
-.btn-ghost::before{
-  content:'';position:absolute;inset:0;
-  background:rgba(255,255,255,0.03);
-  transform:scaleX(0);transform-origin:left;
-  transition:transform .4s cubic-bezier(.16,1,.3,1);
-}
-.btn-ghost:hover::before{transform:scaleX(1);}
-.btn-ghost:hover{color:white;border-color:rgba(255,255,255,0.22);transform:translateY(-4px);}
-
-/* ─── FOOTER ─── */
-footer{
-  background:var(--bg2);border-top:1px solid var(--line);
-  padding:90px 80px;
-  display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:60px;
-}
-.footer-brand .logo{font-size:21px;margin-bottom:22px;gap:10px;}
-.footer-brand .logo-img{height:28px;}
-.footer-brand p{font-size:13px;line-height:1.85;color:var(--muted);max-width:270px;}
-.footer-col-title{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:3.5px;color:rgba(240,237,232,0.35);text-transform:uppercase;margin-bottom:26px;}
-.footer-links{display:flex;flex-direction:column;gap:13px;}
-.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .3s;font-weight:500;}
-.footer-links a:hover{color:var(--text);}
-.footer-bottom{
-  border-top:1px solid var(--line);padding:32px 80px;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.footer-bottom p{font-size:11px;color:var(--muted);font-family:var(--font-cond);letter-spacing:1px;}
-.footer-accent-line{width:80px;height:1px;background:linear-gradient(90deg,var(--accent),transparent);}
-
-/* ─── RESPONSIVE ─── */
-@media(max-width:1200px){
-  .module-full,.mod5-inner{grid-template-columns:1fr;}
-  .module-full.reverse{direction:ltr;}
-  .mod-img-side{height:420px;}
-  .mod5-visual{height:400px;}
-  .mod5-inner{gap:60px;}
-  .timeline{grid-template-columns:1fr 1fr;gap:60px 0;}
-  .timeline::before,.timeline::after{display:none;}
-  footer{grid-template-columns:1fr 1fr;gap:50px;}
-}
+/* ─── MOBILE PIPELINE ─── */
 @media(max-width:900px){
-  .section{padding:100px 24px;}
-  .nav{padding:22px 24px;}
-  .nav.scrolled{padding:14px 24px;}
-  .nav-links,.nav-cta{display:none;}
-  .nav-hamburger{display:flex;}
-  .prog-hero-content{padding:130px 24px 130px 40px;}
-  .prog-hero-heading .line-2{font-size:clamp(80px,20vw,140px);}
-  .prog-hero-heading .line-3{margin-left:clamp(40px,10vw,80px);}
-  .prog-hero-meta{position:relative;flex-wrap:wrap;}
-  .prog-meta-item{flex:1 1 50%;border-bottom:1px solid var(--line);padding:18px 20px;}
-  .prog-meta-item:last-child{border-right:1px solid var(--line);}
-  .module-full{grid-template-columns:1fr;min-height:auto;}
-  .module-full.reverse{direction:ltr;}
-  .mod-img-side{height:360px;}
-  .mod-content-side{padding:50px 28px;}
-  .mod-title{font-size:clamp(60px,16vw,80px);}
-  .mod5-inner{grid-template-columns:1fr;gap:50px;}
-  .mod5-visual{height:340px;}
-  .mod5-features{grid-template-columns:1fr;}
-  .timeline{grid-template-columns:1fr 1fr;gap:50px;}
-  .timeline::before,.timeline::after{display:none;}
-  .separator-band{padding:24px;flex-wrap:wrap;}
-  .final-title{letter-spacing:-2px;}
-  .final-content{padding:60px 24px;}
-  .final-actions{flex-direction:column;align-items:center;}
-  footer{grid-template-columns:1fr;padding:60px 24px;gap:40px;}
-  .footer-bottom{padding:26px 24px;flex-direction:column;gap:14px;text-align:center;}
-  .module-intro-bar{flex-direction:column;align-items:flex-start;}
-}
-@media(max-width:580px){
-  .timeline{grid-template-columns:1fr;}
-  .prog-hero-heading .line-1{font-size:clamp(28px,8vw,48px);}
-  .prog-hero-heading .line-2{font-size:clamp(68px,22vw,110px);}
-  .prog-hero-heading .line-3{font-size:clamp(42px,12vw,64px);margin-left:20px;}
-  .prog-meta-item{flex:1 1 100%;}
-  .mod-metrics{flex-direction:column;gap:8px;}
-  .mobile-menu a{font-size:40px;}
+  .pipeline{padding:0 24px;}
+  .module-node{
+    grid-template-columns:40px 1fr;
+  }
+  .module-node:nth-child(even) .node-content-left{order:unset;}
+  .module-node:nth-child(even) .node-center{order:unset;}
+  .module-node:nth-child(even) .node-content-right{order:unset;}
+  .node-content-left,.node-content-right{
+    border-right:none;border-left:1px solid var(--line);
+    text-align:left;
+    padding:40px 24px 60px;
+    grid-column:2;
+  }
+  .node-content-left .mod-desc{margin-left:0;}
+  .node-content-left .mod-tags-list{justify-content:flex-start;}
+  .node-content-left .mod-points{align-items:flex-start;}
+  .node-content-left .mod-point{flex-direction:row;}
+  .node-content-left .data-row{flex-direction:row;}
+  .node-content-left .data-label{text-align:left;}
+  .node-content-left .mod-visual-accent{background:linear-gradient(90deg,transparent,var(--accent));}
+  .node-center{grid-column:1;padding-top:60px;}
+  .node-connector{min-height:60px;}
+  .pipeline-spine{left:24px;transform:none;}
+  .pipeline-spine-glow{left:24px;transform:none;}
+  .mod-num-bg{display:none;}
+  .intro-statement{padding:80px 24px;}
+  .system-header{padding:80px 24px 60px;}
+  .neural-interlude{padding:100px 24px;}
+  .neural-canvas-wrap{height:200px;}
 }
 </style>
 </head>
@@ -903,101 +611,49 @@ footer{
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- ─── MOBILE MENU ─── -->
-<div class="mobile-menu" id="mobileMenu">
-  <a href="index.html" onclick="closeMobileMenu()">INICIO</a>
-  <a href="sistema.html" onclick="closeMobileMenu()">SISTEMA</a>
-  <a href="programa.html" onclick="closeMobileMenu()">PROGRAMA</a>
-  <a href="resultados.html" onclick="closeMobileMenu()">RESULTADOS</a>
-  <a href="contacto.html" onclick="closeMobileMenu()">CONTACTO</a>
-  <a href="pay.html" class="mobile-cta" onclick="closeMobileMenu()">ENTRAR AHORA</a>
-</div>
-
 <!-- ─── NAV ─── -->
 <nav class="nav" id="nav">
-  <a class="logo" href="index.html">
+<a class="logo" href="index.html">
     <img class="logo-img" src="logo.png" alt="Ascend System Logo" onerror="this.style.display='none'">
     ASCEND <span>SYSTEM</span>
-  </a>
+</a>
   <div class="nav-links">
     <a href="index.html">INICIO</a>
-    <a href="sistema.html">SISTEMA</a>
-    <a href="programa.html" class="active">PROGRAMA</a>
+    <a href="sistema.html" class="active">SISTEMA</a>
+    <a href="programa.html">PROGRAMA</a>
     <a href="resultados.html">RESULTADOS</a>
     <a href="contacto.html">CONTACTO</a>
   </div>
-  <button class="nav-cta" onclick="window.location.href='pay.html'">ENTRAR AHORA</button>
-  <div class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
-    <span></span><span></span><span></span>
-  </div>
+  <a href="pay.html" class="nav-cta">ENTRAR AHORA</a>
 </nav>
 
-<!-- ═══════════════════════════════════════════
-     PROGRAM HERO
-     ═══════════════════════════════════════════ -->
-<section class="prog-hero">
-  <div class="prog-hero-col-left"></div>
-  <div class="prog-hero-vertical">ASCEND SYSTEM · PROGRAMA COMPLETO · 2026</div>
-  <div class="prog-hero-bg-num">05</div>
-  <div class="prog-hero-grid"></div>
-  <div class="prog-hero-scan"></div>
-  <div class="prog-hero-glow"></div>
+<!-- ═══════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════ -->
+<section class="hero-sistema">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-vignette-s"></div>
 
-  <div class="prog-hero-content">
-    <div class="prog-breadcrumb" data-anim="fade-up" data-delay="0">
-      <a href="index.html">INICIO</a>
-      <span class="prog-breadcrumb-sep">—</span>
-      <span>PROGRAMA</span>
+  <div class="hero-s-content">
+    <div class="hero-s-badge" id="hero-badge">
+      <div class="badge-dot"></div>
+      <span>Arquitectura del Sistema · 2026</span>
+      <div class="badge-dot"></div>
     </div>
 
-    <div class="prog-hero-heading" data-anim="fade-up" data-delay="1">
-      <span class="line-1">ARQUITECTURA DE</span>
-      <span class="line-2">ÉLITE</span>
-      <span class="line-3">TOTAL</span>
-    </div>
+    <h1 class="hero-s-title" id="hero-title">
+      <span class="t-stroke">CÓMO</span>
+      <span class="t-accent">FUNCIONA</span>
+      <span class="t-stroke">EL SISTEMA</span>
+    </h1>
 
-    <div class="prog-hero-divider" data-anim="fade-up" data-delay="2">
-      <div class="prog-hero-divider-line"></div>
-      <span class="prog-hero-divider-label">5 módulos · 90 días · sin compromisos</span>
-    </div>
-
-    <p class="prog-hero-desc" data-anim="fade-up" data-delay="3">
-      No es un curso. Es una <strong>arquitectura de transformación</strong> construida sobre neurociencia aplicada, psicología de rendimiento y protocolos de ejecución de élite. Diseñado para funcionar como un sistema operativo instalado en tu cerebro.
+    <p class="hero-s-sub" id="hero-sub">
+      No es un curso. Es una arquitectura de transformación construida sobre neurociencia aplicada, psicología de rendimiento y protocolos de ejecución de élite. Diseñado para funcionar como un sistema operativo instalado en tu cerebro.
     </p>
 
-    <div class="prog-hero-actions" data-anim="fade-up" data-delay="4">
-      <a href="pay.html" class="btn-main">ACCEDER AL SISTEMA</a>
-      <a href="#modulos" class="btn-ghost">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        VER MÓDULOS
-      </a>
-    </div>
-  </div>
-
-  <div class="prog-hero-meta" data-anim="fade-up" data-delay="5">
-    <div class="prog-meta-item">
-      <div class="prog-meta-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      </div>
-      <div class="prog-meta-text"><strong>90D</strong><span>Transformación Total</span></div>
-    </div>
-    <div class="prog-meta-item">
-      <div class="prog-meta-icon">
-        <svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
-      <div class="prog-meta-text"><strong>5</strong><span>Módulos Premium</span></div>
-    </div>
-    <div class="prog-meta-item">
-      <div class="prog-meta-icon">
-        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
-      <div class="prog-meta-text"><strong>12K+</strong><span>Miembros Elite</span></div>
-    </div>
-    <div class="prog-meta-item">
-      <div class="prog-meta-icon">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      </div>
-      <div class="prog-meta-text"><strong>4X</strong><span>Productividad Media</span></div>
+    <div class="hero-s-scroll-hint" id="hero-hint">
+      <div class="scroll-line"></div>
+      <span>Descubre el sistema</span>
     </div>
   </div>
 </section>
@@ -1024,483 +680,619 @@ footer{
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     MÓDULOS
-     ═══════════════════════════════════════════ -->
-<section class="section" id="modulos" style="background:var(--bg);padding-bottom:0;">
-  <div class="module-intro-bar" data-anim="fade-up" data-delay="0">
-    <div>
-      <div class="overline">Los Módulos</div>
-      <h2 class="section-title" style="margin-top:16px;">Contenido<br><em>Completo</em></h2>
-    </div>
-    <p class="module-intro-bar-desc">
-      Cada módulo es un sistema autónomo que se integra con los demás. <strong>No funciona uno sin los otros.</strong> La transformación requiere los cinco operando en sincronía.
-    </p>
-  </div>
-</section>
-
-<!-- ─── MODULE 01 ─── -->
-<div class="modules-wrap" id="mod-01">
-  <div class="module-full" data-anim="module">
-    <div class="mod-img-side">
-      <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1400&auto=format&fit=crop" alt="Disciplina Absoluta">
-      <div class="mod-img-overlay"></div>
-      <div class="mod-img-num">01</div>
-      <div class="mod-metrics">
-        <div class="mod-metric"><strong>95</strong><span>Identidad</span></div>
-        <div class="mod-metric"><strong>88</strong><span>Sistema</span></div>
-        <div class="mod-metric"><strong>76</strong><span>Automatismo</span></div>
-      </div>
-    </div>
-    <div class="mod-content-side">
-      <div class="mod-tag"><div class="mod-tag-line"></div>Módulo 01 · Fundacional</div>
-      <h2 class="mod-title">DISCIPLINA</h2>
-      <h3 class="mod-subtitle">ABSOLUTA</h3>
-      <p class="mod-desc">La disciplina no es fuerza de voluntad. Es identidad + sistema + automatismo. Cuando los tres elementos se alinean, la disciplina deja de ser un esfuerzo y se convierte en tu forma de existir.</p>
-      <div class="mod-pills">
-        <span class="mod-pill">Identity System</span>
-        <span class="mod-pill">Habit Architecture</span>
-        <span class="mod-pill">Anti-Procrastination</span>
-        <span class="mod-pill">Dopamine Control</span>
-      </div>
-      <div class="mod-features">
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Morning &amp; Night Protocol</strong> de élite con 7 reglas absolutas no negociables</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Sistema 5D anti-procrastinación</strong> con protocolo de emergencia activable</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Identity Score System</strong> — tracking diario de coherencia identitaria</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Habit Stacking</strong> matutino automatizado en semana 6-8</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Protocolo SURF</strong> de control de impulsos y reset dopaminérgico</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Reto 30 días → 90 días</strong> con sistema de accountability multinivel</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Military Grade Method</strong> + 5 protocolos de reprogramación mental</p></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="separator-band">
-  <span class="sep-text">MÓDULO <em>02</em></span>
-  <div class="sep-divider"></div>
-  <span class="sep-text">DEEP <em>WORK</em></span>
-</div>
-
-<!-- ─── MODULE 02 ─── -->
-<div class="modules-wrap" id="mod-02">
-  <div class="module-full reverse" data-anim="module">
-    <div class="mod-img-side">
-      <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1400&auto=format&fit=crop" alt="Productividad Extrema">
-      <div class="mod-img-overlay"></div>
-      <div class="mod-img-num">02</div>
-      <div class="mod-metrics" style="right:40px;left:auto;">
-        <div class="mod-metric"><strong>4X</strong><span>Output</span></div>
-        <div class="mod-metric"><strong>85</strong><span>Deep Work</span></div>
-        <div class="mod-metric"><strong>78</strong><span>Foco</span></div>
-      </div>
-    </div>
-    <div class="mod-content-side">
-      <div class="mod-tag"><div class="mod-tag-line"></div>Módulo 02 · Deep Work</div>
-      <h2 class="mod-title">PRODUCTIVIDAD</h2>
-      <h3 class="mod-subtitle">EXTREMA</h3>
-      <p class="mod-desc">Deep Work no es trabajar más horas. Es operar en un estado de concentración tan intensa que tu output por hora supera en 4-10x al de cualquier persona en modo reactivo. La ventaja competitiva del siglo XXI.</p>
-      <div class="mod-pills">
-        <span class="mod-pill">Deep Work</span>
-        <span class="mod-pill">Time Blocking</span>
-        <span class="mod-pill">Flow States</span>
-        <span class="mod-pill">Energy Management</span>
-      </div>
-      <div class="mod-features">
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Método 90/20</strong> basado en ciclos ultradianos del cerebro humano</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Protocolo SHIELD</strong> anti-distracción de 6 niveles de blindaje cognitivo</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Time Blocking Elite</strong> — arquitectura del día perfecto con bloques sagrados</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Flow State Activation</strong> — sistema de entrada al estado pico de rendimiento</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Gestión energética</strong> por momentos del día — pico cognitivo máximo 05-07h</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>KPIs semanales</strong> de productividad — Productivity Score Elite: 85+</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Anti-burnout protocol</strong> con deload cognitivo cada 6 semanas</p></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="separator-band">
-  <span class="sep-text">MÓDULO <em>03</em></span>
-  <div class="sep-divider"></div>
-  <span class="sep-text">FÍSICO &amp; <em>RECOVERY</em></span>
-</div>
-
-<!-- ─── MODULE 03 ─── -->
-<div class="modules-wrap" id="mod-03">
-  <div class="module-full" data-anim="module">
-    <div class="mod-img-side">
-      <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1400&auto=format&fit=crop" alt="Cuerpo Elite">
-      <div class="mod-img-overlay"></div>
-      <div class="mod-img-num">03</div>
-      <div class="mod-metrics">
-        <div class="mod-metric"><strong>+30%</strong><span>Fuerza</span></div>
-        <div class="mod-metric"><strong>+20%</strong><span>HGH</span></div>
-        <div class="mod-metric"><strong>85</strong><span>Cognitivo</span></div>
-      </div>
-    </div>
-    <div class="mod-content-side">
-      <div class="mod-tag"><div class="mod-tag-line"></div>Módulo 03 · Físico &amp; Recovery</div>
-      <h2 class="mod-title">CUERPO</h2>
-      <h3 class="mod-subtitle">ELITE</h3>
-      <p class="mod-desc">Tu cuerpo es el hardware que ejecuta el sistema. Sin optimización física, el rendimiento cognitivo colapsa. Entrenamiento científico, nutrición de precisión y recuperación biohackeada en un solo protocolo.</p>
-      <div class="mod-pills">
-        <span class="mod-pill">Hypertrophy Science</span>
-        <span class="mod-pill">Nutrición Elite</span>
-        <span class="mod-pill">Sleep Optimization</span>
-        <span class="mod-pill">Biohacking</span>
-      </div>
-      <div class="mod-features">
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Rutina Push/Pull/Legs 6 días</strong> — Hipertrofia científica con RIR tracking</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Calculadora de calorías y macros</strong> personalizada por objetivo y perfil</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Menús completos</strong> de volumen, definición y recomposición corporal</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Suplementación estratégica</strong> — solo evidencia científica ★★★★★</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Protocolo de sueño de 7 reglas</strong> — HGH +20%, testosterona óptima</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Deload protocol</strong> cada 4-6 semanas — post-deload semana más productiva</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Recuperación activa:</strong> sauna, baño frío, zona 2 cardio, movilidad diaria</p></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="separator-band">
-  <span class="sep-text">MÓDULO <em>04</em></span>
-  <div class="sep-divider"></div>
-  <span class="sep-text">SISTEMAS <em>MENTALES</em></span>
-</div>
-
-<!-- ─── MODULE 04 ─── -->
-<div class="modules-wrap" id="mod-04">
-  <div class="module-full reverse" data-anim="module">
-    <div class="mod-img-side">
-      <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1400&auto=format&fit=crop" alt="Sistemas Mentales">
-      <div class="mod-img-overlay"></div>
-      <div class="mod-img-num">04</div>
-      <div class="mod-metrics" style="right:40px;left:auto;">
-        <div class="mod-metric"><strong>93</strong><span>Resiliencia</span></div>
-        <div class="mod-metric"><strong>87</strong><span>Confianza</span></div>
-        <div class="mod-metric"><strong>95</strong><span>Claridad</span></div>
-      </div>
-    </div>
-    <div class="mod-content-side">
-      <div class="mod-tag"><div class="mod-tag-line"></div>Módulo 04 · El Núcleo</div>
-      <h2 class="mod-title">SISTEMAS</h2>
-      <h3 class="mod-subtitle">MENTALES</h3>
-      <p class="mod-desc">La diferencia entre quien ejecuta y quien sueña no es información ni talento. Es arquitectura mental. Este módulo reconstruye tu sistema operativo interno desde los cimientos neurológicos.</p>
-      <div class="mod-pills">
-        <span class="mod-pill">Growth Mindset</span>
-        <span class="mod-pill">Ownership Total</span>
-        <span class="mod-pill">Anti-Ansiedad</span>
-        <span class="mod-pill">Resiliencia</span>
-      </div>
-      <div class="mod-features">
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Mapa diagnóstico</strong> Elite vs Promedio en 8 dimensiones de mentalidad</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Sistema de eliminación de excusas</strong> — el Mapa de Resistencia de Pressfield</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>4 pilares de mentalidad elite:</strong> Ownership Total, Delayed Gratification, Resiliencia Activa, Presencia Dominante</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Anti-ansiedad fisiológico</strong> — Box Breathing SEAL, Respiración 4-7-8</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Presencia dominante</strong> — 5 elementos de autoridad y confianza real</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Reprogramación mental 21 días</strong> — auditoría, interrupción, acción confirmante</p></div>
-        <div class="mod-feature"><div class="mod-feature-dot"></div><p><strong>Protocolo de recuperación mental</strong> para días de colapso total</p></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════
-     MODULE 05 — PREMIUM SPECIAL
-     ═══════════════════════════════════════════ -->
-<div class="separator-band">
-  <span class="sep-text">MÓDULO <em>05</em></span>
-  <div class="sep-divider"></div>
-  <span class="sep-text">PACK <em>PREMIUM</em></span>
-</div>
-
-<section class="mod5-section">
-  <div class="mod5-bg-accent"></div>
-  <div class="mod5-inner">
-    <div data-anim="fade-up" data-delay="0">
-      <div class="mod5-label">Pack Premium Completo</div>
-      <h2 class="mod5-title">PHYSICAL<br><em>SYSTEM</em></h2>
-      <p class="mod5-desc">El módulo más completo del mercado de habla hispana. Entrenamiento científico de élite, nutrición de precisión molecular y recuperación optimizada fusionados en un protocolo de rendimiento total. Completa el sistema.</p>
-      <div class="mod5-features">
-        <div class="mod5-feature">
-          <span class="premium-tag">PREMIUM</span>
-          <span class="mod5-feature-label">Protocolo Avanzado</span>
-          <p>Hipertrofia de élite con periodización ondulante y técnicas de intensificación avanzadas</p>
-        </div>
-        <div class="mod5-feature">
-          <span class="premium-tag">PREMIUM</span>
-          <span class="mod5-feature-label">Nutrición Molecular</span>
-          <p>Timing de nutrientes, ciclado de carbohidratos y optimización hormonal precisa</p>
-        </div>
-        <div class="mod5-feature">
-          <span class="premium-tag">PREMIUM</span>
-          <span class="mod5-feature-label">Performance Dashboard</span>
-          <p>Dashboard integrado con todos los módulos activos y KPIs de rendimiento en tiempo real</p>
-        </div>
-        <div class="mod5-feature">
-          <span class="premium-tag">PREMIUM</span>
-          <span class="mod5-feature-label">HRV &amp; Biometrics</span>
-          <p>Optimización mediante métricas de variabilidad cardíaca y biofeedback avanzado</p>
-        </div>
-        <div class="mod5-feature">
-          <span class="premium-tag">PREMIUM</span>
-          <span class="mod5-feature-label">Strength &amp; Cognition</span>
-          <p>El vínculo directo entre rendimiento físico máximo y capacidad cognitiva de élite</p>
-        </div>
-        <div class="mod5-feature">
-          <span class="premium-tag">PREMIUM</span>
-          <span class="mod5-feature-label">Acceso Comunidad</span>
-          <p>Acceso a la comunidad privada de miembros con accountability semanal en vivo</p>
-        </div>
-      </div>
-    </div>
-    <div class="mod5-visual" data-anim="fade-left" data-delay="1">
-      <img class="mod5-img-main" src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?q=80&w=1200&auto=format&fit=crop" alt="Physical System">
-      <img class="mod5-img-secondary" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=900&auto=format&fit=crop" alt="Dashboard">
-      <div class="mod5-badge">
-        <div class="mod5-badge-inner">
-          <strong>05</strong>
-          <span>PREMIUM</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════
-     TRANSFORMATION TIMELINE — 90 días
-     ═══════════════════════════════════════════ -->
-<section class="section transformation-section">
-  <div class="transformation-header" data-anim="fade-up" data-delay="0">
-    <div class="overline" style="justify-content:center;">El Proceso</div>
-    <h2 class="section-title" style="margin-top:20px;">Tu Transformación<br><em>90 Días</em></h2>
-  </div>
-
-  <div class="timeline">
-    <div class="timeline-step" data-anim="fade-up" data-delay="0">
-      <div class="timeline-circle"><span class="t-num">01</span></div>
-      <span class="timeline-phase">Fase I</span>
-      <h3 class="timeline-title">DIAGNÓSTICO</h3>
-      <div class="timeline-days">Día 0</div>
-      <p class="timeline-desc">Evaluación honesta y sin filtros de tu nivel actual en las 4 áreas. Identity Audit. Mapa de identidades negativas activas. Sin mentiras, sin filtros.</p>
-    </div>
-    <div class="timeline-step" data-anim="fade-up" data-delay="1">
-      <div class="timeline-circle"><span class="t-num">02</span></div>
-      <span class="timeline-phase">Fase II</span>
-      <h3 class="timeline-title">INSTALACIÓN</h3>
-      <div class="timeline-days">Días 1-30</div>
-      <p class="timeline-desc">Morning Protocol, Night Protocol, Identity Statement activo. Eliminas las 2 principales fuentes de dopamina basura. El sistema se instala.</p>
-    </div>
-    <div class="timeline-step" data-anim="fade-up" data-delay="2">
-      <div class="timeline-circle"><span class="t-num">03</span></div>
-      <span class="timeline-phase">Fase III</span>
-      <h3 class="timeline-title">TEST REAL</h3>
-      <div class="timeline-days">Días 31-60</div>
-      <p class="timeline-desc">El sistema enfrenta las primeras pruebas reales: estrés, viajes, eventos sociales. Aprendes a mantener la estructura bajo cualquier condición.</p>
-    </div>
-    <div class="timeline-step" data-anim="fade-up" data-delay="3">
-      <div class="timeline-circle"><span class="t-num">04</span></div>
-      <span class="timeline-phase">Fase IV</span>
-      <h3 class="timeline-title">IDENTIDAD</h3>
-      <div class="timeline-days">Días 61-90</div>
-      <p class="timeline-desc">En el día 90, no eres la misma persona que empezó. El sistema ya no es una herramienta — es quien eres. La transformación es permanente.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ─── FINAL CTA ─── -->
-<section class="final-section">
-  <div class="final-bg">
-    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2400&auto=format&fit=crop" alt="Elite">
-  </div>
-  <div class="final-vignette"></div>
-  <div class="final-glow"></div>
-  <div class="final-content">
-    <div class="overline" data-anim="fade-up" data-delay="0">El momento es ahora</div>
-    <h2 class="final-title" data-anim="fade-up" data-delay="1">
-      ELITE<br><em>MODE</em>
+<!-- ═══════════════════════════════════════════════
+     INTRO
+════════════════════════════════════════════════ -->
+<section class="intro-statement">
+  <div class="intro-left" data-reveal>
+    <div class="intro-overline">Por qué existe este sistema</div>
+    <h2 class="intro-title">
+      Los hábitos<br>no son<br><em>suficientes.</em>
     </h2>
-    <p class="final-sub" data-anim="fade-up" data-delay="2">
-      No es una plantilla más. No es un planner cualquiera. Es un ecosistema mental construido para personas obsesionadas con convertirse en su versión más dominante. Sin compromisos.
+    <p class="intro-desc">
+      El 95% de los programas de mejora personal fallan porque atacan síntomas, no causas. ASCEND SYSTEM va a la raíz: reconstruye la arquitectura neurológica que determina cada decisión que tomas, cada hora del día.
     </p>
-    <div class="final-actions" data-anim="fade-up" data-delay="3">
-      <a href="pay.html" class="btn-main">COMENZAR AHORA</a>
-      <a href="sistema.html" class="btn-ghost">VER EL SISTEMA</a>
+  </div>
+  <div class="intro-right" data-reveal>
+    <div class="i-stat">
+      <span class="i-stat-n" data-count="97">97</span>
+      <span class="i-stat-l">% Retención 90 días</span>
     </div>
-    <p class="final-note" data-anim="fade-up" data-delay="4">ACCESO LIMITADO · PLAZAS RESTRINGIDAS · 2026</p>
+    <div class="i-stat">
+      <span class="i-stat-n" data-count="4" data-suffix="X">4X</span>
+      <span class="i-stat-l">Output vs Promedio</span>
+    </div>
+    <div class="i-stat">
+      <span class="i-stat-n" data-count="12" data-suffix="K+">12K+</span>
+      <span class="i-stat-l">Miembros Elite</span>
+    </div>
+    <div class="i-stat">
+      <span class="i-stat-n">90D</span>
+      <span class="i-stat-l">Transformación Total</span>
+    </div>
   </div>
 </section>
 
-<!-- ─── FOOTER ─── -->
-<footer>
-  <div class="footer-brand">
-    <a class="logo" href="index.html" style="text-decoration:none;">
-      <img class="logo-img" src="logo.png" alt="Ascend System Logo" onerror="this.style.display='none'">
-      ASCEND <span>SYSTEM</span>
-    </a>
-    <p>El sistema de performance de élite diseñado para personas que no aceptan el promedio como destino.</p>
+<!-- ═══════════════════════════════════════════════
+     NEURAL INTERLUDE
+════════════════════════════════════════════════ -->
+<div class="neural-interlude">
+  <div class="neural-canvas-wrap">
+    <canvas id="neural-canvas"></canvas>
   </div>
-  <div>
-    <div class="footer-col-title">Sistema</div>
-    <div class="footer-links">
-      <a href="#">Módulo Disciplina</a>
-      <a href="#">Módulo Focus</a>
-      <a href="#">Módulo Físico</a>
-      <a href="#">Módulo Mental</a>
-      <a href="#">Dashboard</a>
-    </div>
+  <div class="neural-text" data-reveal>
+    <div class="overline center">Neurociencia del Cambio</div>
+    <h2 class="neural-title">
+      Tu cerebro<br>es <em>reprogramable</em>
+    </h2>
+    <p class="neural-desc">
+      La neuroplasticidad permite reorganizar redes neuronales a cualquier edad. ASCEND SYSTEM aprovecha este mecanismo mediante protocolos de exposición repetida, automatización de comportamientos y gestión dopaminérgica. El resultado: un sistema operativo de alto rendimiento instalado permanentemente.
+    </p>
   </div>
-  <div>
-    <div class="footer-col-title">Programa</div>
-    <div class="footer-links">
-      <a href="#">Cómo Funciona</a>
-      <a href="#">90 Días</a>
-      <a href="#">Resultados</a>
-      <a href="#">Comunidad</a>
-    </div>
-  </div>
-  <div>
-    <div class="footer-col-title">Contacto</div>
-    <div class="footer-links">
-      <a href="pay.html">Acceso Élite</a>
-      <a href="#">Soporte</a>
-      <a href="#">Privacidad</a>
-    </div>
-  </div>
-</footer>
-<div class="footer-bottom">
-  <p>© 2026 ASCEND SYSTEM · Built for elite performance.</p>
-  <div class="footer-accent-line"></div>
-  <p>No estás aquí por motivación. Estás aquí por identidad.</p>
 </div>
+
+<!-- ═══════════════════════════════════════════════
+     SYSTEM ARCHITECTURE — MAIN PIPELINE
+════════════════════════════════════════════════ -->
+<section class="system-section">
+  <div class="system-header">
+    <div class="overline center" data-reveal>Los 4 Módulos Fundacionales</div>
+    <h2 class="system-header-title" data-reveal>
+      Arquitectura<br><em>del Sistema</em>
+    </h2>
+    <p class="system-header-sub" data-reveal>
+      Cuatro módulos que actúan en sincronía perfecta. Cada uno amplifica a los demás. La ausencia de uno colapsa el sistema completo.
+    </p>
+  </div>
+
+  <div class="pipeline">
+    <div class="pipeline-spine"></div>
+    <div class="pipeline-spine-glow" id="spineGlow"></div>
+
+    <!-- ── MODULE 01 ── -->
+    <div class="module-node" id="mod-node-1">
+      <div class="node-content-left" data-mod="1">
+        <span class="mod-num-bg">01</span>
+        <span class="mod-tag">Módulo 01 · Fundacional</span>
+        <h3 class="mod-title">DISCIPLINA<br>ABSOLUTA</h3>
+        <p class="mod-desc">
+          La disciplina no es fuerza de voluntad. Es identidad + sistema + automatismo. Cuando los tres elementos se alinean, la disciplina deja de ser un esfuerzo y se convierte en tu forma de existir.
+        </p>
+        <div class="mod-tags-list">
+          <span class="mod-tag-pill">Identity System</span>
+          <span class="mod-tag-pill">Habit Architecture</span>
+          <span class="mod-tag-pill">Anti-Procrastination</span>
+          <span class="mod-tag-pill">Dopamine Control</span>
+        </div>
+        <div class="mod-data-viz">
+          <div class="data-row">
+            <span class="data-label">Identidad</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="95"></div></div>
+            <span class="data-val">95</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Sistema</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="88"></div></div>
+            <span class="data-val">88</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Automatismo</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="76"></div></div>
+            <span class="data-val">76</span>
+          </div>
+        </div>
+        <div class="mod-visual-accent"></div>
+      </div>
+
+      <div class="node-center">
+        <div class="node-orb" id="orb-1">
+          <span class="orb-num">01</span>
+        </div>
+        <div class="node-connector" id="conn-1"></div>
+      </div>
+
+      <div class="node-content-right" data-mod="1">
+        <span class="mod-num-bg">01</span>
+        <div class="mod-points">
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Morning & Night Protocol de élite con 7 reglas absolutas no negociables</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Sistema 5D anti-procrastinación con protocolo de emergencia activable</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Identity Score System — tracking diario de coherencia identitaria</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Habit Stacking matutino automatizado en semana 6-8</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Protocolo SURF de control de impulsos y reset dopaminérgico</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Reto 30 días → 90 días con sistema de accountability multinivel</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Military Grade method + 5 protocolos de reprogramación mental</span></div>
+        </div>
+        <div class="mod-visual-accent"></div>
+      </div>
+    </div>
+
+    <!-- ── MODULE 02 ── -->
+    <div class="module-node" id="mod-node-2">
+      <div class="node-content-left" data-mod="2">
+        <span class="mod-num-bg">02</span>
+        <div class="mod-points">
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Método 90/20 basado en ciclos ultradianos del cerebro humano</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Protocolo SHIELD anti-distracción de 6 niveles de blindaje cognitivo</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Time Blocking Elite — arquitectura del día perfecto con bloques sagrados</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Flow State activation — sistema de entrada al estado pico de rendimiento</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Gestión energética por momentos del día — pico cognitivo máximo 05-07h</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>KPIs semanales de productividad — Productivity Score Elite: 85+</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Anti-burnout protocol con deload cognitivo cada 6 semanas</span></div>
+        </div>
+        <div class="mod-visual-accent"></div>
+      </div>
+
+      <div class="node-center">
+        <div class="node-orb" id="orb-2">
+          <span class="orb-num">02</span>
+        </div>
+        <div class="node-connector" id="conn-2"></div>
+      </div>
+
+      <div class="node-content-right" data-mod="2">
+        <span class="mod-num-bg">02</span>
+        <span class="mod-tag">Módulo 02 · Deep Work</span>
+        <h3 class="mod-title">PRODUCTIVIDAD<br>EXTREMA</h3>
+        <p class="mod-desc">
+          Deep Work no es trabajar más horas. Es operar en un estado de concentración tan intensa que tu output por hora supera en 4-10x al de cualquier persona en modo reactivo. La ventaja competitiva del siglo XXI.
+        </p>
+        <div class="mod-tags-list">
+          <span class="mod-tag-pill">Deep Work</span>
+          <span class="mod-tag-pill">Time Blocking</span>
+          <span class="mod-tag-pill">Flow States</span>
+          <span class="mod-tag-pill">Energy Management</span>
+        </div>
+        <div class="mod-data-viz">
+          <div class="data-row">
+            <span class="data-label">Output</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="92"></div></div>
+            <span class="data-val">4X</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Deep Work</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="85"></div></div>
+            <span class="data-val">85</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Foco</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="78"></div></div>
+            <span class="data-val">78</span>
+          </div>
+        </div>
+        <div class="mod-visual-accent"></div>
+      </div>
+    </div>
+
+    <!-- ── MODULE 03 ── -->
+    <div class="module-node" id="mod-node-3">
+      <div class="node-content-left" data-mod="3">
+        <span class="mod-num-bg">03</span>
+        <span class="mod-tag">Módulo 03 · Físico & Recovery</span>
+        <h3 class="mod-title">CUERPO<br>ELITE</h3>
+        <p class="mod-desc">
+          Tu cuerpo es el hardware que ejecuta el sistema. Sin optimización física, el rendimiento cognitivo colapsa. Entrenamiento científico, nutrición de precisión y recuperación biohackeada en un solo protocolo.
+        </p>
+        <div class="mod-tags-list">
+          <span class="mod-tag-pill">Hypertrophy Science</span>
+          <span class="mod-tag-pill">Nutrición Elite</span>
+          <span class="mod-tag-pill">Sleep Optimization</span>
+          <span class="mod-tag-pill">Biohacking</span>
+        </div>
+        <div class="mod-data-viz">
+          <div class="data-row">
+            <span class="data-label">Fuerza</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="90"></div></div>
+            <span class="data-val">+30%</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">HGH</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="80"></div></div>
+            <span class="data-val">+20%</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Cognitivo</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="85"></div></div>
+            <span class="data-val">85</span>
+          </div>
+        </div>
+        <div class="mod-visual-accent"></div>
+      </div>
+
+      <div class="node-center">
+        <div class="node-orb" id="orb-3">
+          <span class="orb-num">03</span>
+        </div>
+        <div class="node-connector" id="conn-3"></div>
+      </div>
+
+      <div class="node-content-right" data-mod="3">
+        <span class="mod-num-bg">03</span>
+        <div class="mod-points">
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Rutina Push/Pull/Legs 6 días — Hipertrofia científica con RIR tracking</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Calculadora de calorías y macros personalizada por objetivo y perfil</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Menús completos de volumen, definición y recomposición corporal</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Suplementación estratégica — solo evidencia científica ★★★★★</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Protocolo de sueño de 7 reglas — HGH +20%, testosterona óptima</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Deload protocol cada 4-6 semanas — post-deload semana más productiva</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Recuperación activa: sauna, baño frío, zona 2 cardio, movilidad diaria</span></div>
+        </div>
+        <div class="mod-visual-accent"></div>
+      </div>
+    </div>
+
+    <!-- ── MODULE 04 ── -->
+    <div class="module-node" id="mod-node-4">
+      <div class="node-content-left" data-mod="4">
+        <span class="mod-num-bg">04</span>
+        <div class="mod-points">
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Mapa diagnóstico Elite vs Promedio en 8 dimensiones de mentalidad</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Sistema de eliminación de excusas — el Mapa de Resistencia de Pressfield</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>4 pilares de mentalidad elite: Ownership Total, Delayed Gratification...</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Anti-ansiedad fisiológico — Box Breathing SEAL, Respiración 4-7-8</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Presencia dominante — 5 elementos de autoridad y confianza real</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Reprogramación mental 21 días — auditoría, interrupción, acción confirmante</span></div>
+          <div class="mod-point"><div class="mod-point-dot"></div><span>Protocolo de recuperación mental para días de colapso total</span></div>
+        </div>
+        <div class="mod-visual-accent"></div>
+      </div>
+
+      <div class="node-center">
+        <div class="node-orb" id="orb-4">
+          <span class="orb-num">04</span>
+        </div>
+      </div>
+
+      <div class="node-content-right" data-mod="4">
+        <span class="mod-num-bg">04</span>
+        <span class="mod-tag">Módulo 04 · El Núcleo</span>
+        <h3 class="mod-title">SISTEMAS<br>MENTALES</h3>
+        <p class="mod-desc">
+          La diferencia entre quien ejecuta y quien sueña no es información ni talento. Es arquitectura mental. Este módulo reconstruye tu sistema operativo interno desde los cimientos neurológicos.
+        </p>
+        <div class="mod-tags-list">
+          <span class="mod-tag-pill">Growth Mindset</span>
+          <span class="mod-tag-pill">Ownership Total</span>
+          <span class="mod-tag-pill">Anti-Ansiedad</span>
+          <span class="mod-tag-pill">Resiliencia</span>
+        </div>
+        <div class="mod-data-viz">
+          <div class="data-row">
+            <span class="data-label">Resiliencia</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="93"></div></div>
+            <span class="data-val">93</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Confianza</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="87"></div></div>
+            <span class="data-val">87</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Claridad</span>
+            <div class="data-bar-wrap"><div class="data-bar-fill" data-w="95"></div></div>
+            <span class="data-val">95</span>
+          </div>
+        </div>
+        <div class="mod-visual-accent"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <script>
-/* ─── MOBILE MENU ─── */
-function toggleMobileMenu(){
-  document.getElementById('mobileMenu').classList.toggle('open');
-  document.getElementById('hamburger').classList.toggle('open');
-}
-function closeMobileMenu(){
-  document.getElementById('mobileMenu').classList.remove('open');
-  document.getElementById('hamburger').classList.remove('open');
-}
-
-/* ─── PROGRESS BAR ─── */
-const progressBar=document.getElementById('progress-bar');
-window.addEventListener('scroll',()=>{
-  const h=document.documentElement;
-  progressBar.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';
-},{passive:true});
-
-/* ─── CURSOR ─── */
+/* ════════════════════════════════════════════
+   CURSOR
+════════════════════════════════════════════ */
 const cursor=document.getElementById('cursor');
 const ring=document.getElementById('cursor-ring');
-if(cursor){
-  let mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{
-    mx=e.clientX;my=e.clientY;
-    cursor.style.left=mx+'px';cursor.style.top=my+'px';
-  });
-  (function animRing(){
-    rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;
-    ring.style.left=rx+'px';ring.style.top=ry+'px';
-    requestAnimationFrame(animRing);
-  })();
-}
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
 
-/* ─── NAV SCROLL ─── */
-const nav=document.getElementById('nav');
+/* ════════════════════════════════════════════
+   PROGRESS BAR
+════════════════════════════════════════════ */
+const pb=document.getElementById('progress-bar');
 window.addEventListener('scroll',()=>{
-  nav.classList.toggle('scrolled',window.scrollY>40);
+  const h=document.documentElement;
+  pb.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
 },{passive:true});
 
-/* ─── GSAP ─── */
+/* ════════════════════════════════════════════
+   NAV
+════════════════════════════════════════════ */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',scrollY>40);
+},{passive:true});
+
+/* ════════════════════════════════════════════
+   HERO CANVAS — ANIMATED CIRCUIT GRID
+════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('hero-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,nodes=[],particles=[];
+
+  function resize(){
+    W=canvas.width=canvas.offsetWidth;
+    H=canvas.height=canvas.offsetHeight;
+    buildNodes();
+  }
+
+  function buildNodes(){
+    nodes=[];
+    const cols=Math.ceil(W/120);
+    const rows=Math.ceil(H/120);
+    for(let r=0;r<=rows;r++){
+      for(let c=0;c<=cols;c++){
+        nodes.push({
+          x:c*120+(Math.random()-0.5)*40,
+          y:r*120+(Math.random()-0.5)*40,
+          vx:(Math.random()-0.5)*0.12,
+          vy:(Math.random()-0.5)*0.12,
+          r:Math.random()*1.5+0.5,
+          pulse:Math.random()*Math.PI*2
+        });
+      }
+    }
+  }
+
+  let mouse={x:W/2,y:H/2};
+  canvas.addEventListener('mousemove',e=>{
+    const r=canvas.getBoundingClientRect();
+    mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;
+  });
+
+  const ACCENT='rgba(200,255,62,';
+
+  function draw(t){
+    ctx.clearRect(0,0,W,H);
+
+    nodes.forEach(n=>{
+      n.x+=n.vx;n.y+=n.vy;
+      n.pulse+=0.018;
+      if(n.x<-60)n.x=W+60; if(n.x>W+60)n.x=-60;
+      if(n.y<-60)n.y=H+60; if(n.y>H+60)n.y=-60;
+    });
+
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const a=nodes[i],b=nodes[j];
+        const dx=b.x-a.x,dy=b.y-a.y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<160){
+          const alpha=(1-dist/160)*0.18;
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y);
+          ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=ACCENT+alpha+')';
+          ctx.lineWidth=0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    nodes.forEach(n=>{
+      const pulse=0.3+Math.sin(n.pulse)*0.2;
+      const dx=mouse.x-n.x,dy=mouse.y-n.y;
+      const md=Math.sqrt(dx*dx+dy*dy);
+      const boost=md<200?1-md/200:0;
+
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r*(1+boost),0,Math.PI*2);
+      ctx.fillStyle=ACCENT+(pulse+boost*0.4)+')';
+      ctx.fill();
+
+      if(boost>0.3){
+        ctx.beginPath();
+        ctx.arc(n.x,n.y,(n.r+4)*boost,0,Math.PI*2);
+        ctx.strokeStyle=ACCENT+(boost*0.3)+')';
+        ctx.lineWidth=1;
+        ctx.stroke();
+      }
+    });
+
+    if(Math.random()<0.12){
+      const idx=Math.floor(Math.random()*nodes.length);
+      const n=nodes[idx];
+      particles.push({x:n.x,y:n.y,vx:(Math.random()-0.5)*1.5,vy:(Math.random()-0.5)*1.5-0.5,life:1});
+    }
+    particles=particles.filter(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.life-=0.018;
+      if(p.life<=0)return false;
+      ctx.beginPath();ctx.arc(p.x,p.y,1.5,0,Math.PI*2);
+      ctx.fillStyle=ACCENT+(p.life*0.7)+')';
+      ctx.fill();
+      return true;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize',resize);
+  resize();
+  requestAnimationFrame(draw);
+})();
+
+/* ════════════════════════════════════════════
+   NEURAL CANVAS — SYNAPTIC NETWORK
+════════════════════════════════════════════ */
+(function(){
+  const canvas=document.getElementById('neural-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let W,H,nodes=[],signals=[];
+
+  function resize(){
+    W=canvas.width=canvas.offsetWidth;
+    H=canvas.height=canvas.offsetHeight;
+    buildNeurons();
+  }
+
+  function buildNeurons(){
+    nodes=[];
+    const count=Math.floor(W/60)+8;
+    for(let i=0;i<count;i++){
+      nodes.push({
+        x:Math.random()*W,y:Math.random()*H,
+        r:Math.random()*3+1,
+        glow:0,glowDir:1,
+        glowSpeed:0.02+Math.random()*0.03
+      });
+    }
+  }
+
+  function fireSynapse(){
+    if(nodes.length<2)return;
+    const a=nodes[Math.floor(Math.random()*nodes.length)];
+    const b=nodes[Math.floor(Math.random()*nodes.length)];
+    if(a===b)return;
+    signals.push({ax:a.x,ay:a.y,bx:b.x,by:b.y,progress:0,speed:0.008+Math.random()*0.012,node:b});
+  }
+
+  setInterval(fireSynapse,300);
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const a=nodes[i],b=nodes[j];
+        const dx=b.x-a.x,dy=b.y-a.y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<W*0.25){
+          const alpha=(1-d/(W*0.25))*0.12;
+          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=`rgba(200,255,62,${alpha})`;
+          ctx.lineWidth=0.5;ctx.stroke();
+        }
+      }
+    }
+
+    signals=signals.filter(s=>{
+      s.progress+=s.speed;
+      if(s.progress>=1){
+        s.node.glow=1;
+        return false;
+      }
+      const x=s.ax+(s.bx-s.ax)*s.progress;
+      const y=s.ay+(s.by-s.ay)*s.progress;
+      ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,255,62,${1-s.progress*0.3})`;
+      ctx.fill();
+      ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,255,62,0.08)`;
+      ctx.fill();
+      return true;
+    });
+
+    nodes.forEach(n=>{
+      n.glow=Math.max(0,n.glow-0.04);
+      n.glowDir=n.glow>0?1:n.glowDir;
+
+      const glow=n.glow;
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,255,62,${0.4+glow*0.5})`;
+      ctx.fill();
+
+      if(glow>0.1){
+        const grad=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,20+glow*20);
+        grad.addColorStop(0,`rgba(200,255,62,${glow*0.3})`);
+        grad.addColorStop(1,'rgba(200,255,62,0)');
+        ctx.beginPath();ctx.arc(n.x,n.y,20+glow*20,0,Math.PI*2);
+        ctx.fillStyle=grad;ctx.fill();
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize',resize);
+  resize();
+  requestAnimationFrame(draw);
+})();
+
+/* ════════════════════════════════════════════
+   GSAP ANIMATIONS
+════════════════════════════════════════════ */
 gsap.registerPlugin(ScrollTrigger);
 
-/* Hero entry */
-document.querySelectorAll('.prog-hero-content [data-anim], .prog-hero-meta[data-anim]').forEach((el,i)=>{
-  const delay=parseFloat(el.dataset.delay||0)*0.18;
-  gsap.from(el,{opacity:0,y:60,duration:1.2,delay:0.1+delay,ease:'power4.out',clearProps:'all'});
-});
+gsap.from('#hero-badge',{opacity:0,y:40,duration:1.2,delay:.2,ease:'power4.out'});
+gsap.from('#hero-title',{opacity:0,y:100,duration:1.5,delay:.5,ease:'power4.out'});
+gsap.from('#hero-sub',{opacity:0,y:60,duration:1.2,delay:.9,ease:'power4.out'});
+gsap.from('#hero-hint',{opacity:0,duration:1,delay:1.4,ease:'power2.out'});
 
-/* Scroll animations */
-document.querySelectorAll('[data-anim]').forEach(el=>{
-  const type=el.dataset.anim;
-  if(!type||el.closest('.prog-hero-content')||el===document.querySelector('.prog-hero-meta'))return;
-  if(type==='module'){
-    gsap.from(el.querySelectorAll('.mod-img-side, .mod-content-side'),{
-      opacity:0,y:60,duration:1.3,stagger:0.15,ease:'power4.out',clearProps:'all',
-      scrollTrigger:{trigger:el,start:'top 80%',toggleActions:'play none none reverse'}
-    });
-    return;
-  }
-  const fromVars={opacity:0,duration:1.1,ease:'power4.out',clearProps:'all'};
-  if(type==='fade-up')fromVars.y=80;
-  if(type==='fade-left')fromVars.x=80;
-  fromVars.delay=parseFloat(el.dataset.delay||0)*0.13;
+document.querySelectorAll('[data-reveal]').forEach((el,i)=>{
   gsap.from(el,{
-    ...fromVars,
-    scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none reverse'}
+    opacity:0,y:80,duration:1.1,
+    ease:'power4.out',
+    scrollTrigger:{
+      trigger:el,start:'top 88%',end:'top 55%',
+      toggleActions:'play none none reverse'
+    }
   });
 });
 
-/* Timeline */
-gsap.from('.timeline-step',{
-  opacity:0,y:60,duration:1.1,stagger:0.15,ease:'power4.out',clearProps:'all',
-  scrollTrigger:{trigger:'.timeline',start:'top 85%',toggleActions:'play none none reverse'}
-});
+function setupModuleReveal(nodeId,orbId,connId,delay){
+  const node=document.getElementById(nodeId);
+  if(!node)return;
+  const orb=document.getElementById(orbId);
+  const conn=document.getElementById(connId);
+  const contents=node.querySelectorAll('.node-content-left,.node-content-right');
 
-/* Module features */
-document.querySelectorAll('.mod-feature').forEach((el,i)=>{
-  gsap.from(el,{
-    opacity:0,x:-20,duration:.7,delay:i*0.05,ease:'power3.out',clearProps:'all',
-    scrollTrigger:{trigger:el.closest('.module-full'),start:'top 80%',toggleActions:'play none none reverse'}
-  });
-});
-
-/* Footer */
-gsap.from('footer > *',{
-  opacity:0,y:40,duration:1,stagger:0.1,ease:'power3.out',clearProps:'all',
-  scrollTrigger:{trigger:'footer',start:'top 90%',toggleActions:'play none none reverse'}
-});
-
-/* ─── MAGNETIC BUTTONS ─── */
-document.querySelectorAll('.btn-main,.nav-cta').forEach(btn=>{
-  btn.addEventListener('mousemove',e=>{
-    const r=btn.getBoundingClientRect();
-    const x=e.clientX-r.left-r.width/2;
-    const y=e.clientY-r.top-r.height/2;
-    btn.style.transform=`translate(${x*0.1}px,${y*0.12-5}px)`;
-  });
-  btn.addEventListener('mouseleave',()=>{btn.style.transform='';});
-});
-
-/* ─── MODULE card 3D tilt ─── */
-if(!('ontouchstart' in window)){
-  document.querySelectorAll('.module-full').forEach(card=>{
-    card.addEventListener('mousemove',e=>{
-      const r=card.getBoundingClientRect();
-      const x=(e.clientX-r.left)/r.width-.5;
-      const y=(e.clientY-r.top)/r.height-.5;
-      card.style.transform=`perspective(2000px) rotateX(${-y*1.5}deg) rotateY(${x*1.5}deg)`;
-    });
-    card.addEventListener('mouseleave',()=>{
-      card.style.transform='perspective(2000px) rotateX(0) rotateY(0)';
-      card.style.transition='transform .8s cubic-bezier(.16,1,.3,1)';
-    });
-    card.addEventListener('mouseenter',()=>{card.style.transition='transform .15s';});
+  ScrollTrigger.create({
+    trigger:node,
+    start:'top 75%',
+    onEnter:()=>{
+      if(orb){
+        orb.classList.add('revealed');
+        setTimeout(()=>orb.classList.add('active'),400);
+      }
+      if(conn)setTimeout(()=>conn.classList.add('active'),600);
+      contents.forEach((c,i)=>{
+        setTimeout(()=>{
+          c.classList.add('revealed','mod-active');
+          c.querySelectorAll('.data-bar-fill').forEach(bar=>{
+            const w=bar.dataset.w;
+            bar.style.width=w+'%';
+          });
+        },200+i*150);
+      });
+    }
   });
 }
-</script>
 
-<script>
+setupModuleReveal('mod-node-1','orb-1','conn-1');
+setupModuleReveal('mod-node-2','orb-2','conn-2');
+setupModuleReveal('mod-node-3','orb-3','conn-3');
+setupModuleReveal('mod-node-4','orb-4',null);
+
+const spineGlow=document.getElementById('spineGlow');
+const pipeline=document.querySelector('.pipeline');
+if(spineGlow && pipeline){
+  ScrollTrigger.create({
+    trigger:pipeline,
+    start:'top center',
+    end:'bottom center',
+    scrub:1,
+    onUpdate:(self)=>{
+      spineGlow.style.height=(self.progress*100)+'%';
+    }
+  });
+}
+
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{
-  if(e.key==='F12')e.preventDefault();
-  if(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))e.preventDefault();
-  if(e.ctrlKey&&e.key==='u')e.preventDefault();
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))||(e.ctrlKey&&e.key==='u'))e.preventDefault();
 });
 </script>
-
 </body>
 </html>
+```
