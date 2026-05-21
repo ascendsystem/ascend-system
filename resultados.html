@@ -1935,25 +1935,18 @@ function updateLightboxContent() {
   document.getElementById('lbDesc').textContent = d.desc;
   document.getElementById('lbM1').textContent = d.m1;
   
-  // FORZAR QUE SE VEA LA IMAGEN
+  // VERSIÓN SIMPLE - Reemplaza todo el contenido del placeholder
   const lbPlaceholder = document.getElementById('lbPlaceholder');
+  lbPlaceholder.innerHTML = `
+    <div class="lb-placeholder-grid"></div>
+    <img src="img/transformacion-${currentLB+1}.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:0;">
+    <div class="lb-placeholder-num" style="position:relative; z-index:2; color:rgba(200,255,62,0.3);">${numStr}</div>
+    <div class="lb-placeholder-label" style="position:relative; z-index:2; color:rgba(200,255,62,0.5);">TRANSFORMACIÓN ${numStr}</div>
+  `;
   
-  // Limpiar el contenido actual pero mantener la estructura
-  const lbGrid = lbPlaceholder.querySelector('.lb-placeholder-grid');
-  const lbNum = document.getElementById('lbNum');
-  const lbLabel = document.getElementById('lbPlaceholderLabel');
-  
-  // Vaciar pero mantener los elementos
-  lbPlaceholder.style.background = `url('img/transformacion-${currentLB+1}.png') center/cover no-repeat`;
-  lbPlaceholder.style.backgroundColor = '#0d0d0d';
-  lbPlaceholder.style.position = 'relative';
-  
-  // Asegurar que el texto sea visible encima
-  if (lbNum) lbNum.style.position = 'relative';
-  if (lbNum) lbNum.style.zIndex = '2';
-  if (lbLabel) lbLabel.style.position = 'relative';
-  if (lbLabel) lbLabel.style.zIndex = '2';
-  if (lbGrid) lbGrid.style.zIndex = '0';
+  // Actualizar referencias (por si se perdieron)
+  document.getElementById('lbNum').textContent = numStr;
+  document.getElementById('lbPlaceholderLabel').textContent = `TRANSFORMACIÓN ${numStr}`;
   
   // Actualizar los labels de métricas
   const m1Label = document.getElementById('lbM1').nextElementSibling;
@@ -1968,6 +1961,8 @@ function updateLightboxContent() {
   document.getElementById('lbCurrent').textContent = currentLB + 1;
   document.getElementById('lbTotal').textContent = lightboxData.length;
 }
+
+   
 
    
 // Cerrar con la X - IMPORTANTE: usar stopPropagation
