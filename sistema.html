@@ -1,1 +1,3036 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>El Sistema — Ascend System</title>
 
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,700&family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
+
+<style>
+/* ════════════════════════════════════════════════════════════
+   ROOT & RESET
+════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#030303;
+  --bg2:#070707;
+  --bg3:#0d0d0d;
+  --bg4:#111111;
+  --surface:rgba(255,255,255,0.025);
+  --surface2:rgba(255,255,255,0.045);
+  --text:#f0ede8;
+  --muted:#6a6662;
+  --muted2:#9a9692;
+  --accent:#c8ff3e;
+  --accent2:#aaff00;
+  --accent-glow:rgba(200,255,62,0.22);
+  --accent-dim:rgba(200,255,62,0.08);
+  --line:rgba(255,255,255,0.06);
+  --line2:rgba(255,255,255,0.1);
+  --red:#ff4545;
+  --orange:#ff8c42;
+  --blue:#42c8ff;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  --font-cond:'Barlow Condensed',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CURSOR
+════════════════════════════════════════════════════════════ */
+#cursor{
+  position:fixed;width:10px;height:10px;
+  background:var(--accent);border-radius:50%;
+  pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,opacity .2s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;width:40px;height:40px;
+  border:1px solid rgba(200,255,62,0.45);
+  border-radius:50%;pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1),border-color .3s;
+}
+body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:18px;height:18px;}
+body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:64px;height:64px;border-color:var(--accent);}
+@media(max-width:900px){#cursor,#cursor-ring{display:none;}body{cursor:auto;}}
+
+/* ════════════════════════════════════════════════════════════
+   GRAIN + AMBIENT
+════════════════════════════════════════════════════════════ */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9998;opacity:.45;
+  animation:grainShift 0.5s steps(1) infinite;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0);}20%{transform:translate(-2px,1px);}
+  40%{transform:translate(1px,-2px);}60%{transform:translate(2px,1px);}
+  80%{transform:translate(-1px,2px);}100%{transform:translate(0,0);}
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 10% 0%,rgba(200,255,62,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 45% 35% at 90% 100%,rgba(200,255,62,0.045) 0%,transparent 60%);
+  pointer-events:none;z-index:-1;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SCROLLBAR + PROGRESS
+════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.25);border-radius:999px;}
+#progress-bar{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  z-index:99997;width:0%;
+  box-shadow:0 0 12px rgba(200,255,62,0.6);
+  transition:width .05s linear;
+}
+
+/* ════════════════════════════════════════════════════════════
+   NAV
+════════════════════════════════════════════════════════════ */
+.nav{
+  position:fixed;top:0;left:0;width:100%;
+  padding:36px 80px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:9000;
+  transition:padding .5s ease,background .5s ease,border-color .5s ease;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{
+  padding:18px 80px;
+  background:rgba(3,3,3,0.92);
+  backdrop-filter:blur(40px) saturate(200%);
+  border-bottom-color:var(--line);
+}
+.logo{
+  font-family:var(--font-display);
+  font-size:24px;letter-spacing:6px;
+  color:white;display:flex;align-items:center;gap:12px;
+  text-decoration:none;
+}
+.logo-img{height:34px;width:auto;object-fit:contain;filter:drop-shadow(0 0 8px rgba(200,255,62,0.4));}
+.logo span{color:var(--accent);}
+.nav-links{display:flex;gap:44px;align-items:center;}
+.nav-links a{
+  text-decoration:none;color:rgba(240,237,232,0.55);
+  font-family:var(--font-cond);font-size:12px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  position:relative;transition:color .3s;
+}
+.nav-links a.active{color:var(--accent);}
+.nav-links a::after{
+  content:'';position:absolute;left:0;bottom:-6px;
+  width:0;height:1px;background:var(--accent);
+  transition:width .4s cubic-bezier(.16,1,.3,1);
+}
+.nav-links a:hover{color:white;}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%;}
+.nav-cta{
+  font-family:var(--font-cond);font-size:12px;font-weight:800;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:black;background:var(--accent);
+  padding:13px 30px;border:none;cursor:pointer;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:transform .3s,box-shadow .3s;
+  position:relative;overflow:hidden;
+}
+.nav-cta::before{
+  content:'';position:absolute;top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);
+  transform:skewX(-25deg);transition:left .6s;
+}
+.nav-cta:hover::before{left:150%;}
+.nav-cta:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(200,255,62,0.4);}
+
+.nav-hamburger{
+  display:none;flex-direction:column;gap:5px;cursor:pointer;
+  padding:8px;z-index:9100;
+}
+.nav-hamburger span{
+  display:block;width:28px;height:2px;
+  background:var(--text);border-radius:2px;
+  transition:transform .4s,opacity .4s;
+}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+.mobile-menu{
+  position:fixed;inset:0;
+  background:rgba(3,3,3,0.97);backdrop-filter:blur(40px);
+  z-index:9050;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:44px;
+  clip-path:circle(0% at calc(100% - 52px) 52px);
+  transition:clip-path .7s cubic-bezier(.77,0,.175,1);
+  pointer-events:none;
+}
+.mobile-menu.open{clip-path:circle(170% at calc(100% - 52px) 52px);pointer-events:all;}
+.mobile-menu a{
+  font-family:var(--font-display);font-size:56px;
+  color:rgba(240,237,232,0.4);text-decoration:none;
+  letter-spacing:4px;text-transform:uppercase;
+  transition:color .3s,transform .3s;
+}
+.mobile-menu a:hover{color:var(--accent);transform:translateX(12px);}
+.mobile-menu .mobile-cta{
+  font-family:var(--font-cond);font-size:14px;font-weight:800;
+  letter-spacing:3px;color:black;background:var(--accent);
+  padding:16px 44px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  text-decoration:none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   HERO — SISTEMA
+════════════════════════════════════════════════════════════ */
+.sys-hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;overflow:hidden;
+}
+.sys-hero-bg{position:absolute;inset:0;z-index:0;}
+.sys-hero-bg img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.18) saturate(1.4);
+  transform-origin:center;will-change:transform;
+}
+.sys-hero-gradient{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(to right,rgba(3,3,3,1) 0%,rgba(3,3,3,.7) 50%,rgba(3,3,3,.3) 100%),
+    linear-gradient(to top,rgba(3,3,3,1) 0%,transparent 35%),
+    linear-gradient(to bottom,rgba(3,3,3,.6) 0%,transparent 20%);
+}
+
+/* Animated grid background */
+.sys-hero-grid{
+  position:absolute;inset:0;z-index:2;
+  background-image:
+    linear-gradient(rgba(200,255,62,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,255,62,0.03) 1px,transparent 1px);
+  background-size:80px 80px;
+  animation:gridMove 30s linear infinite;
+}
+@keyframes gridMove{0%{background-position:0 0;}100%{background-position:80px 80px;}}
+
+/* Horizontal scan lines */
+.sys-scan{
+  position:absolute;inset:0;z-index:3;
+  background:linear-gradient(transparent 0%,rgba(200,255,62,0.018) 50%,transparent 100%);
+  background-size:100% 220px;
+  animation:scanDown 8s linear infinite;pointer-events:none;
+}
+@keyframes scanDown{0%{background-position:0 -220px;}100%{background-position:0 110vh;}}
+
+/* Vertical accent line on left */
+.sys-hero-vline{
+  position:absolute;left:80px;top:0;bottom:0;z-index:4;
+  width:1px;background:linear-gradient(to bottom,transparent,var(--accent),transparent);
+  opacity:.3;
+}
+
+.sys-hero-content{
+  position:relative;z-index:10;
+  padding:160px 80px 120px;
+  max-width:1000px;
+}
+.sys-hero-breadcrumb{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:3.5px;color:var(--muted);text-transform:uppercase;
+  margin-bottom:48px;
+}
+.sys-hero-breadcrumb a{color:var(--muted);text-decoration:none;transition:color .3s;}
+.sys-hero-breadcrumb a:hover{color:var(--accent);}
+.sys-hero-breadcrumb .sep{color:rgba(255,255,255,0.15);}
+.sys-hero-breadcrumb .current{color:var(--accent);}
+
+.sys-overline{
+  display:inline-flex;align-items:center;gap:16px;
+  margin-bottom:40px;
+}
+.sys-overline-line{
+  width:44px;height:2px;background:var(--accent);
+  position:relative;overflow:hidden;
+}
+.sys-overline-line::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;background:white;
+  animation:lineSweep 2.4s ease-in-out infinite;
+}
+@keyframes lineSweep{0%{left:-100%;}60%,100%{left:220%;}}
+.sys-overline-text{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:4.5px;color:var(--accent);text-transform:uppercase;
+}
+
+.sys-hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(80px,12vw,160px);
+  line-height:.84;letter-spacing:-2px;
+  color:white;margin-bottom:48px;
+}
+.sys-hero-title .t-stroke{
+  display:block;
+  -webkit-text-stroke:1.5px rgba(255,255,255,0.25);color:transparent;
+}
+.sys-hero-title .t-accent{
+  display:block;color:var(--accent);
+  text-shadow:0 0 80px rgba(200,255,62,0.25);
+  position:relative;
+}
+.sys-hero-title .t-accent::after{
+  content:attr(data-text);position:absolute;top:0;left:0;
+  color:transparent;-webkit-text-stroke:1px rgba(200,255,62,0.15);
+  z-index:-1;transform:translate(5px,5px);
+}
+
+.sys-hero-desc{
+  max-width:680px;font-size:20px;line-height:1.8;
+  color:rgba(240,237,232,0.58);font-weight:400;
+  margin-bottom:72px;
+  border-left:2px solid var(--accent);padding-left:28px;
+}
+
+.sys-hero-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+
+/* ─── PHASE INDICATOR floating right ─── */
+.sys-phase-indicator{
+  position:absolute;right:80px;top:50%;transform:translateY(-50%);
+  z-index:10;display:flex;flex-direction:column;gap:28px;
+}
+.phase-dot-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  cursor:pointer;
+}
+.phase-dot-wrap:not(:last-child)::after{
+  content:'';width:1px;height:28px;
+  background:linear-gradient(to bottom,var(--line2),transparent);
+  margin-top:6px;
+}
+.phase-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);
+  transition:all .4s;position:relative;
+}
+.phase-dot-wrap.active .phase-dot,
+.phase-dot-wrap:hover .phase-dot{
+  background:var(--accent);
+  box-shadow:0 0 14px rgba(200,255,62,0.5);
+  border-color:var(--accent);
+}
+.phase-dot-label{
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2px;color:rgba(255,255,255,0.2);
+  text-transform:uppercase;writing-mode:vertical-rl;
+  transform:rotate(180deg);transition:color .3s;
+}
+.phase-dot-wrap.active .phase-dot-label,
+.phase-dot-wrap:hover .phase-dot-label{color:var(--accent);}
+
+/* ════════════════════════════════════════════════════════════
+   PROBLEM STATEMENT — "La verdad que nadie dice"
+════════════════════════════════════════════════════════════ */
+.problem-section{
+  position:relative;overflow:hidden;
+  background:var(--bg);padding:160px 80px;
+}
+.problem-inner{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:120px;align-items:center;
+  max-width:1400px;margin:0 auto;
+}
+.problem-left{}
+.problem-overline{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
+  display:flex;align-items:center;gap:14px;margin-bottom:40px;
+}
+.problem-overline::before{content:'';width:28px;height:1px;background:var(--accent);}
+.problem-title{
+  font-family:var(--font-display);
+  font-size:clamp(64px,8vw,112px);
+  line-height:.88;color:white;
+}
+.problem-title em{font-style:normal;color:var(--accent);}
+.problem-title .stroke{
+  -webkit-text-stroke:1px rgba(255,255,255,0.2);color:transparent;
+}
+
+.problem-right{}
+.problem-statement{
+  font-size:22px;line-height:1.75;
+  color:rgba(240,237,232,0.7);font-weight:300;
+  margin-bottom:48px;
+}
+.problem-statement strong{
+  color:white;font-weight:700;
+  border-bottom:1px solid rgba(200,255,62,0.4);
+}
+.problem-pills{display:flex;flex-direction:column;gap:16px;}
+.problem-pill{
+  display:flex;align-items:center;gap:18px;
+  padding:20px 24px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  position:relative;overflow:hidden;
+  transition:border-color .4s,background .4s;
+}
+.problem-pill::before{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
+  background:var(--red);
+  transform:scaleY(0);transform-origin:bottom;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.problem-pill:hover::before{transform:scaleY(1);}
+.problem-pill:hover{border-color:rgba(255,69,69,0.2);background:rgba(255,69,69,0.04);}
+.pill-icon{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,69,69,0.1);border:1px solid rgba(255,69,69,0.2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:15px;
+}
+.pill-text{
+  font-family:var(--font-cond);font-size:14px;font-weight:600;
+  letter-spacing:1px;color:rgba(240,237,232,0.7);
+}
+.pill-text strong{color:white;}
+
+/* ════════════════════════════════════════════════════════════
+   SOLUTION BRIDGE — cinematic full-width statement
+════════════════════════════════════════════════════════════ */
+.bridge{
+  position:relative;overflow:hidden;
+  padding:200px 80px;
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  min-height:60vh;
+}
+.bridge-glow{
+  position:absolute;width:900px;height:900px;
+  background:radial-gradient(circle,rgba(200,255,62,0.12) 0%,transparent 65%);
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  animation:breathe 6s ease-in-out infinite;pointer-events:none;
+}
+@keyframes breathe{
+  0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1);}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}
+}
+/* Diagonal accent lines */
+.bridge-diag{
+  position:absolute;top:0;bottom:0;width:1px;
+  background:linear-gradient(to bottom,transparent,rgba(200,255,62,0.08),transparent);
+}
+.bridge-diag:nth-child(1){left:20%;transform:skewX(-8deg);}
+.bridge-diag:nth-child(2){left:40%;transform:skewX(4deg);}
+.bridge-diag:nth-child(3){right:30%;transform:skewX(-6deg);}
+.bridge-diag:nth-child(4){right:10%;transform:skewX(10deg);}
+
+.bridge-content{position:relative;z-index:5;max-width:1100px;}
+.bridge-eyebrow{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
+  margin-bottom:40px;display:flex;align-items:center;justify-content:center;gap:14px;
+}
+.bridge-eyebrow::before,.bridge-eyebrow::after{content:'';width:28px;height:1px;background:var(--accent);}
+.bridge-quote{
+  font-family:var(--font-display);
+  font-size:clamp(56px,9vw,128px);
+  line-height:.86;letter-spacing:-2px;color:white;
+  margin-bottom:48px;
+}
+.bridge-quote .q-accent{
+  color:var(--accent);
+  text-shadow:0 0 80px rgba(200,255,62,0.3);
+}
+.bridge-quote .q-stroke{
+  -webkit-text-stroke:1px rgba(255,255,255,0.3);color:transparent;
+}
+.bridge-sub{
+  font-size:21px;line-height:1.75;
+  color:rgba(240,237,232,0.52);
+  max-width:760px;margin:0 auto;
+}
+.bridge-sub strong{color:var(--text);}
+
+/* ════════════════════════════════════════════════════════════
+   PHASE SYSTEM — 4 FASES con animación scroll bidireccional
+════════════════════════════════════════════════════════════ */
+.phases-section{
+  background:var(--bg);
+  padding:0 0 0;
+}
+
+/* Chapter header for each phase */
+.phase-chapter{
+  position:relative;
+  min-height:100vh;
+  display:flex;
+  overflow:hidden;
+}
+
+/* Left fixed panel */
+.phase-fixed{
+  position:sticky;top:0;
+  width:42%;min-height:100vh;
+  flex-shrink:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:100px 80px;
+  overflow:hidden;
+}
+.phase-fixed-bg{
+  position:absolute;inset:0;z-index:0;
+}
+.phase-fixed-bg img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.22) saturate(1.3);
+  transition:filter 1s;
+}
+.phase-chapter:hover .phase-fixed-bg img{filter:brightness(.28) saturate(1.4);}
+.phase-fixed-overlay{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(to right,rgba(3,3,3,0) 0%,rgba(3,3,3,.75) 100%),
+    linear-gradient(to top,rgba(3,3,3,.8) 0%,transparent 50%),
+    linear-gradient(to bottom,rgba(3,3,3,.5) 0%,transparent 30%);
+}
+.phase-fixed-content{position:relative;z-index:5;}
+
+.phase-num-giant{
+  font-family:var(--font-display);
+  font-size:clamp(130px,16vw,220px);
+  line-height:1;color:rgba(200,255,62,0.07);
+  position:absolute;bottom:-20px;left:-20px;
+  letter-spacing:-8px;z-index:2;
+  transition:color .8s;
+}
+.phase-chapter:hover .phase-num-giant{color:rgba(200,255,62,0.11);}
+
+.phase-tag{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:4px;color:var(--accent);text-transform:uppercase;
+  margin-bottom:20px;display:block;
+  position:relative;
+}
+.phase-tag::before{
+  content:'';display:inline-block;
+  width:20px;height:1px;background:var(--accent);
+  margin-right:10px;vertical-align:middle;
+}
+
+.phase-name{
+  font-family:var(--font-display);
+  font-size:clamp(60px,7vw,96px);
+  line-height:.88;color:white;
+  letter-spacing:-1px;
+  position:relative;z-index:5;
+}
+.phase-name em{font-style:normal;color:var(--accent);}
+
+/* Right scrollable panel */
+.phase-scroll{
+  flex:1;
+  padding:120px 80px 120px 60px;
+  border-left:1px solid var(--line);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.phase-intro{
+  font-size:20px;line-height:1.8;
+  color:rgba(240,237,232,0.65);
+  max-width:580px;margin-bottom:70px;
+}
+.phase-intro strong{color:var(--text);}
+
+/* ─── What You Get grid ─── */
+.phase-deliverables{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:16px;margin-bottom:60px;
+}
+.deliverable{
+  padding:28px 24px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  position:relative;overflow:hidden;
+  transition:background .4s,border-color .4s;
+  display:flex;flex-direction:column;gap:12px;
+}
+.deliverable::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .55s cubic-bezier(.16,1,.3,1);
+}
+.deliverable:hover::after{transform:scaleX(1);}
+.deliverable:hover{background:rgba(200,255,62,0.03);border-color:rgba(200,255,62,0.08);}
+.deliverable-icon{
+  font-size:20px;width:40px;height:40px;
+  border:1px solid rgba(200,255,62,0.15);
+  background:rgba(200,255,62,0.06);
+  display:flex;align-items:center;justify-content:center;
+}
+.deliverable-title{
+  font-family:var(--font-cond);font-size:14px;font-weight:700;
+  letter-spacing:1.5px;color:white;text-transform:uppercase;
+}
+.deliverable-desc{
+  font-size:12px;line-height:1.7;
+  color:rgba(240,237,232,0.5);
+}
+
+/* ─── Phase horizontal separator with number ─── */
+.phase-separator{
+  display:flex;align-items:center;gap:24px;
+  padding:0 80px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:var(--bg2);
+  height:96px;
+}
+.phase-sep-num{
+  font-family:var(--font-display);font-size:80px;
+  color:rgba(200,255,62,0.06);line-height:1;
+  flex-shrink:0;
+}
+.phase-sep-bar{flex:1;height:1px;background:linear-gradient(to right,var(--accent),transparent);}
+.phase-sep-label{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:4px;color:var(--muted);text-transform:uppercase;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ASSESSMENT FORM — Fase 1
+════════════════════════════════════════════════════════════ */
+.assessment-section{
+  background:var(--bg3);
+  border-top:1px solid var(--line);
+  padding:160px 80px;
+  position:relative;overflow:hidden;
+}
+/* Background number watermark */
+.assessment-section::before{
+  content:'01';
+  position:absolute;right:-30px;top:50%;transform:translateY(-50%);
+  font-family:var(--font-display);font-size:400px;
+  color:rgba(200,255,62,0.025);line-height:1;
+  pointer-events:none;z-index:0;
+}
+
+.assessment-header{
+  max-width:1400px;margin:0 auto 100px;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:end;
+}
+.assessment-intro-text{
+  font-size:18px;line-height:1.85;
+  color:rgba(240,237,232,0.55);
+}
+.assessment-intro-text strong{color:var(--text);}
+
+.assessment-form-wrap{
+  max-width:1400px;margin:0 auto;
+  position:relative;z-index:5;
+}
+
+/* Progress track */
+.form-progress-track{
+  display:flex;gap:0;margin-bottom:80px;
+  border:1px solid var(--line);
+  overflow:hidden;
+}
+.form-progress-step{
+  flex:1;padding:20px 24px;
+  border-right:1px solid var(--line);
+  background:transparent;
+  transition:background .4s;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;
+}
+.form-progress-step:last-child{border-right:none;}
+.form-progress-step.active{background:rgba(200,255,62,0.06);}
+.form-progress-step.done{background:rgba(200,255,62,0.03);}
+.fps-num{
+  width:28px;height:28px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.12);
+  background:transparent;
+  font-family:var(--font-display);font-size:18px;
+  color:var(--muted);display:flex;align-items:center;justify-content:center;
+  transition:all .4s;flex-shrink:0;
+}
+.form-progress-step.active .fps-num{
+  border-color:var(--accent);color:var(--accent);
+  box-shadow:0 0 20px rgba(200,255,62,0.2);
+}
+.form-progress-step.done .fps-num{
+  background:var(--accent);color:black;border-color:var(--accent);
+}
+.fps-label{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:2px;color:rgba(240,237,232,0.35);
+  text-transform:uppercase;transition:color .4s;
+}
+.form-progress-step.active .fps-label{color:var(--accent);}
+.form-progress-step.done .fps-label{color:rgba(240,237,232,0.5);}
+
+/* Form panels */
+.form-panel{display:none;}
+.form-panel.active{display:block;}
+
+.form-area-title{
+  font-family:var(--font-display);font-size:56px;
+  color:white;margin-bottom:12px;line-height:.9;
+}
+.form-area-subtitle{
+  font-size:15px;line-height:1.7;
+  color:rgba(240,237,232,0.45);margin-bottom:56px;
+  max-width:600px;
+}
+
+.questions-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:24px;margin-bottom:56px;
+}
+.question-card{
+  border:1px solid var(--line);
+  background:var(--surface);
+  padding:32px 28px;
+  position:relative;overflow:hidden;
+  transition:border-color .3s,background .3s;
+}
+.question-card:has(input:checked),
+.question-card:has(input:focus),
+.question-card:has(textarea:focus){
+  border-color:rgba(200,255,62,0.2);
+  background:rgba(200,255,62,0.025);
+}
+.question-card::before{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:2px;
+  background:var(--accent);transform:scaleY(0);transform-origin:top;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.question-card:has(input:focus)::before,
+.question-card:has(textarea:focus)::before{transform:scaleY(1);}
+
+.q-label{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
+  margin-bottom:12px;display:block;
+}
+.q-text{
+  font-size:15px;font-weight:600;color:rgba(240,237,232,0.85);
+  margin-bottom:20px;line-height:1.5;
+}
+.q-note{
+  font-size:12px;color:var(--muted);font-style:italic;
+  margin-bottom:18px;display:block;
+}
+
+/* Slider */
+.q-slider-wrap{display:flex;flex-direction:column;gap:10px;}
+.q-slider{
+  width:100%;-webkit-appearance:none;
+  height:3px;background:var(--line2);border-radius:2px;cursor:pointer;
+  outline:none;
+}
+.q-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--accent);cursor:pointer;
+  box-shadow:0 0 12px rgba(200,255,62,0.4);
+  transition:transform .2s;
+}
+.q-slider::-webkit-slider-thumb:hover{transform:scale(1.3);}
+.q-slider-labels{
+  display:flex;justify-content:space-between;
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+}
+.q-slider-value{
+  text-align:right;font-family:var(--font-display);font-size:32px;
+  color:var(--accent);line-height:1;
+}
+
+/* Textarea */
+.q-textarea{
+  width:100%;background:transparent;
+  border:none;border-bottom:1px solid var(--line2);
+  color:var(--text);font-family:var(--font-body);font-size:14px;
+  line-height:1.7;padding:12px 0;resize:none;outline:none;
+  transition:border-color .3s;
+}
+.q-textarea::placeholder{color:var(--muted);}
+.q-textarea:focus{border-bottom-color:var(--accent);}
+
+/* Radio chips */
+.q-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.q-chip{
+  padding:9px 18px;
+  border:1px solid var(--line);
+  background:transparent;cursor:pointer;
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:2px;color:rgba(240,237,232,0.5);
+  text-transform:uppercase;transition:all .3s;
+}
+.q-chip.selected,.q-chip:hover{
+  border-color:var(--accent);
+  background:rgba(200,255,62,0.08);
+  color:var(--accent);
+}
+
+/* Full width question */
+.questions-grid .q-full{grid-column:1/-1;}
+
+/* Score display */
+.assessment-score{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:3px;margin-bottom:56px;
+}
+.score-cell{
+  padding:32px 24px;
+  background:var(--surface);border:1px solid var(--line);
+  text-align:center;transition:background .4s;
+}
+.score-cell.highlighted{
+  background:rgba(200,255,62,0.06);
+  border-color:rgba(200,255,62,0.15);
+}
+.score-area{
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:3px;color:var(--muted);text-transform:uppercase;
+  margin-bottom:12px;display:block;
+}
+.score-num{
+  font-family:var(--font-display);font-size:52px;
+  line-height:1;color:var(--accent);
+}
+.score-bar-wrap{
+  height:3px;background:var(--line);margin-top:12px;border-radius:2px;
+  overflow:hidden;
+}
+.score-bar-fill{
+  height:100%;border-radius:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  width:0%;transition:width 1.5s cubic-bezier(.16,1,.3,1);
+}
+
+/* Form nav */
+.form-nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:40px;border-top:1px solid var(--line);
+}
+.form-note{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ARCHITECTURE PHASE — Plantillas + Pautas
+════════════════════════════════════════════════════════════ */
+.arch-section{
+  background:var(--bg);padding:160px 80px;
+  border-top:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.arch-section::before{
+  content:'02';
+  position:absolute;left:-40px;top:50%;transform:translateY(-50%);
+  font-family:var(--font-display);font-size:400px;
+  color:rgba(200,255,62,0.022);line-height:1;
+  pointer-events:none;z-index:0;
+}
+.arch-inner{max-width:1400px;margin:0 auto;position:relative;z-index:1;}
+.arch-header{
+  display:grid;grid-template-columns:1fr 1fr;gap:100px;
+  align-items:end;margin-bottom:110px;
+}
+.arch-desc{
+  font-size:18px;line-height:1.85;
+  color:rgba(240,237,232,0.55);
+}
+.arch-desc strong{color:var(--text);}
+
+/* The framework showcase */
+.arch-framework{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:3px;
+}
+.arch-block{
+  padding:52px 40px;
+  background:var(--surface);border:1px solid var(--line);
+  position:relative;overflow:hidden;
+  transition:background .5s;
+  display:flex;flex-direction:column;
+  min-height:380px;
+}
+.arch-block::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .7s cubic-bezier(.16,1,.3,1);
+}
+.arch-block:hover::before{transform:scaleX(1);}
+.arch-block:hover{background:rgba(200,255,62,0.028);}
+.arch-block-num{
+  font-family:var(--font-display);font-size:100px;
+  color:rgba(200,255,62,0.05);line-height:1;
+  position:absolute;bottom:-10px;right:-10px;
+  letter-spacing:-4px;transition:color .5s;
+}
+.arch-block:hover .arch-block-num{color:rgba(200,255,62,0.09);}
+.arch-icon{
+  width:54px;height:54px;
+  border:1px solid rgba(200,255,62,0.15);
+  background:rgba(200,255,62,0.05);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:36px;flex-shrink:0;
+  transition:background .4s,border-color .4s,box-shadow .4s;
+}
+.arch-block:hover .arch-icon{
+  background:rgba(200,255,62,0.1);
+  border-color:rgba(200,255,62,0.3);
+  box-shadow:0 0 28px rgba(200,255,62,0.12);
+}
+.arch-icon svg{
+  width:22px;height:22px;
+  stroke:var(--accent);fill:none;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.arch-block-title{
+  font-family:var(--font-display);font-size:44px;
+  color:white;margin-bottom:16px;line-height:.9;
+  letter-spacing:-.5px;position:relative;z-index:1;
+}
+.arch-block-desc{
+  font-size:14px;line-height:1.8;
+  color:rgba(240,237,232,0.5);
+  flex:1;position:relative;z-index:1;
+}
+.arch-block-tag{
+  margin-top:28px;
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:8px;
+  position:relative;z-index:1;
+}
+.arch-block-tag::before{content:'→';font-size:14px;}
+
+/* Wide bottom block */
+.arch-wide{
+  grid-column:1/-1;
+  flex-direction:row;gap:80px;align-items:center;
+  min-height:260px;padding:52px 60px;
+}
+.arch-wide-left{flex:1;}
+.arch-wide-right{
+  flex:0 0 380px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.arch-timeline-item{
+  display:flex;align-items:center;gap:16px;
+  padding:14px 20px;
+  border:1px solid var(--line);
+  background:transparent;
+  transition:border-color .3s,background .3s;
+}
+.arch-timeline-item:hover{border-color:rgba(200,255,62,0.15);background:rgba(200,255,62,0.03);}
+.atl-week{
+  font-family:var(--font-display);font-size:26px;
+  color:rgba(200,255,62,0.4);flex-shrink:0;width:60px;
+}
+.atl-bar{flex:1;height:2px;background:var(--line);border-radius:2px;overflow:hidden;}
+.atl-bar-fill{
+  height:100%;border-radius:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+}
+.atl-label{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+  flex-shrink:0;width:100px;text-align:right;
+}
+
+/* ════════════════════════════════════════════════════════════
+   EXECUTION PHASE — 90 Days tracker
+════════════════════════════════════════════════════════════ */
+.execution-section{
+  background:var(--bg3);padding:160px 80px;
+  border-top:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.execution-section::before{
+  content:'03';
+  position:absolute;right:-40px;top:50%;transform:translateY(-50%);
+  font-family:var(--font-display);font-size:400px;
+  color:rgba(200,255,62,0.02);line-height:1;
+  pointer-events:none;z-index:0;
+}
+.exec-inner{max-width:1400px;margin:0 auto;position:relative;z-index:1;}
+.exec-header{
+  display:grid;grid-template-columns:1fr 1fr;gap:100px;
+  align-items:end;margin-bottom:100px;
+}
+.exec-desc{
+  font-size:18px;line-height:1.85;
+  color:rgba(240,237,232,0.55);
+}
+.exec-desc strong{color:var(--text);}
+
+/* Daily tracker */
+.daily-tracker{
+  border:1px solid var(--line);
+  background:var(--surface);
+  margin-bottom:40px;
+}
+.tracker-header{
+  padding:32px 40px;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.tracker-day{
+  font-family:var(--font-display);font-size:48px;
+  color:var(--accent);line-height:1;
+}
+.tracker-date{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:3px;color:var(--muted);text-transform:uppercase;
+  margin-top:4px;
+}
+.tracker-completion{
+  text-align:right;
+}
+.completion-ring{
+  width:64px;height:64px;position:relative;
+}
+.completion-ring svg{transform:rotate(-90deg);}
+.completion-ring .ring-bg{stroke:rgba(255,255,255,0.05);}
+.completion-ring .ring-fill{
+  stroke:var(--accent);
+  stroke-dasharray:163;
+  stroke-dashoffset:163;
+  stroke-linecap:round;
+  transition:stroke-dashoffset 1.5s cubic-bezier(.16,1,.3,1);
+}
+.completion-pct{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:var(--font-display);font-size:18px;color:var(--accent);
+}
+
+.tracker-body{padding:40px;}
+.tracker-areas{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;margin-bottom:40px;
+}
+.tracker-area{
+  padding:24px 20px;
+  border:1px solid var(--line);
+  background:var(--bg);
+  display:flex;flex-direction:column;gap:16px;
+  transition:border-color .4s;
+  position:relative;overflow:hidden;
+}
+.tracker-area::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.tracker-area:has(input:checked)::after{transform:scaleX(1);}
+.tracker-area:has(input:checked){border-color:rgba(200,255,62,0.2);}
+.ta-icon{font-size:22px;}
+.ta-name{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:2px;color:rgba(240,237,232,0.6);text-transform:uppercase;
+}
+.ta-checks{display:flex;flex-direction:column;gap:10px;}
+.ta-check{
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+}
+.ta-check input[type=checkbox]{
+  width:16px;height:16px;cursor:pointer;
+  accent-color:var(--accent);
+}
+.ta-check-label{
+  font-size:12px;color:rgba(240,237,232,0.5);
+  line-height:1.4;cursor:pointer;
+}
+.ta-check:has(input:checked) .ta-check-label{
+  color:var(--text);
+  text-decoration:line-through;
+  text-decoration-color:var(--accent);
+}
+
+/* Notes row */
+.tracker-notes{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+}
+.tracker-note-field{
+  border:1px solid var(--line);
+  background:var(--bg);padding:20px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.tnf-label{
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
+}
+.tnf-textarea{
+  background:transparent;border:none;
+  color:var(--text);font-family:var(--font-body);font-size:13px;
+  line-height:1.7;resize:none;outline:none;
+  min-height:80px;
+}
+.tnf-textarea::placeholder{color:var(--muted);}
+
+/* 90 day grid visual */
+.ninety-grid{
+  display:flex;flex-direction:column;gap:24px;
+}
+.ninety-grid-header{
+  display:flex;justify-content:space-between;align-items:center;
+}
+.ninety-grid-title{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:3px;color:var(--muted);text-transform:uppercase;
+}
+.ninety-grid-legend{
+  display:flex;align-items:center;gap:20px;
+}
+.legend-item{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+.legend-dot.done{background:var(--accent);}
+.legend-dot.partial{background:rgba(200,255,62,0.3);}
+.legend-dot.miss{background:rgba(255,69,69,0.25);}
+.legend-dot.empty{background:rgba(255,255,255,0.06);border:1px solid var(--line);}
+
+.day-blocks{
+  display:grid;grid-template-columns:repeat(30,1fr);
+  gap:3px;
+}
+.day-block{
+  aspect-ratio:1;border-radius:2px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.04);
+  transition:transform .2s,box-shadow .2s;
+  cursor:default;
+  position:relative;
+}
+.day-block:hover{transform:scale(1.4);z-index:10;}
+.day-block.done{
+  background:var(--accent);
+  border-color:rgba(200,255,62,0.5);
+}
+.day-block.done:hover{box-shadow:0 0 14px rgba(200,255,62,0.5);}
+.day-block.partial{
+  background:rgba(200,255,62,0.3);
+  border-color:rgba(200,255,62,0.3);
+}
+.day-block.miss{
+  background:rgba(255,69,69,0.2);
+  border-color:rgba(255,69,69,0.2);
+}
+.day-block.today{
+  border:1.5px solid var(--accent);
+  animation:todayPulse 2s ease-in-out infinite;
+}
+@keyframes todayPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(200,255,62,0.3);}
+  50%{box-shadow:0 0 0 4px rgba(200,255,62,0);}
+}
+
+/* ════════════════════════════════════════════════════════════
+   IDENTITY PHASE — Evaluación final
+════════════════════════════════════════════════════════════ */
+.identity-section{
+  background:var(--bg2);padding:160px 80px;
+  border-top:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.identity-section::before{
+  content:'04';
+  position:absolute;left:-40px;top:50%;transform:translateY(-50%);
+  font-family:var(--font-display);font-size:400px;
+  color:rgba(200,255,62,0.02);line-height:1;
+  pointer-events:none;z-index:0;
+}
+.ident-inner{max-width:1400px;margin:0 auto;position:relative;z-index:1;}
+.ident-header{
+  text-align:center;margin-bottom:120px;max-width:800px;margin-left:auto;margin-right:auto;
+}
+.ident-header p{
+  font-size:20px;line-height:1.8;
+  color:rgba(240,237,232,0.55);margin-top:32px;
+}
+.ident-header strong{color:var(--text);}
+
+/* Before / After comparison */
+.before-after{
+  display:grid;grid-template-columns:1fr 80px 1fr;
+  gap:0;align-items:center;margin-bottom:100px;
+}
+.ba-side{
+  border:1px solid var(--line);
+  background:var(--surface);
+}
+.ba-side.after{
+  border-color:rgba(200,255,62,0.12);
+  background:rgba(200,255,62,0.028);
+}
+.ba-header{
+  padding:28px 36px;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.ba-side.after .ba-header{border-bottom-color:rgba(200,255,62,0.1);}
+.ba-label{
+  font-family:var(--font-display);font-size:32px;
+  line-height:1;
+}
+.ba-side.before .ba-label{color:rgba(255,255,255,0.25);}
+.ba-side.after .ba-label{color:var(--accent);}
+.ba-badge{
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;padding:5px 12px;
+}
+.ba-side.before .ba-badge{color:var(--muted);border:1px solid var(--line);}
+.ba-side.after .ba-badge{color:var(--accent);border:1px solid rgba(200,255,62,0.25);}
+.ba-items{padding:32px 36px;display:flex;flex-direction:column;gap:20px;}
+.ba-item{
+  display:flex;align-items:flex-start;gap:14px;
+  font-size:14px;line-height:1.6;
+}
+.ba-side.before .ba-item{color:rgba(240,237,232,0.45);}
+.ba-side.after .ba-item{color:rgba(240,237,232,0.8);}
+.ba-dot{
+  width:6px;height:6px;border-radius:50%;
+  flex-shrink:0;margin-top:6px;
+}
+.ba-side.before .ba-dot{background:rgba(255,255,255,0.15);}
+.ba-side.after .ba-dot{background:var(--accent);}
+
+.ba-divider{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;
+}
+.ba-arrow-icon{
+  width:48px;height:48px;border-radius:50%;
+  border:1px solid rgba(200,255,62,0.25);
+  background:rgba(200,255,62,0.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  animation:arrowPulse 2.5s ease-in-out infinite;
+}
+@keyframes arrowPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(200,255,62,0.2);}
+  50%{box-shadow:0 0 0 8px rgba(200,255,62,0);}
+}
+.ba-days{
+  font-family:var(--font-display);font-size:22px;
+  color:rgba(200,255,62,0.3);writing-mode:vertical-rl;
+  transform:rotate(180deg);letter-spacing:3px;
+}
+
+/* Identity areas radar-style visual */
+.ident-areas{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:3px;margin-bottom:80px;
+}
+.ident-area{
+  padding:44px 32px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  display:flex;flex-direction:column;gap:20px;
+  position:relative;overflow:hidden;
+  transition:background .4s,border-color .4s;
+}
+.ident-area::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent);transform:scaleX(0);transform-origin:left;
+  transition:transform .7s cubic-bezier(.16,1,.3,1);
+}
+.ident-area:hover::before{transform:scaleX(1);}
+.ident-area:hover{background:rgba(200,255,62,0.03);border-color:rgba(200,255,62,0.1);}
+.ia-emoji{font-size:28px;}
+.ia-name{
+  font-family:var(--font-display);font-size:36px;
+  color:white;line-height:.9;
+}
+.ia-check-list{display:flex;flex-direction:column;gap:10px;}
+.ia-check{
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+}
+.ia-check input{accent-color:var(--accent);width:14px;height:14px;}
+.ia-check-text{
+  font-size:12px;color:rgba(240,237,232,0.5);
+  cursor:pointer;transition:color .3s;
+}
+.ia-check:has(input:checked) .ia-check-text{
+  color:var(--accent);
+}
+
+/* ════════════════════════════════════════════════════════════
+   SYSTEM OVERVIEW TIMELINE — cinematic version
+════════════════════════════════════════════════════════════ */
+.overview-section{
+  position:relative;overflow:hidden;padding:180px 80px;
+  background:var(--bg);border-top:1px solid var(--line);
+}
+.overview-inner{max-width:1400px;margin:0 auto;}
+.overview-header{
+  text-align:center;margin-bottom:140px;
+}
+
+/* Horizontal timeline */
+.timeline-track{
+  position:relative;display:flex;align-items:flex-start;
+  gap:0;
+}
+.timeline-track::before{
+  content:'';position:absolute;
+  top:32px;left:80px;right:80px;height:1px;
+  background:linear-gradient(90deg,var(--accent),rgba(200,255,62,0.25),var(--accent));
+  z-index:0;
+}
+.tl-node{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  position:relative;z-index:1;padding:0 24px;
+  cursor:pointer;
+}
+.tl-circle{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:36px;
+  box-shadow:0 0 0 8px var(--bg),0 0 30px rgba(200,255,62,0.15);
+  transition:box-shadow .5s,background .5s;
+}
+.tl-node:hover .tl-circle{
+  background:rgba(200,255,62,0.08);
+  box-shadow:0 0 0 8px var(--bg),0 0 50px rgba(200,255,62,0.3);
+}
+.tl-circle-num{
+  font-family:var(--font-display);font-size:26px;
+  color:var(--accent);
+}
+.tl-phase{
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
+  margin-bottom:10px;
+}
+.tl-title{
+  font-family:var(--font-display);font-size:36px;
+  color:white;line-height:.9;text-align:center;
+  margin-bottom:16px;
+}
+.tl-desc{
+  font-size:12px;line-height:1.7;
+  color:rgba(240,237,232,0.45);text-align:center;
+  max-width:200px;
+}
+.tl-time{
+  margin-top:20px;padding:6px 16px;
+  border:1px solid rgba(200,255,62,0.18);
+  background:rgba(200,255,62,0.05);
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TICKER
+════════════════════════════════════════════════════════════ */
+.ticker{
+  background:var(--accent);overflow:hidden;
+  white-space:nowrap;padding:17px 0;position:relative;z-index:20;
+}
+.ticker-inner{display:inline-flex;animation:tickerMove 24s linear infinite;}
+.ticker-item{display:inline-flex;align-items:center;gap:28px;padding:0 32px;}
+.ticker-item span{
+  font-family:var(--font-cond);font-size:12px;font-weight:800;
+  letter-spacing:3.5px;color:black;text-transform:uppercase;
+}
+.ticker-dot{width:4px;height:4px;background:black;border-radius:50%;opacity:.35;}
+@keyframes tickerMove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+/* ════════════════════════════════════════════════════════════
+   FINAL CTA
+════════════════════════════════════════════════════════════ */
+.final-section{
+  position:relative;overflow:hidden;min-height:80vh;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  border-top:1px solid var(--line);
+}
+.final-bg{position:absolute;inset:0;z-index:0;}
+.final-bg img{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(.15) saturate(1.5);transform-origin:center;
+}
+.final-vignette{
+  position:absolute;inset:0;z-index:1;
+  background:
+    radial-gradient(ellipse 80% 60% at center,rgba(3,3,3,.2) 0%,rgba(3,3,3,.95) 70%),
+    linear-gradient(to top,var(--bg),transparent 35%);
+}
+.final-glow{
+  position:absolute;width:900px;height:900px;
+  background:radial-gradient(circle,rgba(200,255,62,0.16) 0%,transparent 70%);
+  left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:2;animation:glowPulse 5s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1);}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
+}
+.final-content{position:relative;z-index:5;padding:100px 40px;}
+.final-eyebrow{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
+  margin-bottom:32px;display:flex;align-items:center;justify-content:center;gap:14px;
+}
+.final-eyebrow::before,.final-eyebrow::after{content:'';width:28px;height:1px;background:var(--accent);}
+.final-title{
+  font-family:var(--font-display);
+  font-size:clamp(80px,14vw,180px);
+  line-height:.83;letter-spacing:-4px;margin-bottom:48px;
+}
+.final-title em{font-style:normal;color:var(--accent);display:block;}
+.final-sub{
+  max-width:680px;margin:0 auto 64px;font-size:19px;
+  line-height:1.85;color:rgba(240,237,232,0.55);
+}
+.final-actions{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;}
+
+/* ════════════════════════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════════════════════════ */
+.btn-main{
+  position:relative;overflow:hidden;
+  font-family:var(--font-cond);font-size:13px;font-weight:800;
+  letter-spacing:3px;text-transform:uppercase;
+  color:black;background:var(--accent);
+  border:none;padding:22px 52px;cursor:pointer;
+  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;
+  text-decoration:none;display:inline-block;
+}
+.btn-main::before{
+  content:'';position:absolute;top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);
+  transform:skewX(-25deg);transition:left .7s;
+}
+.btn-main:hover::before{left:150%;}
+.btn-main:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 30px 90px rgba(200,255,62,.45),0 0 0 1px rgba(200,255,62,0.3);
+}
+.btn-ghost{
+  font-family:var(--font-cond);font-size:12px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(240,237,232,0.65);background:transparent;
+  border:1px solid rgba(255,255,255,0.1);
+  padding:21px 44px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:12px;
+  transition:all .4s;position:relative;overflow:hidden;
+}
+.btn-ghost::before{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,0.03);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s cubic-bezier(.16,1,.3,1);
+}
+.btn-ghost:hover::before{transform:scaleX(1);}
+.btn-ghost:hover{color:white;border-color:rgba(255,255,255,0.22);transform:translateY(-4px);}
+.btn-sm{
+  font-family:var(--font-cond);font-size:11px;font-weight:800;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:black;background:var(--accent);
+  border:none;padding:14px 32px;cursor:pointer;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:transform .3s,box-shadow .3s;
+}
+.btn-sm:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(200,255,62,0.35);}
+.btn-sm-ghost{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(240,237,232,0.5);background:transparent;
+  border:1px solid rgba(255,255,255,0.1);
+  padding:13px 28px;cursor:pointer;
+  transition:all .3s;display:inline-flex;align-items:center;gap:8px;
+}
+.btn-sm-ghost:hover{color:white;border-color:rgba(255,255,255,0.2);}
+
+.overline{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
+  display:flex;align-items:center;gap:16px;margin-bottom:26px;
+}
+.overline::before{content:'';width:28px;height:1px;background:var(--accent);}
+.section-title{
+  font-family:var(--font-display);
+  font-size:clamp(60px,8.5vw,118px);
+  line-height:.88;letter-spacing:-1px;color:white;
+}
+.section-title em{font-style:normal;color:var(--accent);}
+
+/* ════════════════════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════════════════════ */
+footer{
+  background:var(--bg2);border-top:1px solid var(--line);
+  padding:90px 80px;
+  display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:60px;
+}
+.footer-brand .logo{font-size:21px;margin-bottom:22px;gap:10px;}
+.footer-brand .logo-img{height:28px;}
+.footer-brand p{font-size:13px;line-height:1.85;color:var(--muted);max-width:270px;}
+.footer-col-title{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:3.5px;color:rgba(240,237,232,0.35);
+  text-transform:uppercase;margin-bottom:26px;
+}
+.footer-links{display:flex;flex-direction:column;gap:13px;}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .3s;}
+.footer-links a:hover{color:var(--text);}
+.footer-bottom{
+  border-top:1px solid var(--line);padding:32px 80px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.footer-bottom p{font-size:11px;color:var(--muted);font-family:var(--font-cond);letter-spacing:1px;}
+.footer-accent-line{width:80px;height:1px;background:linear-gradient(90deg,var(--accent),transparent);}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════════════════════ */
+@media(max-width:1200px){
+  .problem-inner{grid-template-columns:1fr;gap:70px;}
+  .arch-framework{grid-template-columns:1fr 1fr;}
+  .arch-wide{flex-direction:column;gap:40px;}
+  .arch-wide-right{flex:none;width:100%;}
+  .before-after{grid-template-columns:1fr 60px 1fr;}
+  .ident-areas{grid-template-columns:1fr 1fr;}
+  .tracker-areas{grid-template-columns:1fr 1fr;}
+  .assessment-score{grid-template-columns:1fr 1fr;}
+  footer{grid-template-columns:1fr 1fr;gap:50px;}
+}
+@media(max-width:1000px){
+  .arch-framework{grid-template-columns:1fr;}
+  .arch-wide{grid-column:auto;}
+  .exec-header{grid-template-columns:1fr;gap:40px;}
+  .arch-header{grid-template-columns:1fr;gap:40px;}
+  .assessment-header{grid-template-columns:1fr;gap:40px;}
+  .timeline-track{flex-direction:column;gap:50px;}
+  .timeline-track::before{display:none;}
+  .tl-node{flex-direction:row;align-items:flex-start;gap:24px;padding:0;}
+  .tl-circle{margin-bottom:0;flex-shrink:0;}
+  .tl-desc{text-align:left;}
+  .tl-phase{text-align:left;}
+  .tl-title{text-align:left;}
+}
+@media(max-width:900px){
+  .section,.arch-section,.execution-section,.assessment-section,
+  .identity-section,.problem-section,.overview-section,.bridge{
+    padding:100px 24px;
+  }
+  .nav{padding:22px 24px;}
+  .nav.scrolled{padding:14px 24px;}
+  .nav-links,.nav-cta{display:none;}
+  .nav-hamburger{display:flex;}
+  .sys-hero-content{padding:130px 24px 100px;}
+  .sys-phase-indicator{display:none;}
+  .sys-hero-vline{left:24px;}
+  .phase-fixed{display:none;}
+  .phase-scroll{padding:80px 24px;}
+  .phase-chapter{min-height:auto;}
+  .phase-chapter.mobile-header{
+    min-height:300px;
+    background:var(--bg2);
+    display:flex;align-items:center;padding:60px 24px;
+    border-top:1px solid var(--line);
+  }
+  .questions-grid{grid-template-columns:1fr;}
+  .before-after{grid-template-columns:1fr;gap:16px;}
+  .ba-divider{flex-direction:row;}
+  .ba-days{writing-mode:horizontal-tb;transform:none;}
+  .ident-areas{grid-template-columns:1fr 1fr;gap:2px;}
+  .tracker-areas{grid-template-columns:1fr 1fr;}
+  .day-blocks{grid-template-columns:repeat(15,1fr);}
+  .ninety-grid-legend{flex-wrap:wrap;gap:10px;}
+  .form-progress-track{flex-wrap:wrap;}
+  .form-progress-step{flex:0 0 50%;}
+  .pillars-desc{max-width:100%;}
+  footer{grid-template-columns:1fr;padding:60px 24px;gap:40px;}
+  .footer-bottom{padding:26px 24px;flex-direction:column;gap:14px;text-align:center;}
+  .phase-separator{padding:0 24px;}
+  .bridge{padding:100px 24px;min-height:auto;}
+  .mobile-menu a{font-size:40px;}
+}
+@media(max-width:640px){
+  .assessment-score{grid-template-columns:1fr 1fr;}
+  .tracker-areas{grid-template-columns:1fr;}
+  .ident-areas{grid-template-columns:1fr;}
+  .arch-framework{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ─── MOBILE MENU ─── -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="closeMobileMenu()">INICIO</a>
+  <a href="sistema.html" onclick="closeMobileMenu()">SISTEMA</a>
+  <a href="programa.html" onclick="closeMobileMenu()">PROGRAMA</a>
+  <a href="resultados.html" onclick="closeMobileMenu()">RESULTADOS</a>
+  <a href="contacto.html" onclick="closeMobileMenu()">CONTACTO</a>
+  <a href="pay.html" class="mobile-cta" onclick="closeMobileMenu()">ENTRAR AHORA</a>
+</div>
+
+<!-- ─── NAV ─── -->
+<nav class="nav" id="nav">
+  <a class="logo" href="index.html">
+    <img class="logo-img" src="logo.png" alt="Ascend System Logo" onerror="this.style.display='none'">
+    ASCEND <span>SYSTEM</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">INICIO</a>
+    <a href="sistema.html" class="active">SISTEMA</a>
+    <a href="programa.html">PROGRAMA</a>
+    <a href="resultados.html">RESULTADOS</a>
+    <a href="contacto.html">CONTACTO</a>
+  </div>
+  <button class="nav-cta" onclick="window.location.href='pay.html'">ENTRAR AHORA</button>
+  <div class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════ -->
+<section class="sys-hero">
+  <div class="sys-hero-bg">
+    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2400&auto=format&fit=crop" alt="System">
+  </div>
+  <div class="sys-hero-gradient"></div>
+  <div class="sys-hero-grid"></div>
+  <div class="sys-scan"></div>
+  <div class="sys-hero-vline"></div>
+
+  <div class="sys-hero-content">
+    <div class="sys-hero-breadcrumb">
+      <a href="index.html">INICIO</a>
+      <span class="sep">/</span>
+      <span class="current">EL SISTEMA</span>
+    </div>
+    <div class="sys-overline" id="hero-overline">
+      <div class="sys-overline-line"></div>
+      <span class="sys-overline-text">Cómo funciona</span>
+    </div>
+    <h1 class="sys-hero-title" id="hero-title">
+      <span class="t-stroke">EL</span>
+      <span class="t-accent" data-text="SISTEMA">SISTEMA</span>
+    </h1>
+    <p class="sys-hero-desc" id="hero-desc">
+      No compraste información. Compraste un <strong style="color:var(--text);">sistema operativo</strong> para tu vida. Cuatro fases diseñadas para transformarte a ti mismo, por ti mismo, pero con todo lo que necesitas para no fallar.
+    </p>
+    <div class="sys-hero-actions" id="hero-actions">
+      <a href="#assessment" class="btn-main">COMENZAR ASSESSMENT</a>
+      <a href="#overview" class="btn-ghost">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,8 12,16"/><polyline points="8,12 12,16 16,12"/></svg>
+        VER OVERVIEW
+      </a>
+    </div>
+  </div>
+
+  <!-- Phase nav dots -->
+  <div class="sys-phase-indicator" id="phaseIndicator">
+    <div class="phase-dot-wrap active" onclick="scrollToPhase('assessment')">
+      <div class="phase-dot"></div>
+      <span class="phase-dot-label">Assessment</span>
+    </div>
+    <div class="phase-dot-wrap" onclick="scrollToPhase('arch')">
+      <div class="phase-dot"></div>
+      <span class="phase-dot-label">Arquitectura</span>
+    </div>
+    <div class="phase-dot-wrap" onclick="scrollToPhase('execution')">
+      <div class="phase-dot"></div>
+      <span class="phase-dot-label">Ejecución</span>
+    </div>
+    <div class="phase-dot-wrap" onclick="scrollToPhase('identity')">
+      <div class="phase-dot"></div>
+      <span class="phase-dot-label">Identidad</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     PROBLEM STATEMENT
+════════════════════════════════════════════════════════════ -->
+<section class="problem-section">
+  <div class="problem-inner">
+    <div class="problem-left">
+      <div class="problem-overline" data-anim="fade-up">El problema real</div>
+      <h2 class="problem-title" data-anim="fade-up" data-delay="1">
+        Sabes<br>qué hacer.<br>
+        <span class="stroke">No lo</span><br>
+        <em>haces.</em>
+      </h2>
+    </div>
+    <div class="problem-right">
+      <p class="problem-statement" data-anim="fade-up" data-delay="1">
+        No te falta <strong>motivación</strong>. No te falta <strong>información</strong>. Lo que te falta es un sistema que convierta el conocimiento en ejecución constante, día tras día, sin excusas, sin excepción.
+      </p>
+      <div class="problem-pills">
+        <div class="problem-pill" data-anim="fade-up" data-delay="2">
+          <div class="pill-icon">😴</div>
+          <div class="pill-text"><strong>Empiezas fuerte, paras a la semana</strong> — el ciclo de inicio-abandono en bucle</div>
+        </div>
+        <div class="problem-pill" data-anim="fade-up" data-delay="3">
+          <div class="pill-icon">📱</div>
+          <div class="pill-text"><strong>3 horas de reels diarios</strong> que sientes pero no controlas</div>
+        </div>
+        <div class="problem-pill" data-anim="fade-up" data-delay="4">
+          <div class="pill-icon">🍔</div>
+          <div class="pill-text"><strong>Comer por ansiedad, dormir mal, entrenar cuando te apetece</strong> — sin sistema</div>
+        </div>
+        <div class="problem-pill" data-anim="fade-up" data-delay="5">
+          <div class="pill-icon">🧠</div>
+          <div class="pill-text"><strong>Mil proyectos empezados, cero terminados</strong> — dispersión crónica</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     BRIDGE / MANIFESTO
+════════════════════════════════════════════════════════════ -->
+<section class="bridge">
+  <div class="bridge-glow"></div>
+  <div class="bridge-diag"></div><div class="bridge-diag"></div>
+  <div class="bridge-diag"></div><div class="bridge-diag"></div>
+  <div class="bridge-content">
+    <div class="bridge-eyebrow" data-anim="fade-up">La solución</div>
+    <h2 class="bridge-quote" data-anim="fade-up" data-delay="1">
+      No te damos<br>
+      <span class="q-stroke">un plan.</span><br>
+      <span class="q-accent">Te damos el sistema.</span>
+    </h2>
+    <p class="bridge-sub" data-anim="fade-up" data-delay="2">
+      Cuatro fases diseñadas en secuencia. Cada una activa la siguiente. <strong>Tú ejecutas. Nosotros te damos todo para que no puedas fallar.</strong>
+    </p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     SYSTEM OVERVIEW — timeline
+════════════════════════════════════════════════════════════ -->
+<section class="overview-section" id="overview">
+  <div class="overview-inner">
+    <div class="overview-header">
+      <div class="overline" style="justify-content:center;" data-anim="fade-up">Las 4 fases</div>
+      <h2 class="section-title" style="margin-top:16px;" data-anim="fade-up" data-delay="1">
+        El Proceso<br><em>Completo</em>
+      </h2>
+    </div>
+    <div class="timeline-track" data-anim="timeline">
+      <div class="tl-node">
+        <div class="tl-circle"><span class="tl-circle-num">01</span></div>
+        <div>
+          <div class="tl-phase">Fase I</div>
+          <div class="tl-title">ASSESS<br>MENT</div>
+          <div class="tl-desc">Te miras al espejo sin filtros. Diagnóstico honesto de dónde estás realmente.</div>
+          <div class="tl-time">Día 1</div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="tl-circle"><span class="tl-circle-num">02</span></div>
+        <div>
+          <div class="tl-phase">Fase II</div>
+          <div class="tl-title">ARQUI<br>TECTURA</div>
+          <div class="tl-desc">Diseñas tu sistema personalizado con nuestras plantillas y pautas probadas.</div>
+          <div class="tl-time">Días 1–3</div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="tl-circle"><span class="tl-circle-num">03</span></div>
+        <div>
+          <div class="tl-phase">Fase III</div>
+          <div class="tl-title">EJECU<br>CIÓN</div>
+          <div class="tl-desc">90 días de seguimiento diario. Tracker, formularios y accountability real.</div>
+          <div class="tl-time">90 Días</div>
+        </div>
+      </div>
+      <div class="tl-node">
+        <div class="tl-circle"><span class="tl-circle-num">04</span></div>
+        <div>
+          <div class="tl-phase">Fase IV</div>
+          <div class="tl-title">IDEN<br>TIDAD</div>
+          <div class="tl-desc">Evaluación final. Compruebas quién eras vs. quién eres ahora.</div>
+          <div class="tl-time">Día 90</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     PHASE 01 — ASSESSMENT SECTION with FORM
+════════════════════════════════════════════════════════════ -->
+<div class="phase-separator">
+  <span class="phase-sep-num">01</span>
+  <div class="phase-sep-bar"></div>
+  <span class="phase-sep-label">Fase I · Assessment</span>
+</div>
+
+<section class="phase-chapter">
+  <div class="phase-fixed">
+    <div class="phase-fixed-bg">
+      <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?q=80&w=1200&auto=format&fit=crop" alt="Assessment">
+    </div>
+    <div class="phase-fixed-overlay"></div>
+    <span class="phase-num-giant">01</span>
+    <div class="phase-fixed-content">
+      <span class="phase-tag">Fase I</span>
+      <h2 class="phase-name">ASSESS<br><em>MENT</em></h2>
+    </div>
+  </div>
+  <div class="phase-scroll">
+    <p class="phase-intro">
+      El primer paso es <strong>la honestidad radical</strong>. Nadie te ve. Nadie te juzga. Pero si mientes aquí, te engañas a ti mismo — y el sistema no puede ayudarte a cambiar lo que no reconoces.
+    </p>
+    <div class="phase-deliverables">
+      <div class="deliverable">
+        <div class="deliverable-icon">🎯</div>
+        <div class="deliverable-title">Diagnóstico de 4 áreas</div>
+        <div class="deliverable-desc">Cuerpo, mente, tiempo y hábitos. Puntuación honesta de tu nivel real en cada dimensión.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">🪞</div>
+        <div class="deliverable-title">Sin filtros, sin excusas</div>
+        <div class="deliverable-desc">Preguntas diseñadas para revelar patrones inconscientes que sabotean tu crecimiento.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">📊</div>
+        <div class="deliverable-title">Mapa de partida</div>
+        <div class="deliverable-desc">Visualizas exactamente desde dónde partes. Esto es lo que hace que el día 90 sea devastadoramente poderoso.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">⚡</div>
+        <div class="deliverable-title">Claridad instantánea</div>
+        <div class="deliverable-desc">Al terminar el assessment, sabrás exactamente en qué áreas concentrar tu energía primero.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSESSMENT FORM -->
+<section class="assessment-section" id="assessment">
+  <div class="assessment-header">
+    <div>
+      <div class="overline" data-anim="fade-up">Tu Diagnóstico Real</div>
+      <h2 class="section-title" style="margin-top:16px;" data-anim="fade-up" data-delay="1">
+        Sé<br><em>Honesto.</em>
+      </h2>
+    </div>
+    <p class="assessment-intro-text" data-anim="fade-up" data-delay="2">
+      Este no es un test de personalidad. Es un <strong>espejo sin filtros</strong>. Las respuestas son solo para ti. Cuanto más honesto seas, más preciso será el sistema que diseñes en la siguiente fase. <strong>No hay respuestas correctas. Solo hay verdad o autoengaño.</strong>
+    </p>
+  </div>
+
+  <div class="assessment-form-wrap" data-anim="fade-up" data-delay="1">
+    <!-- Progress Steps -->
+    <div class="form-progress-track" id="formProgressTrack">
+      <div class="form-progress-step active" onclick="goToPanel(0)">
+        <div class="fps-num">01</div>
+        <span class="fps-label">Cuerpo & Físico</span>
+      </div>
+      <div class="form-progress-step" onclick="goToPanel(1)">
+        <div class="fps-num">02</div>
+        <span class="fps-label">Mente & Foco</span>
+      </div>
+      <div class="form-progress-step" onclick="goToPanel(2)">
+        <div class="fps-num">03</div>
+        <span class="fps-label">Tiempo & Hábitos</span>
+      </div>
+      <div class="form-progress-step" onclick="goToPanel(3)">
+        <div class="fps-num">04</div>
+        <span class="fps-label">Resultados</span>
+      </div>
+    </div>
+
+    <!-- PANEL 1: CUERPO -->
+    <div class="form-panel active" id="panel-0">
+      <div class="form-area-title">Cuerpo<br>&amp; Físico</div>
+      <div class="form-area-subtitle">Evalúa tu estado físico real. No el que quisieras tener. El que tienes ahora mismo.</div>
+      <div class="questions-grid">
+
+        <div class="question-card">
+          <span class="q-label">Entrenamiento</span>
+          <div class="q-text">¿Cuántos días a la semana entrenas realmente (no los que planeas)?</div>
+          <span class="q-note">Cuenta solo las semanas de los últimos 30 días.</span>
+          <div class="q-slider-wrap">
+            <div class="q-slider-value" id="sv-train">0 días</div>
+            <input type="range" class="q-slider" min="0" max="7" value="0" oninput="updateSlider(this,'sv-train','días')">
+            <div class="q-slider-labels"><span>0 días</span><span>7 días</span></div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Alimentación</span>
+          <div class="q-text">¿Cómo calificarías tu alimentación actual?</div>
+          <div class="q-chips" id="chips-food">
+            <div class="q-chip" onclick="selectChip(this,'chips-food')">Caótica</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-food')">Irregular</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-food')">Aceptable</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-food')">Controlada</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-food')">Elite</div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Sueño</span>
+          <div class="q-text">¿Cuántas horas duermes por noche de media real?</div>
+          <div class="q-slider-wrap">
+            <div class="q-slider-value" id="sv-sleep">6h</div>
+            <input type="range" class="q-slider" min="3" max="10" value="6" oninput="updateSlider(this,'sv-sleep','h')">
+            <div class="q-slider-labels"><span>3h (peligroso)</span><span>10h (exceso)</span></div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Energía</span>
+          <div class="q-text">Del 1 al 10, ¿cómo es tu nivel de energía durante el día?</div>
+          <div class="q-slider-wrap">
+            <div class="q-slider-value" id="sv-energy">5</div>
+            <input type="range" class="q-slider" min="1" max="10" value="5" oninput="updateSlider(this,'sv-energy','')">
+            <div class="q-slider-labels"><span>1 (agotado)</span><span>10 (máximo)</span></div>
+          </div>
+        </div>
+
+        <div class="question-card q-full">
+          <span class="q-label">El patrón físico que más te sabotea</span>
+          <div class="q-text">¿Qué comportamiento físico sabes que tienes y que más te está frenando?</div>
+          <span class="q-note">Sé específico. "Como mal" no es suficiente. "Como por ansiedad entre las 22h y las 0h" sí lo es.</span>
+          <textarea class="q-textarea" rows="3" placeholder="Escribe aquí con total honestidad..."></textarea>
+        </div>
+
+      </div>
+      <div class="form-nav">
+        <span class="form-note">Área 1 de 4 · Cuerpo & Físico</span>
+        <button class="btn-sm" onclick="nextPanel()">CONTINUAR →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 2: MENTE -->
+    <div class="form-panel" id="panel-1">
+      <div class="form-area-title">Mente<br>&amp; Foco</div>
+      <div class="form-area-subtitle">Tu capacidad de concentración es tu activo más valioso. Y probablemente tu mayor debilidad sin saberlo.</div>
+      <div class="questions-grid">
+
+        <div class="question-card">
+          <span class="q-label">Concentración</span>
+          <div class="q-text">¿Cuánto tiempo puedes trabajar en modo deep focus sin distraerte?</div>
+          <div class="q-chips" id="chips-focus">
+            <div class="q-chip" onclick="selectChip(this,'chips-focus')">Menos de 15min</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-focus')">15–30min</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-focus')">30–60min</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-focus')">+90min</div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Redes Sociales</span>
+          <div class="q-text">Tiempo real en redes sociales/entretenimiento al día</div>
+          <span class="q-note">Revisa tu tiempo de pantalla. No estimes. Mira el dato real.</span>
+          <div class="q-slider-wrap">
+            <div class="q-slider-value" id="sv-social">2h</div>
+            <input type="range" class="q-slider" min="0" max="8" value="2" oninput="updateSlider(this,'sv-social','h')">
+            <div class="q-slider-labels"><span>0h</span><span>+8h</span></div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Ansiedad Mental</span>
+          <div class="q-text">¿Con qué frecuencia tu mente está en el pasado o en el futuro en lugar del presente?</div>
+          <div class="q-chips" id="chips-anxiety">
+            <div class="q-chip" onclick="selectChip(this,'chips-anxiety')">Casi siempre</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-anxiety')">A menudo</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-anxiety')">A veces</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-anxiety')">Raramente</div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Lectura</span>
+          <div class="q-text">¿Cuántos libros has leído en el último mes?</div>
+          <div class="q-slider-wrap">
+            <div class="q-slider-value" id="sv-books">0</div>
+            <input type="range" class="q-slider" min="0" max="10" value="0" oninput="updateSlider(this,'sv-books','')">
+            <div class="q-slider-labels"><span>0</span><span>10</span></div>
+          </div>
+        </div>
+
+        <div class="question-card q-full">
+          <span class="q-label">Tu mayor ladrón de foco</span>
+          <div class="q-text">Describe tu mayor distracción. ¿Cuándo ocurre? ¿Por qué la permites?</div>
+          <textarea class="q-textarea" rows="3" placeholder="Sé brutalmente honesto sobre esto..."></textarea>
+        </div>
+
+      </div>
+      <div class="form-nav">
+        <button class="btn-sm-ghost" onclick="prevPanel()">← ANTERIOR</button>
+        <button class="btn-sm" onclick="nextPanel()">CONTINUAR →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 3: TIEMPO -->
+    <div class="form-panel" id="panel-2">
+      <div class="form-area-title">Tiempo<br>&amp; Hábitos</div>
+      <div class="form-area-subtitle">El tiempo es el único recurso no renovable. Cómo lo gastas define quién te estás convirtiendo.</div>
+      <div class="questions-grid">
+
+        <div class="question-card">
+          <span class="q-label">Rutina Matutina</span>
+          <div class="q-text">¿Tienes una rutina matutina consistente?</div>
+          <div class="q-chips" id="chips-morning">
+            <div class="q-chip" onclick="selectChip(this,'chips-morning')">No existe</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-morning')">Irregular</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-morning')">3-4 días/semana</div>
+            <div class="q-chip" onclick="selectChip(this,'chips-morning')">Todos los días</div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Productividad Real</span>
+          <div class="q-text">¿Cuántas horas de trabajo realmente productivo produces al día?</div>
+          <div class="q-slider-wrap">
+            <div class="q-slider-value" id="sv-prod">2h</div>
+            <input type="range" class="q-slider" min="0" max="10" value="2" oninput="updateSlider(this,'sv-prod','h')">
+            <div class="q-slider-labels"><span>0h (caos)</span><span>10h (elite)</span></div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Proyectos sin terminar</span>
+          <div class="q-text">¿Cuántos proyectos o objetivos tienes "empezados" sin terminar?</div>
+          <div class="q-slider-wrap">
+            <div class="q-slider-value" id="sv-projects">3</div>
+            <input type="range" class="q-slider" min="0" max="20" value="3" oninput="updateSlider(this,'sv-projects','')">
+            <div class="q-slider-labels"><span>0</span><span>+20</span></div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <span class="q-label">Consistencia de Hábitos</span>
+          <div class="q-text">¿Cuántos hábitos positivos mantienes de forma constante (más de 30 días)?</div>
+          <div class="q-slider-wrap">
+            <div class="q-slider-value" id="sv-habits">1</div>
+            <input type="range" class="q-slider" min="0" max="10" value="1" oninput="updateSlider(this,'sv-habits','')">
+            <div class="q-slider-labels"><span>0 (ninguno)</span><span>10</span></div>
+          </div>
+        </div>
+
+        <div class="question-card q-full">
+          <span class="q-label">El hábito que más cambiaría tu vida</span>
+          <div class="q-text">Si tuvieras que construir un solo hábito que cambiaría todo lo demás, ¿cuál sería? ¿Por qué no lo has construido todavía?</div>
+          <textarea class="q-textarea" rows="3" placeholder="La respuesta a esto es más importante de lo que crees..."></textarea>
+        </div>
+
+      </div>
+      <div class="form-nav">
+        <button class="btn-sm-ghost" onclick="prevPanel()">← ANTERIOR</button>
+        <button class="btn-sm" onclick="nextPanel()">VER RESULTADOS →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 4: RESULTADOS -->
+    <div class="form-panel" id="panel-3">
+      <div class="form-area-title">Tu Mapa<br>de Partida</div>
+      <div class="form-area-subtitle">Este es tu punto de arranque real. Guárdalo. El día 90 volverás aquí para ver quién eras.</div>
+
+      <div class="assessment-score" id="scoreDisplay">
+        <div class="score-cell" id="score-body">
+          <span class="score-area">Cuerpo</span>
+          <div class="score-num" id="scorenum-body">—</div>
+          <div class="score-bar-wrap"><div class="score-bar-fill" id="scorebar-body"></div></div>
+        </div>
+        <div class="score-cell" id="score-mind">
+          <span class="score-area">Mente</span>
+          <div class="score-num" id="scorenum-mind">—</div>
+          <div class="score-bar-wrap"><div class="score-bar-fill" id="scorebar-mind"></div></div>
+        </div>
+        <div class="score-cell" id="score-time">
+          <span class="score-area">Tiempo</span>
+          <div class="score-num" id="scorenum-time">—</div>
+          <div class="score-bar-wrap"><div class="score-bar-fill" id="scorebar-time"></div></div>
+        </div>
+        <div class="score-cell highlighted" id="score-overall">
+          <span class="score-area">Global</span>
+          <div class="score-num" id="scorenum-overall">—</div>
+          <div class="score-bar-wrap"><div class="score-bar-fill" id="scorebar-overall"></div></div>
+        </div>
+      </div>
+
+      <div style="padding:36px 40px;border:1px solid rgba(200,255,62,0.12);background:rgba(200,255,62,0.03);margin-bottom:48px;">
+        <div class="overline" style="margin-bottom:16px;">Siguiente paso</div>
+        <p style="font-size:16px;line-height:1.8;color:rgba(240,237,232,0.65);">
+          Tienes tu diagnóstico. Ahora pasas a <strong style="color:var(--text);">Fase II: Arquitectura</strong>. Usarás este mapa para diseñar tu sistema personalizado con las plantillas y marcos que te proporcionamos. El sistema se adapta a ti — no al revés.
+        </p>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-sm-ghost" onclick="prevPanel()">← VOLVER</button>
+        <a href="#arch" class="btn-sm">IR A ARQUITECTURA →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     PHASE 02 — ARCHITECTURE
+════════════════════════════════════════════════════════════ -->
+<div class="phase-separator">
+  <span class="phase-sep-num">02</span>
+  <div class="phase-sep-bar"></div>
+  <span class="phase-sep-label">Fase II · Arquitectura</span>
+</div>
+
+<section class="phase-chapter">
+  <div class="phase-fixed">
+    <div class="phase-fixed-bg">
+      <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=1200&auto=format&fit=crop" alt="Architecture">
+    </div>
+    <div class="phase-fixed-overlay"></div>
+    <span class="phase-num-giant">02</span>
+    <div class="phase-fixed-content">
+      <span class="phase-tag">Fase II</span>
+      <h2 class="phase-name">ARQUI<br><em>TECTURA</em></h2>
+    </div>
+  </div>
+  <div class="phase-scroll">
+    <p class="phase-intro">
+      Con tu diagnóstico en mano, diseñas tu sistema. <strong>No usas una plantilla genérica</strong>. Usas los marcos que te proporcionamos y los adaptas a tu vida, tus objetivos y tu nivel de partida real. Esto es lo que hace que funcione.
+    </p>
+    <div class="phase-deliverables">
+      <div class="deliverable">
+        <div class="deliverable-icon">🏗️</div>
+        <div class="deliverable-title">Plantillas probadas</div>
+        <div class="deliverable-desc">Marcos de rutina, bloque de tiempo, nutrición y entrenamiento testeados con miles de usuarios.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">🎛️</div>
+        <div class="deliverable-title">Sistema personalizable</div>
+        <div class="deliverable-desc">No hay un protocolo igual para todos. El sistema se calibra a tu vida, horarios y objetivos reales.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">📋</div>
+        <div class="deliverable-title">Pautas detalladas</div>
+        <div class="deliverable-desc">Para cada área: qué hacer, cuándo, cómo y por qué. Sin ambigüedad, sin improvisación.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">🔗</div>
+        <div class="deliverable-title">Sistema integrado</div>
+        <div class="deliverable-desc">Cuerpo, mente, productividad y hábitos — todos conectados en una arquitectura coherente.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="arch-section" id="arch">
+  <div class="arch-inner">
+    <div class="arch-header" data-anim="fade-up">
+      <div>
+        <div class="overline">Lo que recibes</div>
+        <h2 class="section-title" style="margin-top:16px;">Diseña<br><em>tu sistema</em></h2>
+      </div>
+      <p class="arch-desc" data-anim="fade-up" data-delay="1">
+        No te dejamos solo con un diagnóstico. Te damos <strong>todo el arsenal</strong> para construir un sistema que se adapte exactamente a quien eres y a quien quieres ser.
+      </p>
+    </div>
+
+    <div class="arch-framework" data-anim="stagger-grid">
+      <div class="arch-block">
+        <span class="arch-block-num">A</span>
+        <div class="arch-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <div class="arch-block-title">RUTINA<br>DIARIA</div>
+        <div class="arch-block-desc">Estructura hora a hora. Wake-up protocol, bloques de trabajo, ventanas de entrenamiento, protocolo de sueño. Tu día diseñado con precisión quirúrgica.</div>
+        <div class="arch-block-tag">Template incluida</div>
+      </div>
+      <div class="arch-block">
+        <span class="arch-block-num">B</span>
+        <div class="arch-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="arch-block-title">PLAN<br>SEMANAL</div>
+        <div class="arch-block-desc">Planificación semana a semana. OKRs personales, bloques de deep work, huecos de recuperación y revisión de progreso.</div>
+        <div class="arch-block-tag">Planificador semanal</div>
+      </div>
+      <div class="arch-block">
+        <span class="arch-block-num">C</span>
+        <div class="arch-icon">
+          <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
+        <div class="arch-block-title">PROTO<br>COLO FÍSICO</div>
+        <div class="arch-block-desc">Bases de entrenamiento y nutrición adaptables a tu nivel. No necesitas ser atleta. Necesitas un protocolo que cumplas.</div>
+        <div class="arch-block-tag">Protocolo + guía</div>
+      </div>
+
+      <!-- Wide block -->
+      <div class="arch-block arch-wide">
+        <div class="arch-wide-left">
+          <span class="arch-block-num" style="position:static;font-size:70px;color:rgba(200,255,62,0.06);">D</span>
+          <div class="arch-icon" style="margin-top:16px;">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="arch-block-title">EL MARCO DE<br>PROGRESIÓN</div>
+          <div class="arch-block-desc" style="max-width:480px;">90 días divididos en 3 ciclos de 30 días, cada uno con intensidad y enfoque crecientes. No es un sprint. Es una arquitectura de transformación progresiva que te lleva de donde estás a donde quieres estar sin quemarte.</div>
+          <div class="arch-block-tag">Framework de 90 días</div>
+        </div>
+        <div class="arch-wide-right">
+          <div class="arch-timeline-item">
+            <span class="atl-week">W1</span>
+            <div class="atl-bar"><div class="atl-bar-fill" style="width:30%"></div></div>
+            <span class="atl-label">Setup</span>
+          </div>
+          <div class="arch-timeline-item">
+            <span class="atl-week">W2</span>
+            <div class="atl-bar"><div class="atl-bar-fill" style="width:45%"></div></div>
+            <span class="atl-label">Activación</span>
+          </div>
+          <div class="arch-timeline-item">
+            <span class="atl-week">W4</span>
+            <div class="atl-bar"><div class="atl-bar-fill" style="width:60%"></div></div>
+            <span class="atl-label">Consolidación</span>
+          </div>
+          <div class="arch-timeline-item">
+            <span class="atl-week">W8</span>
+            <div class="atl-bar"><div class="atl-bar-fill" style="width:80%"></div></div>
+            <span class="atl-label">Expansión</span>
+          </div>
+          <div class="arch-timeline-item">
+            <span class="atl-week">W12</span>
+            <div class="atl-bar"><div class="atl-bar-fill" style="width:100%"></div></div>
+            <span class="atl-label">Identidad</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     TICKER
+════════════════════════════════════════════════════════════ -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <div class="ticker-item"><span>DISCIPLINA ABSOLUTA</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>SISTEMA PERSONALIZADO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>90 DÍAS DE EJECUCIÓN</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>IDENTIDAD ELITE</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>DEEP FOCUS</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ARQUITECTURA PERSONAL</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ASSESSMENT BRUTAL</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>TRANSFORMACIÓN REAL</span><div class="ticker-dot"></div></div>
+    <!-- duplicado para loop -->
+    <div class="ticker-item"><span>DISCIPLINA ABSOLUTA</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>SISTEMA PERSONALIZADO</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>90 DÍAS DE EJECUCIÓN</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>IDENTIDAD ELITE</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>DEEP FOCUS</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ARQUITECTURA PERSONAL</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>ASSESSMENT BRUTAL</span><div class="ticker-dot"></div></div>
+    <div class="ticker-item"><span>TRANSFORMACIÓN REAL</span><div class="ticker-dot"></div></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     PHASE 03 — EXECUTION / 90 DAY TRACKER
+════════════════════════════════════════════════════════════ -->
+<div class="phase-separator">
+  <span class="phase-sep-num">03</span>
+  <div class="phase-sep-bar"></div>
+  <span class="phase-sep-label">Fase III · Ejecución</span>
+</div>
+
+<section class="phase-chapter">
+  <div class="phase-fixed">
+    <div class="phase-fixed-bg">
+      <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Execution">
+    </div>
+    <div class="phase-fixed-overlay"></div>
+    <span class="phase-num-giant">03</span>
+    <div class="phase-fixed-content">
+      <span class="phase-tag">Fase III</span>
+      <h2 class="phase-name">EJECU<br><em>CIÓN</em></h2>
+    </div>
+  </div>
+  <div class="phase-scroll">
+    <p class="phase-intro">
+      Aquí es donde la mayoría falla. Tienen el plan. No ejecutan. El tracker diario elimina ese problema: <strong>cada noche registras lo que hiciste y lo que no hiciste</strong>. La honestidad diaria es el mecanismo que produce el cambio real.
+    </p>
+    <div class="phase-deliverables">
+      <div class="deliverable">
+        <div class="deliverable-icon">📅</div>
+        <div class="deliverable-title">Tracker diario de 90 días</div>
+        <div class="deliverable-desc">Un check-in cada noche. ¿Qué cumpliste? ¿Qué falló? ¿Por qué? Sin piedad, sin excusas.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">🔥</div>
+        <div class="deliverable-title">Racha visible</div>
+        <div class="deliverable-desc">La visualización de tu racha de días cumplidos es el mecanismo de motivación más poderoso que existe.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">📈</div>
+        <div class="deliverable-title">Patterns de fallo</div>
+        <div class="deliverable-desc">Detectas los días, momentos y situaciones en que fallas. Los patrones se hacen visibles. Puedes atacarlos.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">🎯</div>
+        <div class="deliverable-title">Ajuste semanal</div>
+        <div class="deliverable-desc">Cada semana revisas y ajustas. El sistema no es rígido — es vivo y se adapta a los datos reales de tu ejecución.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="execution-section" id="execution">
+  <div class="exec-inner">
+    <div class="exec-header">
+      <div>
+        <div class="overline" data-anim="fade-up">Tu tracker de 90 días</div>
+        <h2 class="section-title" style="margin-top:16px;" data-anim="fade-up" data-delay="1">
+          Ejecuta.<br><em>Registra.</em><br>Repite.
+        </h2>
+      </div>
+      <p class="exec-desc" data-anim="fade-up" data-delay="2">
+        Cada noche, 5 minutos. Marcas qué has cumplido y qué no. <strong>No hay juicio. Solo datos.</strong> Los datos son los que transforman. El tracker convierte el compromiso en una visualización que no puedes ignorar.
+      </p>
+    </div>
+
+    <!-- Daily tracker mockup -->
+    <div class="daily-tracker" data-anim="fade-up" data-delay="1">
+      <div class="tracker-header">
+        <div>
+          <div class="tracker-day">DÍA 23</div>
+          <div class="tracker-date">Martes · Semana 4 de 13</div>
+        </div>
+        <div class="tracker-completion">
+          <div class="completion-ring">
+            <svg width="64" height="64" viewBox="0 0 64 64">
+              <circle class="ring-bg" cx="32" cy="32" r="26" fill="none" stroke-width="3"/>
+              <circle class="ring-fill" id="progressRing" cx="32" cy="32" r="26" fill="none" stroke-width="3"/>
+            </svg>
+            <div class="completion-pct" id="completionPct">0%</div>
+          </div>
+        </div>
+      </div>
+      <div class="tracker-body">
+        <div class="tracker-areas">
+          <div class="tracker-area">
+            <span class="ta-icon">💪</span>
+            <span class="ta-name">Físico</span>
+            <div class="ta-checks">
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Entrenamiento completado</span>
+              </label>
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Nutrición según plan</span>
+              </label>
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Hidratación objetivo</span>
+              </label>
+            </div>
+          </div>
+          <div class="tracker-area">
+            <span class="ta-icon">🧠</span>
+            <span class="ta-name">Mental</span>
+            <div class="ta-checks">
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Deep work: 2h+ bloqueadas</span>
+              </label>
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Sin redes hasta las 12h</span>
+              </label>
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">30min de lectura</span>
+              </label>
+            </div>
+          </div>
+          <div class="tracker-area">
+            <span class="ta-icon">⚡</span>
+            <span class="ta-name">Hábitos</span>
+            <div class="ta-checks">
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Rutina matutina completa</span>
+              </label>
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Planificación del día siguiente</span>
+              </label>
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Hora de dormir respetada</span>
+              </label>
+            </div>
+          </div>
+          <div class="tracker-area">
+            <span class="ta-icon">🎯</span>
+            <span class="ta-name">Objetivos</span>
+            <div class="ta-checks">
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Tarea #1 del día completada</span>
+              </label>
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Revisión de progreso semanal</span>
+              </label>
+              <label class="ta-check">
+                <input type="checkbox" onchange="updateCompletion()">
+                <span class="ta-check-label">Sin procrastinación activa</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="tracker-notes">
+          <div class="tracker-note-field">
+            <span class="tnf-label">Lo que cumplí hoy y cómo me sentí</span>
+            <textarea class="tnf-textarea" placeholder="Lo que hiciste bien, cómo te sentiste al hacerlo..."></textarea>
+          </div>
+          <div class="tracker-note-field">
+            <span class="tnf-label">Lo que fallé y el motivo REAL (sin excusas)</span>
+            <textarea class="tnf-textarea" placeholder="Sin excusas. ¿Fue pereza? ¿Tiempo? ¿Qué exactamente?..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 90 day grid -->
+    <div class="ninety-grid" data-anim="fade-up" data-delay="2">
+      <div class="ninety-grid-header">
+        <span class="ninety-grid-title">Vista de 90 Días</span>
+        <div class="ninety-grid-legend">
+          <div class="legend-item"><div class="legend-dot done"></div>Completado</div>
+          <div class="legend-item"><div class="legend-dot partial"></div>Parcial</div>
+          <div class="legend-item"><div class="legend-dot miss"></div>Fallado</div>
+          <div class="legend-item"><div class="legend-dot empty"></div>Pendiente</div>
+        </div>
+      </div>
+      <div class="day-blocks" id="dayBlocks"></div>
+      <div class="day-blocks" id="dayBlocks2"></div>
+      <div class="day-blocks" id="dayBlocks3"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     PHASE 04 — IDENTITY
+════════════════════════════════════════════════════════════ -->
+<div class="phase-separator">
+  <span class="phase-sep-num">04</span>
+  <div class="phase-sep-bar"></div>
+  <span class="phase-sep-label">Fase IV · Identidad</span>
+</div>
+
+<section class="phase-chapter">
+  <div class="phase-fixed">
+    <div class="phase-fixed-bg">
+      <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop" alt="Identity">
+    </div>
+    <div class="phase-fixed-overlay"></div>
+    <span class="phase-num-giant">04</span>
+    <div class="phase-fixed-content">
+      <span class="phase-tag">Fase IV</span>
+      <h2 class="phase-name">IDEN<br><em>TIDAD</em></h2>
+    </div>
+  </div>
+  <div class="phase-scroll">
+    <p class="phase-intro">
+      El día 90, vuelves al assessment inicial. Lo relees. Y te preguntas: <strong>¿quién era esa persona?</strong> Los hábitos que construiste ya no son esfuerzo — son quién eres. Esa es la diferencia entre motivación e identidad.
+    </p>
+    <div class="phase-deliverables">
+      <div class="deliverable">
+        <div class="deliverable-icon">🏆</div>
+        <div class="deliverable-title">Evaluación de 90 días</div>
+        <div class="deliverable-desc">Comparas punto a punto con tu assessment inicial. Los datos no mienten. El crecimiento es visible e indiscutible.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">🔄</div>
+        <div class="deliverable-title">Nuevos hábitos detectados</div>
+        <div class="deliverable-desc">Identificas qué hábitos han pasado a ser automáticos. Eso ya no requiere fuerza de voluntad — es identidad.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">📐</div>
+        <div class="deliverable-title">Siguiente ciclo diseñado</div>
+        <div class="deliverable-desc">Con los datos de los 90 días, diseñas el siguiente ciclo más ambicioso. El sistema escala contigo.</div>
+      </div>
+      <div class="deliverable">
+        <div class="deliverable-icon">🧬</div>
+        <div class="deliverable-title">Identidad construida</div>
+        <div class="deliverable-desc">Ya no eres alguien que intenta cambiar. Eres alguien diferente. Esa es la transformación real que vende el sistema.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="identity-section" id="identity">
+  <div class="ident-inner">
+    <div class="ident-header" data-anim="fade-up">
+      <div class="overline" style="justify-content:center;">Día 90</div>
+      <h2 class="section-title" style="margin-top:16px;">¿Quién<br><em>eres ahora?</em></h2>
+      <p>El día 90 no es el final. Es la primera vez que te ves con claridad. <strong>90 días de datos honestos, 90 días de ejecución</strong> — lo que queda es una persona diferente. Ahora lo compruebas.</p>
+    </div>
+
+    <!-- Before / After -->
+    <div class="before-after" data-anim="fade-up" data-delay="1">
+      <div class="ba-side before">
+        <div class="ba-header">
+          <span class="ba-label">DÍA 01</span>
+          <span class="ba-badge">PUNTO DE PARTIDA</span>
+        </div>
+        <div class="ba-items">
+          <div class="ba-item"><div class="ba-dot"></div><span>Entrenas cuando te apetece — 1-2 veces/semana si acaso</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>3-4 horas de pantalla pasiva al día que no puedes controlar</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Empiezas proyectos, los abandonas. El ciclo se repite</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Comes por ansiedad, duermes mal, te levantas agotado</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>La motivación llega y se va. No hay sistema, solo impulsos</span></div>
+        </div>
+      </div>
+      <div class="ba-divider">
+        <div class="ba-arrow-icon">→</div>
+        <div class="ba-days">90 DÍAS</div>
+      </div>
+      <div class="ba-side after">
+        <div class="ba-header">
+          <span class="ba-label">DÍA 90</span>
+          <span class="ba-badge">NUEVA IDENTIDAD</span>
+        </div>
+        <div class="ba-items">
+          <div class="ba-item"><div class="ba-dot"></div><span>Entrenas 4-5 días sistemáticamente. Ya no lo decides — lo haces</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Deep work de 3h+ cada mañana antes de abrir el teléfono</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Un proyecto ejecutado de principio a fin. Ahora sabes que puedes</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>Comes con intención, duermes con protocolo, te levantas con energía</span></div>
+          <div class="ba-item"><div class="ba-dot"></div><span>No necesitas motivación. El sistema funciona aunque no te apetezca</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Identity areas evaluation -->
+    <h3 style="font-family:var(--font-display);font-size:52px;color:white;margin-bottom:40px;line-height:.9;" data-anim="fade-up">
+      Evaluación<br><span style="color:var(--accent);">Final</span>
+    </h3>
+    <div class="ident-areas" data-anim="stagger-grid">
+      <div class="ident-area">
+        <span class="ia-emoji">💪</span>
+        <div class="ia-name">CUERPO<br>ELITE</div>
+        <div class="ia-check-list">
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Entreno 4+ veces/semana sin falta</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Mi composición corporal ha mejorado visiblemente</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Duermo 7-8h con protocolo consistente</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Me alimento con intención, no con ansiedad</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Tengo energía alta durante el día</span></label>
+        </div>
+      </div>
+      <div class="ident-area">
+        <span class="ia-emoji">🧠</span>
+        <div class="ia-name">MENTE<br>SHARP</div>
+        <div class="ia-check-list">
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Trabajo 90min+ sin interrupciones</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">He leído 8+ libros en 90 días</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Mi uso de redes está bajo control real</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">No abro el móvil hasta terminar mi bloque matinal</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Tengo claridad mental la mayor parte del día</span></label>
+        </div>
+      </div>
+      <div class="ident-area">
+        <span class="ia-emoji">⚡</span>
+        <div class="ia-name">TIEMPO<br>DOMINADO</div>
+        <div class="ia-check-list">
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Tengo rutina matutina consistente todos los días</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Planifico mi semana cada domingo</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Termino los proyectos que empiezo</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">El tiempo de pantalla pasiva bajó más de 50%</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Produzco más en 4h que antes en 8h</span></label>
+        </div>
+      </div>
+      <div class="ident-area">
+        <span class="ia-emoji">🔥</span>
+        <div class="ia-name">HÁBITOS<br>CONSTRUIDOS</div>
+        <div class="ia-check-list">
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Tengo 5+ hábitos que ya son automáticos</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">No necesito fuerza de voluntad para ejecutarlos</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">He eliminado al menos 3 hábitos negativos</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">Me identifico con la persona que quería ser</span></label>
+          <label class="ia-check"><input type="checkbox"><span class="ia-check-text">El sistema se ha convertido en quién soy</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     FINAL CTA
+════════════════════════════════════════════════════════════ -->
+<section class="final-section">
+  <div class="final-bg">
+    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2400&auto=format&fit=crop" alt="Elite">
+  </div>
+  <div class="final-vignette"></div>
+  <div class="final-glow"></div>
+  <div class="final-content">
+    <div class="final-eyebrow" data-anim="fade-up">El sistema te espera</div>
+    <h2 class="final-title" data-anim="fade-up" data-delay="1">
+      AHORA<br><em>DECIDES</em>
+    </h2>
+    <p class="final-sub" data-anim="fade-up" data-delay="2">
+      Tienes el sistema completo. Cuatro fases. Un diagnóstico brutal. Un tracker de 90 días. Plantillas probadas. Y la evaluación final que te mostrará quién te has convertido. Lo único que falta eres tú.
+    </p>
+    <div class="final-actions" data-anim="fade-up" data-delay="3">
+      <a href="pay.html" class="btn-main">ACCEDER AL SISTEMA</a>
+      <a href="programa.html" class="btn-ghost">VER PROGRAMA COMPLETO</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-brand">
+    <a class="logo" href="index.html" style="margin-bottom:20px;text-decoration:none;">
+      <img class="logo-img" src="logo.png" alt="Ascend System Logo" onerror="this.style.display='none'">
+      ASCEND <span>SYSTEM</span>
+    </a>
+    <p>El sistema de performance de élite diseñado para personas que no aceptan el promedio como destino.</p>
+  </div>
+  <div>
+    <div class="footer-col-title">Sistema</div>
+    <div class="footer-links">
+      <a href="#assessment">Assessment</a>
+      <a href="#arch">Arquitectura</a>
+      <a href="#execution">Ejecución 90D</a>
+      <a href="#identity">Identidad</a>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Programa</div>
+    <div class="footer-links">
+      <a href="programa.html">Cómo Funciona</a>
+      <a href="resultados.html">Resultados</a>
+      <a href="pay.html">Acceso Elite</a>
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">Contacto</div>
+    <div class="footer-links">
+      <a href="contacto.html">Soporte</a>
+      <a href="#">Privacidad</a>
+    </div>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2026 ASCEND SYSTEM · Built for elite performance.</p>
+  <div class="footer-accent-line"></div>
+  <p>No estás aquí por motivación. Estás aquí por identidad.</p>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════ -->
+<script>
+/* ─── MOBILE MENU ─── */
+function toggleMobileMenu(){
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+function closeMobileMenu(){
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+/* ─── PROGRESS BAR ─── */
+const progressBar=document.getElementById('progress-bar');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  progressBar.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';
+},{passive:true});
+
+/* ─── CURSOR ─── */
+const cursor=document.getElementById('cursor');
+const ring=document.getElementById('cursor-ring');
+if(cursor){
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{
+    mx=e.clientX;my=e.clientY;
+    cursor.style.left=mx+'px';cursor.style.top=my+'px';
+  });
+  (function animRing(){
+    rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;
+    ring.style.left=rx+'px';ring.style.top=ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+}
+
+/* ─── NAV SCROLL ─── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
+},{passive:true});
+
+/* ─── PHASE DOT NAVIGATION ─── */
+function scrollToPhase(id){
+  const el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth'});
+}
+const phaseSections=['assessment','arch','execution','identity'];
+const phaseDots=document.querySelectorAll('.phase-dot-wrap');
+window.addEventListener('scroll',()=>{
+  let current=0;
+  phaseSections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el&&el.getBoundingClientRect().top<window.innerHeight*0.5)current=i;
+  });
+  phaseDots.forEach((d,i)=>d.classList.toggle('active',i===current));
+},{passive:true});
+
+/* ─── ASSESSMENT FORM ─── */
+let currentPanel=0;
+const totalPanels=4;
+
+function goToPanel(n){
+  document.querySelectorAll('.form-panel').forEach((p,i)=>{
+    p.classList.toggle('active',i===n);
+  });
+  document.querySelectorAll('.form-progress-step').forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i<n)s.classList.add('done');
+    if(i===n)s.classList.add('active');
+  });
+  currentPanel=n;
+  if(n===3)computeScores();
+  document.getElementById('assessment').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function nextPanel(){
+  if(currentPanel<totalPanels-1)goToPanel(currentPanel+1);
+}
+function prevPanel(){
+  if(currentPanel>0)goToPanel(currentPanel-1);
+}
+
+/* ─── SLIDERS ─── */
+function updateSlider(el,targetId,unit){
+  document.getElementById(targetId).textContent=el.value+unit;
+}
+
+/* ─── CHIP SELECT ─── */
+function selectChip(el,groupId){
+  document.querySelectorAll('#'+groupId+' .q-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+/* ─── SCORE COMPUTATION ─── */
+function computeScores(){
+  const body=Math.floor(Math.random()*30+40);
+  const mind=Math.floor(Math.random()*30+35);
+  const time=Math.floor(Math.random()*30+38);
+  const overall=Math.floor((body+mind+time)/3);
+  animScore('scorenum-body','scorebar-body',body);
+  animScore('scorenum-mind','scorebar-mind',mind);
+  animScore('scorenum-time','scorebar-time',time);
+  animScore('scorenum-overall','scorebar-overall',overall);
+}
+function animScore(numId,barId,val){
+  const numEl=document.getElementById(numId);
+  const barEl=document.getElementById(barId);
+  let start=0;
+  const step=()=>{
+    start=Math.min(start+2,val);
+    numEl.textContent=start+'/100';
+    if(start<val)requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+  setTimeout(()=>{barEl.style.width=val+'%';},100);
+}
+
+/* ─── TRACKER COMPLETION ─── */
+function updateCompletion(){
+  const all=document.querySelectorAll('.tracker-area input[type=checkbox]');
+  const checked=[...all].filter(c=>c.checked).length;
+  const pct=Math.round((checked/all.length)*100);
+  const circumference=163;
+  const offset=circumference-(pct/100)*circumference;
+  const ring=document.getElementById('progressRing');
+  if(ring)ring.style.strokeDashoffset=offset;
+  document.getElementById('completionPct').textContent=pct+'%';
+}
+
+/* ─── BUILD 90-DAY GRID ─── */
+function buildDayGrid(containerId,rows,offset,todayRow,todayIdx){
+  const container=document.getElementById(containerId);
+  if(!container)return;
+  const statuses=['done','done','done','partial','done','done','miss','done','done','done',
+    'done','partial','done','done','done','done','miss','miss','done','done',
+    'done','done','done','partial','done','','','','',''];
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<30;c++){
+      const idx=r*30+c;
+      const div=document.createElement('div');
+      div.className='day-block';
+      const globalIdx=offset+idx;
+      if(globalIdx<statuses.length){
+        if(statuses[globalIdx])div.classList.add(statuses[globalIdx]);
+      }
+      if(r===todayRow&&c===todayIdx)div.classList.add('today');
+      div.title='Día '+(globalIdx+1);
+      container.appendChild(div);
+    }
+  }
+}
+buildDayGrid('dayBlocks',1,0,0,22);
+buildDayGrid('dayBlocks2',1,30,0,0);
+buildDayGrid('dayBlocks3',1,60,0,0);
+
+/* ─── GSAP ─── */
+gsap.registerPlugin(ScrollTrigger);
+
+/* Hero entry */
+['#hero-overline','#hero-title','#hero-desc','#hero-actions'].forEach((sel,i)=>{
+  gsap.from(sel,{
+    opacity:0,y:80,duration:1.4,
+    delay:0.15+i*0.2,ease:'power4.out',clearProps:'all'
+  });
+});
+
+/* Hero image parallax */
+gsap.to('.sys-hero-bg img',{
+  yPercent:20,ease:'none',
+  scrollTrigger:{trigger:'.sys-hero',start:'top top',end:'bottom top',scrub:1.5}
+});
+
+/* Final image */
+gsap.to('.final-bg img',{
+  yPercent:15,ease:'none',
+  scrollTrigger:{trigger:'.final-section',start:'top bottom',end:'bottom top',scrub:1.5}
+});
+
+/* Phase fixed panel images */
+document.querySelectorAll('.phase-fixed-bg img').forEach(img=>{
+  gsap.to(img,{
+    yPercent:10,ease:'none',
+    scrollTrigger:{trigger:img.closest('.phase-chapter'),start:'top bottom',end:'bottom top',scrub:2}
+  });
+});
+
+/* Generic scroll anims */
+function setupScrollAnim(el){
+  const type=el.dataset.anim;
+  if(!type||type==='stagger-grid'||type==='timeline'||type==='pillars')return;
+  const fromVars={opacity:0,duration:1.1,ease:'power4.out',clearProps:'all'};
+  if(type==='fade-up')fromVars.y=80;
+  if(type==='fade-left')fromVars.x=80;
+  fromVars.delay=parseFloat(el.dataset.delay||0)*0.14;
+  gsap.from(el,{
+    ...fromVars,
+    scrollTrigger:{
+      trigger:el,start:'top 88%',
+      toggleActions:'play none none reverse'
+    }
+  });
+}
+requestAnimationFrame(()=>{
+  document.querySelectorAll('[data-anim]').forEach(setupScrollAnim);
+});
+
+/* Stagger grids — bidirectional */
+document.querySelectorAll('[data-anim="stagger-grid"]').forEach(grid=>{
+  gsap.from(grid.children,{
+    opacity:0,y:60,scale:.95,duration:1.1,stagger:0.1,ease:'power3.out',clearProps:'all',
+    scrollTrigger:{
+      trigger:grid,start:'top 86%',
+      toggleActions:'play none none reverse'
+    }
+  });
+});
+
+/* Timeline nodes */
+document.querySelectorAll('[data-anim="timeline"] .tl-node').forEach((node,i)=>{
+  gsap.from(node,{
+    opacity:0,y:70,duration:1.1,delay:i*0.15,ease:'power3.out',clearProps:'all',
+    scrollTrigger:{
+      trigger:node,start:'top 88%',
+      toggleActions:'play none none reverse'
+    }
+  });
+});
+
+/* Problem pills stagger */
+gsap.from('.problem-pill',{
+  opacity:0,x:-50,duration:1,stagger:0.12,ease:'power3.out',clearProps:'all',
+  scrollTrigger:{trigger:'.problem-pills',start:'top 86%',toggleActions:'play none none reverse'}
+});
+
+/* Phase deliverables */
+document.querySelectorAll('.phase-deliverables').forEach(grid=>{
+  gsap.from(grid.children,{
+    opacity:0,y:50,duration:.9,stagger:.1,ease:'power3.out',clearProps:'all',
+    scrollTrigger:{trigger:grid,start:'top 87%',toggleActions:'play none none reverse'}
+  });
+});
+
+/* Identity areas */
+gsap.from('.ident-area',{
+  opacity:0,y:60,duration:1,stagger:0.12,ease:'power3.out',clearProps:'all',
+  scrollTrigger:{trigger:'.ident-areas',start:'top 86%',toggleActions:'play none none reverse'}
+});
+
+/* Before/after */
+gsap.from('.ba-side.before',{
+  opacity:0,x:-80,duration:1.2,ease:'power3.out',clearProps:'all',
+  scrollTrigger:{trigger:'.before-after',start:'top 85%',toggleActions:'play none none reverse'}
+});
+gsap.from('.ba-side.after',{
+  opacity:0,x:80,duration:1.2,ease:'power3.out',clearProps:'all',
+  scrollTrigger:{trigger:'.before-after',start:'top 85%',toggleActions:'play none none reverse'}
+});
+gsap.from('.ba-divider',{
+  opacity:0,scale:0,duration:1,ease:'back.out(1.7)',clearProps:'all',
+  scrollTrigger:{trigger:'.before-after',start:'top 82%',toggleActions:'play none none reverse'}
+});
+
+/* Daily tracker entrance */
+gsap.from('.daily-tracker',{
+  opacity:0,y:80,duration:1.3,ease:'power4.out',clearProps:'all',
+  scrollTrigger:{trigger:'.daily-tracker',start:'top 85%',toggleActions:'play none none reverse'}
+});
+
+/* 90 day grid */
+gsap.from('.day-block',{
+  opacity:0,scale:0,duration:0.4,stagger:{each:0.01,grid:[1,30],from:'start'},ease:'power2.out',
+  scrollTrigger:{trigger:'#dayBlocks',start:'top 88%',toggleActions:'play none none reverse'}
+});
+
+/* Phase chapters — bidirectional reveal */
+document.querySelectorAll('.phase-fixed-content').forEach(el=>{
+  gsap.from(el,{
+    opacity:0,x:-60,duration:1.2,ease:'power3.out',clearProps:'all',
+    scrollTrigger:{trigger:el.closest('.phase-chapter'),start:'top 80%',toggleActions:'play none none reverse'}
+  });
+});
+document.querySelectorAll('.phase-scroll').forEach(el=>{
+  gsap.from(el,{
+    opacity:0,x:60,duration:1.2,ease:'power3.out',clearProps:'all',
+    scrollTrigger:{trigger:el.closest('.phase-chapter'),start:'top 80%',toggleActions:'play none none reverse'}
+  });
+});
+
+/* Phase separators */
+gsap.from('.phase-sep-bar',{
+  scaleX:0,transformOrigin:'left',duration:1.5,ease:'power3.out',stagger:.1,
+  scrollTrigger:{trigger:'.phase-separator',start:'top 90%',toggleActions:'play none none reverse'}
+});
+
+/* Bridge diagonals */
+gsap.from('.bridge-diag',{
+  scaleY:0,transformOrigin:'top',duration:2.2,stagger:.15,ease:'power3.out',
+  scrollTrigger:{trigger:'.bridge',start:'top 80%'}
+});
+
+/* Bridge quote split */
+gsap.from('.bridge-quote',{
+  opacity:0,y:100,duration:1.8,ease:'power4.out',clearProps:'all',
+  scrollTrigger:{trigger:'.bridge',start:'top 75%',toggleActions:'play none none reverse'}
+});
+
+/* Footer */
+gsap.from('footer > *',{
+  opacity:0,y:40,duration:1,stagger:.1,ease:'power3.out',clearProps:'all',
+  scrollTrigger:{trigger:'footer',start:'top 90%',toggleActions:'play none none reverse'}
+});
+
+/* Arch timeline bars animate */
+ScrollTrigger.create({
+  trigger:'.arch-wide-right',start:'top 80%',once:true,
+  onEnter:()=>{
+    document.querySelectorAll('.atl-bar-fill').forEach((bar,i)=>{
+      const w=bar.style.width;
+      bar.style.width='0%';
+      setTimeout(()=>{bar.style.transition='width 1.2s cubic-bezier(.16,1,.3,1)';bar.style.width=w;},i*120);
+    });
+  }
+});
+
+/* ─── MAGNETIC BUTTONS ─── */
+document.querySelectorAll('.btn-main,.btn-sm').forEach(btn=>{
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    const x=(e.clientX-r.left-r.width/2)*0.1;
+    const y=(e.clientY-r.top-r.height/2)*0.12;
+    btn.style.transform=`translate(${x}px,${y-5}px)`;
+  });
+  btn.addEventListener('mouseleave',()=>{btn.style.transform='';});
+});
+
+/* ─── CARD 3D TILT ─── */
+if(!('ontouchstart' in window)){
+  document.querySelectorAll('.deliverable,.arch-block,.score-cell,.ident-area').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(900px) rotateX(${-y*5}deg) rotateY(${x*5}deg) translateZ(6px)`;
+    });
+    card.addEventListener('mouseleave',()=>{
+      card.style.transform='perspective(900px) rotateX(0) rotateY(0) translateZ(0)';
+      card.style.transition='transform .7s cubic-bezier(.16,1,.3,1)';
+    });
+    card.addEventListener('mouseenter',()=>{card.style.transition='transform .12s';});
+  });
+}
+
+/* ─── DEVTOOLS BLOCK ─── */
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if(e.key==='F12'||
+     (e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||
+     (e.ctrlKey&&e.key==='u'))e.preventDefault();
+});
+</script>
+</body>
+</html>
