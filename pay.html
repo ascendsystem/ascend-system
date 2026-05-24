@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ASCEND SYSTEM — Acceso Élite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,700&family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+:root{
+  --bg:#030303;
+  --bg2:#070707;
+  --bg3:#0d0d0d;
+  --surface:rgba(255,255,255,0.025);
+  --surface2:rgba(255,255,255,0.045);
+  --text:#f0ede8;
+  --muted:#6a6662;
+  --muted2:#9a9692;
+  --accent:#c8ff3e;
+  --accent2:#aaff00;
+  --accent-glow:rgba(200,255,62,0.22);
+  --accent-dim:rgba(200,255,62,0.1);
+  --line:rgba(255,255,255,0.06);
+  --line2:rgba(255,255,255,0.1);
+  --gold:#ffd14a;
+  --gold-dim:rgba(255,209,74,0.15);
+  --font-display:'Bebas Neue',sans-serif;
+  --font-body:'Barlow',sans-serif;
+  --font-cond:'Barlow Condensed',sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* ─── CURSOR ─── */
+#cursor{
+  position:fixed;width:10px;height:10px;
+  background:var(--accent);border-radius:50%;
+  pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:width .2s,height .2s,opacity .2s;
+  mix-blend-mode:difference;
+}
+#cursor-ring{
+  position:fixed;width:40px;height:40px;
+  border:1px solid rgba(200,255,62,0.45);
+  border-radius:50%;pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:width .45s cubic-bezier(.16,1,.3,1),height .45s cubic-bezier(.16,1,.3,1),border-color .3s;
+}
+body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:18px;height:18px;}
+body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:64px;height:64px;border-color:var(--accent);}
+@media(max-width:900px){#cursor,#cursor-ring{display:none;}body{cursor:auto;}}
+
+/* ─── GRAIN ─── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9998;opacity:.45;
+  animation:grainShift 0.5s steps(1) infinite;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0);}20%{transform:translate(-2px,1px);}
+  40%{transform:translate(1px,-2px);}60%{transform:translate(2px,1px);}
+  80%{transform:translate(-1px,2px);}100%{transform:translate(0,0);}
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.25);border-radius:999px;}
+
+/* ─── SCROLL PROGRESS ─── */
+#progress-bar{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  z-index:99997;width:0%;
+  box-shadow:0 0 12px rgba(200,255,62,0.6);
+}
+
+/* ══════════════════════════════════════════════
+   ── 3D INTRO CINEMATIC TRANSITION ──
+══════════════════════════════════════════════ */
+#intro-overlay{
+  position:fixed;inset:0;z-index:99990;
+  background:#030303;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;
+  perspective:1200px;
+}
+.intro-word{
+  font-family:var(--font-display);
+  font-size:clamp(80px,18vw,220px);
+  line-height:.85;letter-spacing:-4px;
+  color:white;
+  display:block;
+  transform-origin:center bottom;
+  will-change:transform,opacity;
+}
+.intro-word.accent{color:var(--accent);}
+.intro-scanlines{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.18) 2px,
+    rgba(0,0,0,0.18) 4px
+  );
+  pointer-events:none;
+  animation:scanFade 0.4s ease-out forwards;
+  animation-delay:2.2s;
+}
+@keyframes scanFade{to{opacity:0;}}
+
+.intro-glitch{
+  position:absolute;inset:0;
+  pointer-events:none;
+  animation:glitch 0.12s steps(1) infinite;
+  opacity:0;
+  animation-delay:1.8s;
+  mix-blend-mode:difference;
+}
+@keyframes glitch{
+  0%{opacity:0;transform:translate(0,0);}
+  10%{opacity:.4;transform:translate(-4px,0);background:rgba(200,255,62,0.06);}
+  20%{opacity:0;transform:translate(4px,2px);}
+  100%{opacity:0;}
+}
+
+.intro-bar{
+  position:absolute;bottom:0;left:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  box-shadow:0 0 20px rgba(200,255,62,0.8);
+  animation:barLoad 2s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes barLoad{from{width:0%;}to{width:100%;}}
+
+/* ─── NAV ─── */
+.nav{
+  position:fixed;top:0;left:0;width:100%;
+  padding:28px 80px;
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:9000;
+  transition:padding .5s ease,background .5s ease,border-color .5s ease;
+  border-bottom:1px solid transparent;
+  opacity:0;transform:translateY(-20px);
+}
+.nav.visible{opacity:1;transform:translateY(0);transition:opacity .8s ease,transform .8s ease,padding .5s ease,background .5s ease;}
+.nav.scrolled{
+  padding:16px 80px;
+  background:rgba(3,3,3,0.95);
+  backdrop-filter:blur(40px) saturate(200%);
+  border-bottom-color:var(--line);
+}
+.logo{
+  font-family:var(--font-display);
+  font-size:22px;letter-spacing:6px;
+  color:white;display:flex;align-items:center;gap:12px;
+  text-decoration:none;
+}
+.logo span{color:var(--accent);}
+.nav-back{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;
+  display:flex;align-items:center;gap:10px;
+  transition:color .3s;
+}
+.nav-back:hover{color:var(--text);}
+.nav-back::before{content:'←';font-size:16px;}
+.nav-trust{
+  display:flex;align-items:center;gap:24px;
+}
+.trust-badge{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+}
+.trust-badge svg{width:14px;height:14px;stroke:var(--accent);fill:none;stroke-width:2;}
+
+/* ══════════════════════════════════════════════
+   ── HERO SECTION ──
+══════════════════════════════════════════════ */
+.pay-hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  padding:160px 80px 120px;
+  text-align:center;
+}
+
+/* BG video-like animated grid */
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(200,255,62,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%,rgba(200,255,62,0.05) 0%,transparent 60%),
+    var(--bg);
+}
+.hero-grid-3d{
+  position:absolute;inset:0;z-index:1;
+  background-image:
+    linear-gradient(rgba(200,255,62,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(200,255,62,0.05) 1px,transparent 1px);
+  background-size:80px 80px;
+  transform:perspective(600px) rotateX(55deg) scale(1.8);
+  transform-origin:center 140%;
+  animation:gridDrift 20s linear infinite;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 100%,black 0%,transparent 70%);
+}
+@keyframes gridDrift{
+  0%{background-position:0 0;}
+  100%{background-position:80px 80px;}
+}
+
+/* Floating particles */
+.particles{position:absolute;inset:0;z-index:2;pointer-events:none;}
+.particle{
+  position:absolute;
+  width:2px;height:2px;
+  background:var(--accent);
+  border-radius:50%;
+  animation:particleFloat linear infinite;
+  opacity:0;
+}
+@keyframes particleFloat{
+  0%{transform:translateY(0) scale(1);opacity:0;}
+  10%{opacity:.6;}
+  90%{opacity:.3;}
+  100%{transform:translateY(-120vh) scale(0.4);opacity:0;}
+}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:14px;
+  margin-bottom:40px;position:relative;z-index:10;
+}
+.eyebrow-text{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
+}
+.eyebrow-pip{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pip 1.4s ease-in-out infinite;}
+@keyframes pip{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.5);}}
+
+.hero-pretitle{
+  font-family:var(--font-cond);font-size:14px;font-weight:700;
+  letter-spacing:6px;color:rgba(200,255,62,0.5);text-transform:uppercase;
+  margin-bottom:24px;position:relative;z-index:10;
+}
+
+.hero-title{
+  font-family:var(--font-display);
+  font-size:clamp(80px,14vw,200px);
+  line-height:.82;letter-spacing:-4px;
+  color:white;position:relative;z-index:10;
+  margin-bottom:16px;
+}
+.hero-title .t-accent{
+  color:var(--accent);display:block;
+  text-shadow:0 0 120px rgba(200,255,62,0.3),0 0 60px rgba(200,255,62,0.2);
+  animation:titleGlow 4s ease-in-out infinite;
+}
+@keyframes titleGlow{
+  0%,100%{text-shadow:0 0 120px rgba(200,255,62,0.3),0 0 60px rgba(200,255,62,0.2);}
+  50%{text-shadow:0 0 180px rgba(200,255,62,0.5),0 0 80px rgba(200,255,62,0.35);}
+}
+.hero-title .t-stroke{
+  display:block;
+  -webkit-text-stroke:1.5px rgba(255,255,255,0.22);color:transparent;
+}
+
+.hero-sub{
+  position:relative;z-index:10;
+  font-size:20px;line-height:1.75;
+  color:rgba(240,237,232,0.5);
+  max-width:680px;margin:0 auto 64px;
+}
+
+/* Countdown */
+.hero-countdown{
+  position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:center;gap:0;
+  margin-bottom:60px;
+}
+.cd-block{
+  display:flex;flex-direction:column;align-items:center;
+  padding:24px 32px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,0.02);
+  position:relative;
+}
+.cd-block:not(:last-child)::after{
+  content:':';
+  position:absolute;right:-10px;
+  font-family:var(--font-display);font-size:40px;
+  color:var(--accent);opacity:.4;
+  top:50%;transform:translateY(-50%);
+}
+.cd-num{
+  font-family:var(--font-display);font-size:60px;
+  color:white;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.cd-label{
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:3px;color:var(--muted);text-transform:uppercase;
+  margin-top:6px;
+}
+
+/* scroll cue */
+.scroll-cue{
+  position:absolute;bottom:52px;left:50%;transform:translateX(-50%);
+  z-index:10;display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:3px;color:var(--muted);text-transform:uppercase;
+}
+.scroll-mouse{
+  width:24px;height:38px;border:1.5px solid rgba(255,255,255,0.15);
+  border-radius:12px;position:relative;
+}
+.scroll-mouse::after{
+  content:'';position:absolute;top:6px;left:50%;
+  transform:translateX(-50%);
+  width:3px;height:7px;background:var(--accent);border-radius:3px;
+  animation:scrollDot 1.8s ease-in-out infinite;
+}
+@keyframes scrollDot{
+  0%{transform:translateX(-50%) translateY(0);opacity:1;}
+  100%{transform:translateX(-50%) translateY(16px);opacity:0;}
+}
+
+/* ══════════════════════════════════════════════
+   ── TRUST BAR ──
+══════════════════════════════════════════════ */
+.trust-bar{
+  background:rgba(200,255,62,0.04);
+  border-top:1px solid rgba(200,255,62,0.08);
+  border-bottom:1px solid rgba(200,255,62,0.08);
+  padding:24px 80px;
+  display:flex;align-items:center;justify-content:center;gap:70px;
+  flex-wrap:wrap;
+}
+.trust-item{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:2.5px;color:var(--muted2);text-transform:uppercase;
+}
+.trust-item svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.8;flex-shrink:0;}
+.trust-item strong{color:var(--text);}
+
+/* ══════════════════════════════════════════════
+   ── WHAT YOU GET — VISUAL MODULES STRIP ──
+══════════════════════════════════════════════ */
+.modules-strip{
+  padding:160px 80px;
+  position:relative;overflow:hidden;
+}
+.modules-strip-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 100% 50%,rgba(200,255,62,0.04) 0%,transparent 65%),
+    var(--bg2);
+}
+.strip-header{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:80px;align-items:end;margin-bottom:120px;
+  position:relative;z-index:2;
+}
+.overline{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
+  display:flex;align-items:center;gap:16px;margin-bottom:22px;
+}
+.overline::before{content:'';width:28px;height:1px;background:var(--accent);}
+.section-title{
+  font-family:var(--font-display);
+  font-size:clamp(60px,8vw,110px);
+  line-height:.88;letter-spacing:-1px;color:white;
+}
+.section-title em{font-style:normal;color:var(--accent);}
+.strip-header-desc{
+  font-size:17px;line-height:1.85;
+  color:rgba(240,237,232,0.5);
+}
+
+/* Module rows */
+.module-row{
+  display:grid;grid-template-columns:80px 1fr 1fr;
+  gap:0;
+  border-top:1px solid var(--line);
+  position:relative;z-index:2;
+  transition:background .5s;
+  cursor:default;
+}
+.module-row:last-child{border-bottom:1px solid var(--line);}
+.module-row:hover{background:rgba(200,255,62,0.025);}
+
+.row-num{
+  padding:48px 0 48px 0;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding-top:52px;
+  font-family:var(--font-display);font-size:16px;
+  color:rgba(200,255,62,0.3);letter-spacing:2px;
+  border-right:1px solid var(--line);
+}
+.row-main{
+  padding:44px 60px 44px 52px;
+  border-right:1px solid var(--line);
+}
+.row-tag{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
+  margin-bottom:12px;display:block;
+}
+.row-title{
+  font-family:var(--font-display);font-size:48px;
+  color:white;line-height:.9;margin-bottom:20px;
+  letter-spacing:-.5px;
+}
+.row-body{
+  font-size:14px;line-height:1.8;
+  color:rgba(240,237,232,0.5);max-width:480px;
+}
+.row-features{
+  padding:44px 52px;
+  display:flex;flex-direction:column;gap:14px;
+  justify-content:center;
+}
+.feat-item{
+  display:flex;align-items:flex-start;gap:14px;
+  font-size:13px;line-height:1.5;color:rgba(240,237,232,0.55);
+}
+.feat-item svg{
+  width:16px;height:16px;flex-shrink:0;margin-top:1px;
+  stroke:var(--accent);fill:none;stroke-width:2;
+}
+/* plan badge on row */
+.row-plan-badge{
+  position:absolute;right:52px;top:48px;
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  padding:5px 12px;
+}
+.badge-base{
+  color:var(--accent);
+  border:1px solid rgba(200,255,62,0.2);
+  background:rgba(200,255,62,0.06);
+}
+.badge-premium{
+  color:var(--gold);
+  border:1px solid rgba(255,209,74,0.2);
+  background:rgba(255,209,74,0.07);
+}
+
+/* extra modules (5-9) premium only */
+.module-row.premium-only{
+  border-left:2px solid rgba(255,209,74,0.2);
+}
+.module-row.premium-only .row-num{color:rgba(255,209,74,0.4);}
+.module-row.premium-only .row-tag{color:var(--gold);}
+.module-row.premium-only:hover{background:rgba(255,209,74,0.015);}
+
+/* ══════════════════════════════════════════════
+   ── COMPARISON 3D SPLIT ──
+══════════════════════════════════════════════ */
+.comparison-section{
+  padding:160px 80px;
+  position:relative;overflow:hidden;
+  background:var(--bg);
+}
+.comparison-title{
+  text-align:center;margin-bottom:120px;
+}
+.comparison-title .section-title{margin-top:16px;}
+
+/* Plan cards container — perspective 3D */
+.plans-wrapper{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:3px;
+  perspective:1400px;
+  max-width:1200px;margin:0 auto;
+  position:relative;z-index:2;
+}
+
+.plan-card{
+  position:relative;overflow:hidden;
+  padding:70px 60px 80px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  transition:transform .8s cubic-bezier(.16,1,.3,1),box-shadow .8s,border-color .5s;
+  cursor:default;
+  will-change:transform;
+}
+.plan-card:hover{
+  transform:translateY(-12px) scale(1.01);
+}
+
+/* BASE plan */
+.plan-base{
+  transform-origin:right center;
+}
+.plan-base:hover{
+  border-color:rgba(200,255,62,0.15);
+  box-shadow:0 40px 120px rgba(0,0,0,0.6),-20px 0 80px rgba(200,255,62,0.04);
+}
+
+/* PREMIUM plan */
+.plan-premium{
+  background:rgba(200,255,62,0.03);
+  border-color:rgba(200,255,62,0.1);
+  transform-origin:left center;
+}
+.plan-premium::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  box-shadow:0 0 30px rgba(200,255,62,0.5);
+}
+.plan-premium:hover{
+  border-color:rgba(200,255,62,0.25);
+  box-shadow:0 40px 140px rgba(0,0,0,0.7),20px 0 80px rgba(200,255,62,0.06),0 0 0 1px rgba(200,255,62,0.08);
+}
+
+/* Plan badge */
+.plan-label{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:4px;text-transform:uppercase;
+  margin-bottom:32px;display:flex;align-items:center;gap:12px;
+}
+.plan-base .plan-label{color:var(--muted2);}
+.plan-premium .plan-label{color:var(--accent);}
+.label-pill{
+  padding:4px 12px;border-radius:0;
+  font-size:9px;font-weight:700;letter-spacing:2.5px;
+}
+.label-pill.popular{
+  background:var(--accent);color:black;
+  animation:pillPulse 2.5s ease-in-out infinite;
+}
+@keyframes pillPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(200,255,62,0);}
+  50%{box-shadow:0 0 0 8px rgba(200,255,62,0);}
+}
+
+.plan-name{
+  font-family:var(--font-display);
+  font-size:88px;line-height:.85;
+  letter-spacing:-2px;color:white;
+  margin-bottom:14px;
+}
+.plan-premium .plan-name{color:var(--accent);}
+
+.plan-tagline{
+  font-size:14px;line-height:1.7;
+  color:rgba(240,237,232,0.45);
+  margin-bottom:60px;max-width:360px;
+}
+
+/* Price block */
+.plan-price-block{
+  margin-bottom:56px;padding:36px 40px;
+  background:rgba(0,0,0,0.3);
+  border:1px solid var(--line);
+  position:relative;
+}
+.plan-premium .plan-price-block{
+  background:rgba(200,255,62,0.04);
+  border-color:rgba(200,255,62,0.1);
+}
+.price-original{
+  font-family:var(--font-cond);font-size:18px;font-weight:600;
+  color:var(--muted);text-decoration:line-through;
+  letter-spacing:1px;margin-bottom:6px;
+}
+.price-main{
+  font-family:var(--font-display);
+  font-size:110px;line-height:.85;
+  letter-spacing:-3px;color:white;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.plan-premium .price-main{color:var(--accent);}
+.price-currency{font-size:44px;margin-top:12px;}
+.price-note{
+  font-family:var(--font-cond);font-size:11px;font-weight:600;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+  margin-top:10px;
+}
+.price-save{
+  position:absolute;top:-14px;right:28px;
+  background:var(--accent);color:black;
+  font-family:var(--font-cond);font-size:10px;font-weight:800;
+  letter-spacing:2.5px;text-transform:uppercase;
+  padding:6px 16px;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+}
+
+/* Features list */
+.plan-features{
+  display:flex;flex-direction:column;gap:16px;
+  margin-bottom:52px;
+}
+.plan-feat{
+  display:flex;align-items:center;gap:16px;
+  font-size:14px;color:rgba(240,237,232,0.6);
+  padding-bottom:16px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.plan-feat:last-child{border-bottom:none;padding-bottom:0;}
+.feat-icon{
+  width:32px;height:32px;flex-shrink:0;
+  border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.025);
+  display:flex;align-items:center;justify-content:center;
+}
+.feat-icon svg{width:14px;height:14px;stroke:var(--muted2);fill:none;stroke-width:2;}
+.plan-premium .feat-icon svg{stroke:var(--accent);}
+.plan-feat strong{color:var(--text);font-weight:600;}
+.feat-check{
+  margin-left:auto;
+  width:20px;height:20px;flex-shrink:0;
+  background:rgba(200,255,62,0.1);
+  border:1px solid rgba(200,255,62,0.2);
+  display:flex;align-items:center;justify-content:center;
+}
+.feat-check svg{width:10px;height:10px;stroke:var(--accent);fill:none;stroke-width:2.5;}
+.feat-check.locked{background:rgba(255,255,255,0.03);border-color:rgba(255,255,255,0.06);}
+.feat-check.locked svg{stroke:var(--muted);}
+
+/* CTA button */
+.plan-cta{
+  width:100%;
+  position:relative;overflow:hidden;
+  font-family:var(--font-cond);font-size:14px;font-weight:800;
+  letter-spacing:3.5px;text-transform:uppercase;
+  padding:26px 40px;border:none;cursor:pointer;
+  clip-path:polygon(14px 0%,100% 0%,calc(100% - 14px) 100%,0% 100%);
+  transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;
+  text-decoration:none;display:block;text-align:center;
+}
+.plan-cta::before{
+  content:'';position:absolute;top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);
+  transform:skewX(-25deg);transition:left .7s;
+}
+.plan-cta:hover::before{left:150%;}
+.plan-cta:hover{transform:translateY(-6px) scale(1.01);box-shadow:0 30px 80px rgba(0,0,0,.5);}
+
+.cta-base{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  color:var(--text);
+}
+.cta-base:hover{box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,0.1);}
+
+.cta-premium{
+  background:var(--accent);color:black;
+}
+.cta-premium:hover{box-shadow:0 30px 90px rgba(200,255,62,.4),0 0 0 1px rgba(200,255,62,0.3);}
+
+.plan-guarantee{
+  margin-top:24px;text-align:center;
+  font-family:var(--font-cond);font-size:10px;font-weight:600;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.plan-guarantee svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:2;}
+
+/* ── The versus divider ── */
+.versus-divider{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:60px;height:60px;background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:18px;
+  color:var(--muted);letter-spacing:2px;
+  z-index:10;
+}
+
+/* ══════════════════════════════════════════════
+   ── TRANSFORMATION TABLE ──
+══════════════════════════════════════════════ */
+.compare-section{
+  padding:160px 80px;
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.compare-table{
+  max-width:1100px;margin:120px auto 0;
+  position:relative;z-index:2;
+}
+.compare-row{
+  display:grid;grid-template-columns:1fr 120px 120px;
+  gap:0;border-bottom:1px solid var(--line);
+  transition:background .3s;
+}
+.compare-row:hover{background:rgba(200,255,62,0.02);}
+.compare-row.header{
+  border-bottom:2px solid rgba(200,255,62,0.15);
+  margin-bottom:0;
+}
+.compare-cell{
+  padding:22px 28px;
+  font-size:13px;line-height:1.5;
+  color:rgba(240,237,232,0.55);
+}
+.compare-cell.label{
+  font-size:14px;color:var(--text);
+  padding-left:0;
+}
+.compare-cell.center{text-align:center;}
+.compare-cell.col-head{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);
+  padding-left:0;padding-bottom:16px;
+}
+.compare-cell.col-head.accent{color:var(--accent);}
+.check-yes{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;
+  background:rgba(200,255,62,0.1);
+  border:1px solid rgba(200,255,62,0.2);
+}
+.check-yes svg{width:13px;height:13px;stroke:var(--accent);fill:none;stroke-width:2.5;}
+.check-no{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+}
+.check-no svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:2;}
+
+/* ══════════════════════════════════════════════
+   ── TESTIMONIALS ──
+══════════════════════════════════════════════ */
+.testi-section{
+  padding:160px 80px;
+  background:var(--bg);
+  position:relative;overflow:hidden;
+}
+.testi-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:3px;margin-top:100px;
+  position:relative;z-index:2;
+}
+.testi-card{
+  padding:52px 44px;
+  background:var(--surface);border:1px solid var(--line);
+  position:relative;overflow:hidden;
+  transition:background .5s,border-color .5s,transform .5s;
+  cursor:default;
+}
+.testi-card:hover{
+  background:rgba(200,255,62,0.025);
+  border-color:rgba(200,255,62,0.08);
+  transform:translateY(-8px);
+}
+.testi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .65s cubic-bezier(.16,1,.3,1);
+}
+.testi-card:hover::before{transform:scaleX(1);}
+.testi-quote-mark{
+  font-family:var(--font-display);font-size:100px;
+  color:rgba(200,255,62,0.07);line-height:.7;
+  margin-bottom:20px;display:block;
+}
+.testi-text{
+  font-size:15px;line-height:1.8;
+  color:rgba(240,237,232,0.65);
+  margin-bottom:40px;
+  font-style:italic;
+}
+.testi-result{
+  display:inline-block;
+  font-family:var(--font-display);font-size:42px;
+  color:var(--accent);margin-bottom:8px;
+  text-shadow:0 0 30px rgba(200,255,62,0.2);
+}
+.testi-author{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;
+}
+.testi-author strong{color:var(--muted2);display:block;margin-bottom:2px;font-size:12px;}
+
+/* ══════════════════════════════════════════════
+   ── FAQ ──
+══════════════════════════════════════════════ */
+.faq-section{
+  padding:160px 80px;
+  background:var(--bg2);
+  border-top:1px solid var(--line);
+  position:relative;overflow:hidden;
+}
+.faq-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:3px;margin-top:100px;
+  position:relative;z-index:2;
+}
+.faq-item{
+  border:1px solid var(--line);
+  background:var(--surface);
+  transition:background .4s;
+  cursor:pointer;
+}
+.faq-item:hover{background:rgba(200,255,62,0.02);}
+.faq-q{
+  padding:36px 44px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  font-family:var(--font-cond);font-size:17px;font-weight:700;
+  letter-spacing:.5px;color:var(--text);
+}
+.faq-arrow{
+  width:32px;height:32px;flex-shrink:0;
+  border:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .4s,background .3s,border-color .3s;
+}
+.faq-item.open .faq-arrow{
+  transform:rotate(45deg);
+  background:rgba(200,255,62,0.08);
+  border-color:rgba(200,255,62,0.2);
+}
+.faq-arrow svg{width:14px;height:14px;stroke:var(--muted2);fill:none;stroke-width:2;}
+.faq-a{
+  max-height:0;overflow:hidden;
+  transition:max-height .55s cubic-bezier(.16,1,.3,1);
+}
+.faq-item.open .faq-a{max-height:200px;}
+.faq-a-inner{
+  padding:0 44px 36px;
+  font-size:14px;line-height:1.8;color:rgba(240,237,232,0.5);
+  border-top:1px solid var(--line);
+  padding-top:24px;
+}
+
+/* ══════════════════════════════════════════════
+   ── FINAL CHECKOUT STRIP ──
+══════════════════════════════════════════════ */
+.checkout-strip{
+  padding:120px 80px;
+  background:var(--bg);
+  border-top:1px solid var(--line);
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:120px;align-items:center;
+  position:relative;overflow:hidden;
+}
+.checkout-strip::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 70% at 100% 50%,rgba(200,255,62,0.06) 0%,transparent 60%);
+  pointer-events:none;
+}
+.checkout-left{}
+.checkout-title{
+  font-family:var(--font-display);
+  font-size:clamp(70px,9vw,130px);
+  line-height:.85;letter-spacing:-2px;color:white;
+  margin-top:20px;margin-bottom:40px;
+}
+.checkout-title em{font-style:normal;color:var(--accent);display:block;}
+.checkout-sub{
+  font-size:16px;line-height:1.8;
+  color:rgba(240,237,232,0.5);max-width:420px;
+}
+
+/* Checkout form */
+.checkout-form{
+  position:relative;z-index:2;
+}
+.form-plan-select{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:3px;margin-bottom:36px;
+}
+.form-plan-opt{
+  padding:24px 28px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  cursor:pointer;
+  transition:background .3s,border-color .3s;
+  position:relative;
+}
+.form-plan-opt:hover{background:rgba(200,255,62,0.03);}
+.form-plan-opt.selected{
+  background:rgba(200,255,62,0.05);
+  border-color:rgba(200,255,62,0.2);
+}
+.form-plan-opt.selected::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent);
+}
+.opt-name{
+  font-family:var(--font-display);font-size:28px;color:white;
+  line-height:1;margin-bottom:6px;
+}
+.form-plan-opt.selected .opt-name{color:var(--accent);}
+.opt-price{
+  font-family:var(--font-cond);font-size:13px;font-weight:700;
+  letter-spacing:1px;color:var(--muted);
+}
+.opt-modules{
+  font-family:var(--font-cond);font-size:10px;font-weight:600;
+  letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;
+  margin-top:6px;
+}
+
+.form-group{
+  margin-bottom:16px;
+  position:relative;
+}
+.form-group label{
+  display:block;
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;
+  margin-bottom:10px;
+}
+.form-group input{
+  width:100%;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  color:var(--text);
+  font-family:var(--font-body);font-size:15px;
+  padding:16px 20px;
+  outline:none;
+  transition:border-color .3s,background .3s;
+  border-radius:0;
+  -webkit-appearance:none;
+}
+.form-group input:focus{
+  border-color:rgba(200,255,62,0.3);
+  background:rgba(200,255,62,0.03);
+}
+.form-group input::placeholder{color:var(--muted);}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+.form-submit{
+  width:100%;margin-top:28px;
+  position:relative;overflow:hidden;
+  font-family:var(--font-cond);font-size:14px;font-weight:800;
+  letter-spacing:3.5px;text-transform:uppercase;
+  color:black;background:var(--accent);
+  border:none;padding:26px 40px;cursor:pointer;
+  clip-path:polygon(14px 0%,100% 0%,calc(100% - 14px) 100%,0% 100%);
+  transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;
+}
+.form-submit::before{
+  content:'';position:absolute;top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);
+  transform:skewX(-25deg);transition:left .7s;
+}
+.form-submit:hover::before{left:150%;}
+.form-submit:hover{
+  transform:translateY(-6px);
+  box-shadow:0 30px 80px rgba(200,255,62,.4);
+}
+.form-secure{
+  margin-top:18px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  font-family:var(--font-cond);font-size:10px;font-weight:600;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+}
+.form-secure svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:2;}
+.form-methods{
+  margin-top:20px;display:flex;align-items:center;justify-content:center;gap:12px;
+  flex-wrap:wrap;
+}
+.method-badge{
+  padding:6px 16px;
+  border:1px solid rgba(255,255,255,0.07);
+  background:rgba(255,255,255,0.025);
+  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
+}
+
+/* ─── FOOTER ─── */
+footer{
+  background:var(--bg2);border-top:1px solid var(--line);
+  padding:60px 80px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;
+}
+.footer-logo{
+  font-family:var(--font-display);font-size:20px;letter-spacing:6px;
+  color:white;text-decoration:none;
+}
+.footer-logo span{color:var(--accent);}
+.footer-links-row{display:flex;gap:36px;flex-wrap:wrap;}
+.footer-links-row a{
+  font-family:var(--font-cond);font-size:11px;font-weight:600;
+  letter-spacing:2px;color:var(--muted);text-decoration:none;
+  text-transform:uppercase;transition:color .3s;
+}
+.footer-links-row a:hover{color:var(--text);}
+.footer-copy{
+  font-family:var(--font-cond);font-size:10px;font-weight:500;
+  letter-spacing:1.5px;color:var(--muted);
+}
+
+/* ─── AMBIENT BG ─── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 50% 40% at 5% 0%,rgba(200,255,62,0.06) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 95% 100%,rgba(200,255,62,0.04) 0%,transparent 55%);
+  pointer-events:none;z-index:-1;
+}
+
+/* ─── FLOATING PROMO PILL ─── */
+.promo-pill{
+  position:fixed;bottom:36px;left:50%;transform:translateX(-50%);
+  background:rgba(3,3,3,0.95);
+  border:1px solid rgba(200,255,62,0.18);
+  backdrop-filter:blur(30px);
+  padding:14px 32px;
+  display:flex;align-items:center;gap:24px;
+  z-index:8000;
+  opacity:0;transform:translateX(-50%) translateY(20px);
+  transition:opacity .6s,transform .6s;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.promo-pill.visible{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:all;}
+.promo-pill-text{
+  font-family:var(--font-cond);font-size:13px;font-weight:700;
+  letter-spacing:2px;color:var(--text);text-transform:uppercase;
+}
+.promo-pill-text strong{color:var(--accent);}
+.promo-pill-cta{
+  font-family:var(--font-cond);font-size:12px;font-weight:800;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:black;background:var(--accent);
+  padding:10px 24px;border:none;cursor:pointer;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  transition:transform .3s;text-decoration:none;
+}
+.promo-pill-cta:hover{transform:scale(1.03);}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1100px){
+  .strip-header{grid-template-columns:1fr;gap:40px;}
+  .module-row{grid-template-columns:60px 1fr;}
+  .row-features{display:none;}
+  .plans-wrapper{grid-template-columns:1fr;gap:3px;}
+  .versus-divider{display:none;}
+  .compare-section .compare-row{grid-template-columns:1fr 80px 80px;}
+  .testi-grid{grid-template-columns:1fr 1fr;}
+  .checkout-strip{grid-template-columns:1fr;gap:60px;}
+}
+@media(max-width:900px){
+  .pay-hero{padding:140px 24px 100px;min-height:90vh;}
+  .modules-strip,.comparison-section,.compare-section,.testi-section,.faq-section,.checkout-strip{padding:100px 24px;}
+  .trust-bar{padding:20px 24px;gap:32px;}
+  .faq-grid{grid-template-columns:1fr;}
+  .testi-grid{grid-template-columns:1fr;}
+  .hero-countdown{flex-wrap:wrap;gap:0;}
+  .cd-block{padding:16px 20px;}
+  .cd-num{font-size:44px;}
+  .form-row{grid-template-columns:1fr;}
+  .nav{padding:20px 24px;}
+  .nav.scrolled{padding:14px 24px;}
+  footer{padding:48px 24px;}
+  .plan-name{font-size:66px;}
+  .price-main{font-size:80px;}
+}
+@media(max-width:600px){
+  .form-plan-select{grid-template-columns:1fr;}
+  .compare-section .compare-row{grid-template-columns:1fr 60px 60px;}
+  .hero-title{font-size:clamp(64px,18vw,110px);}
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ══ 3D INTRO CINEMATIC ══ -->
+<div id="intro-overlay">
+  <div class="intro-glitch"></div>
+  <div class="intro-scanlines"></div>
+  <span class="intro-word t-stroke" id="iw1" style="opacity:0;transform:rotateX(-90deg) translateZ(80px);">ACCESO</span>
+  <span class="intro-word accent" id="iw2" style="opacity:0;transform:rotateX(-90deg) translateZ(80px);">ÉLITE</span>
+  <div class="intro-bar" style="width:0%"></div>
+</div>
+
+<!-- ─── NAV ─── -->
+<nav class="nav" id="nav">
+  <a class="logo" href="index.html">ASCEND <span>SYSTEM</span></a>
+  <a class="nav-back" href="index.html">Volver al inicio</a>
+  <div class="nav-trust">
+    <div class="trust-badge">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Pago Seguro
+    </div>
+    <div class="trust-badge">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      30 días garantía
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="pay-hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-3d"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="hero-eyebrow" data-reveal="fade-up" data-delay=".1">
+    <div class="eyebrow-pip"></div>
+    <span class="eyebrow-text">Acceso Élite 2026</span>
+    <div class="eyebrow-pip"></div>
+  </div>
+
+  <p class="hero-pretitle" data-reveal="fade-up" data-delay=".2">El sistema que te convierte en otra persona</p>
+
+  <h1 class="hero-title" data-reveal="fade-up" data-delay=".3">
+    <span class="t-stroke">ÚNETE AL</span>
+    <span class="t-accent">SISTEMA</span>
+  </h1>
+
+  <p class="hero-sub" data-reveal="fade-up" data-delay=".4">
+    Elige tu nivel. Comprométete completamente. En 90 días no serás la misma persona que empezó.
+    Sin excusas. Sin medias tintas. Todo o nada.
+  </p>
+
+  <!-- Countdown -->
+  <div class="hero-countdown" data-reveal="fade-up" data-delay=".5">
+    <div class="cd-block">
+      <span class="cd-num" id="cd-d">00</span>
+      <span class="cd-label">Días</span>
+    </div>
+    <div class="cd-block">
+      <span class="cd-num" id="cd-h">00</span>
+      <span class="cd-label">Horas</span>
+    </div>
+    <div class="cd-block">
+      <span class="cd-num" id="cd-m">00</span>
+      <span class="cd-label">Min</span>
+    </div>
+    <div class="cd-block">
+      <span class="cd-num" id="cd-s">00</span>
+      <span class="cd-label">Seg</span>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <div class="scroll-mouse"></div>
+    Descubre los planes
+  </div>
+</section>
+
+<!-- ══ TRUST BAR ══ -->
+<div class="trust-bar" data-reveal="fade-up">
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span><strong>12.400+</strong> miembros activos</span>
+  </div>
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <span><strong>97%</strong> retención a los 90 días</span>
+  </div>
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Garantía <strong>30 días</strong> o devolución</span>
+  </div>
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    <span>Pago 100% <strong>seguro</strong></span>
+  </div>
+  <div class="trust-item">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>Acceso <strong>inmediato</strong></span>
+  </div>
+</div>
+
+<!-- ══ MODULES STRIP ══ -->
+<section class="modules-strip">
+  <div class="modules-strip-bg"></div>
+  <div class="strip-header">
+    <div>
+      <div class="overline">Lo que obtienes</div>
+      <h2 class="section-title">Todo el<br><em>Sistema</em></h2>
+    </div>
+    <p class="strip-header-desc">
+      Nueve módulos construidos sobre investigación real en comportamiento humano, neurociencia aplicada y psicología de ejecución de alto rendimiento. Cada uno diseñado para actuar en perfecta sincronía con los demás.
+    </p>
+  </div>
+
+  <!-- MODULE 1-4: BASE + PREMIUM -->
+  <div class="module-row" data-reveal="row" data-delay="0">
+    <div class="row-num">01</div>
+    <div class="row-main">
+      <span class="row-tag">Pilar I — Disciplina</span>
+      <h3 class="row-title">PRODUCTIVIDAD<br>EXTREMA</h3>
+      <p class="row-body">Deep work, bloques de flujo, eliminación total del ruido mental y control absoluto del tiempo. Convierte cada hora en una unidad de salida máxima.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Framework de time blocking de élite</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo de flujo cognitivo (4x output)</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Sistema anti-distracción neurológico</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Tracker de productividad semanal</div>
+    </div>
+    <span class="row-plan-badge badge-base">BASE + PREMIUM</span>
+  </div>
+
+  <div class="module-row" data-reveal="row" data-delay="1">
+    <div class="row-num">02</div>
+    <div class="row-main">
+      <span class="row-tag">Pilar II — Mentalidad</span>
+      <h3 class="row-title">HABIT<br>ARCHITECTURE</h3>
+      <p class="row-body">Construye hábitos que cambian tu identidad a nivel neurológico. No sobre motivación. Sobre automatización de comportamiento de alto rendimiento.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Ciclos de hábito e identidad (3 fases)</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Reprogramación de rutinas en 21 días</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Sistema de accountability diario</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Neuroplasticidad aplicada</div>
+    </div>
+    <span class="row-plan-badge badge-base">BASE + PREMIUM</span>
+  </div>
+
+  <div class="module-row" data-reveal="row" data-delay="2">
+    <div class="row-num">03</div>
+    <div class="row-main">
+      <span class="row-tag">Pilar III — Cuerpo</span>
+      <h3 class="row-title">CUERPO<br>ÉLITE</h3>
+      <p class="row-body">Entrenamiento, nutrición y recuperación fusionados en un sistema biológico de alto rendimiento. Cuando tu cuerpo funciona, tu mente domina.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo de fuerza y composición corporal</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Nutrición de precisión para rendimiento</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Suplementación estratégica</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Plan de 90 días progresivo</div>
+    </div>
+    <span class="row-plan-badge badge-base">BASE + PREMIUM</span>
+  </div>
+
+  <div class="module-row" data-reveal="row" data-delay="3">
+    <div class="row-num">04</div>
+    <div class="row-main">
+      <span class="row-tag">Pilar IV — Sistemas</span>
+      <h3 class="row-title">PERFORMANCE<br>DASHBOARD</h3>
+      <p class="row-body">El núcleo del sistema. Dashboard inmersivo que integra todos los módulos en una sola vista de control total sobre tu vida y rendimiento diario.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>KPIs personales en tiempo real</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Visual performance tracking</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Análisis de tendencias semanales</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Integración con todos los módulos</div>
+    </div>
+    <span class="row-plan-badge badge-base">BASE + PREMIUM</span>
+  </div>
+
+  <!-- MODULES 5-9: PREMIUM ONLY -->
+  <div class="module-row premium-only" data-reveal="row" data-delay="4">
+    <div class="row-num">05</div>
+    <div class="row-main">
+      <span class="row-tag">Avanzado — Solo Premium</span>
+      <h3 class="row-title">RECOVERY<br>PROTOCOL</h3>
+      <p class="row-body">Sueño, energía y recuperación optimizados mediante protocolo de biohacking avanzado. Opera al máximo nivel cada día sin excepciones.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo HRV y optimización de sueño</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Cold exposure y sauna scheduling</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Stack de biohacking avanzado</div>
+    </div>
+    <span class="row-plan-badge badge-premium">Solo PREMIUM</span>
+  </div>
+
+  <div class="module-row premium-only" data-reveal="row" data-delay="5">
+    <div class="row-num">06</div>
+    <div class="row-main">
+      <span class="row-tag">Avanzado — Solo Premium</span>
+      <h3 class="row-title">DEEP FOCUS<br>PROTOCOL</h3>
+      <p class="row-body">Concentración de bloque extremo. Técnicas de eliminación de ruido mental, control total del entorno cognitivo y sesiones de ultra-productividad.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo de 4 horas de deep work</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Environment design cognitivo</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Supresión de distracciones digitales</div>
+    </div>
+    <span class="row-plan-badge badge-premium">Solo PREMIUM</span>
+  </div>
+
+  <div class="module-row premium-only" data-reveal="row" data-delay="6">
+    <div class="row-num">07</div>
+    <div class="row-main">
+      <span class="row-tag">Avanzado — Solo Premium</span>
+      <h3 class="row-title">SISTEMAS<br>MENTALES</h3>
+      <p class="row-body">Arquitectura mental para decisiones de alta velocidad, control emocional absoluto y ejecución sin fricción bajo presión extrema.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Marcos de decisión de élite</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Regulación emocional avanzada</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Ejecución bajo presión y estrés</div>
+    </div>
+    <span class="row-plan-badge badge-premium">Solo PREMIUM</span>
+  </div>
+
+  <div class="module-row premium-only" data-reveal="row" data-delay="7">
+    <div class="row-num">08</div>
+    <div class="row-main">
+      <span class="row-tag">Exclusivo — Solo Premium</span>
+      <h3 class="row-title">IDENTITY<br>SHIFT</h3>
+      <p class="row-body">El módulo más profundo. Reprogramación completa de identidad y creencias limitantes. De quién eres a quién necesitas ser. Sin compromisos.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Auditoría completa de identidad actual</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Eliminación de creencias limitantes</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Construcción de identidad de élite</div>
+    </div>
+    <span class="row-plan-badge badge-premium">Solo PREMIUM</span>
+  </div>
+
+  <div class="module-row premium-only" data-reveal="row" data-delay="8">
+    <div class="row-num">09</div>
+    <div class="row-main">
+      <span class="row-tag">Exclusivo — Solo Premium</span>
+      <h3 class="row-title">ELITE<br>NETWORK</h3>
+      <p class="row-body">Acceso directo a la comunidad premium. Sesiones en vivo mensuales, feedback directo, y accountability con personas que operan en el mismo nivel.</p>
+    </div>
+    <div class="row-features">
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Comunidad privada premium</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>2 sesiones en vivo mensuales</div>
+      <div class="feat-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Soporte directo 7 días a la semana</div>
+    </div>
+    <span class="row-plan-badge badge-premium">Solo PREMIUM</span>
+  </div>
+</section>
+
+<!-- ══ PLANS ══ -->
+<section class="comparison-section">
+  <div class="comparison-title">
+    <div class="overline" style="justify-content:center;">Elige tu nivel</div>
+    <h2 class="section-title" style="margin-top:16px;">Base o<br><em>Premium</em></h2>
+  </div>
+
+  <div class="plans-wrapper">
+    <!-- BASE -->
+    <div class="plan-card plan-base" id="plan-base" data-reveal="plan-left">
+      <div class="plan-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Plan Base
+      </div>
+      <div class="plan-name">BASE</div>
+      <p class="plan-tagline">Los 4 módulos fundamentales. El sistema completo para empezar a transformar tu vida desde el día uno.</p>
+
+      <div class="plan-price-block">
+        <div class="price-original">€ 497</div>
+        <div class="price-main">
+          <span class="price-currency">€</span>
+          <span>297</span>
+        </div>
+        <p class="price-note">Pago único · Acceso de por vida</p>
+        <div class="price-save">AHORRA €200</div>
+      </div>
+
+      <div class="plan-features">
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <div><strong>Módulo 01</strong> — Productividad Extrema</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46"/></svg></div>
+          <div><strong>Módulo 02</strong> — Habit Architecture</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+          <div><strong>Módulo 03</strong> — Cuerpo Élite</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+          <div><strong>Módulo 04</strong> — Performance Dashboard</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat" style="opacity:.35;">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+          <div>Módulos 05–09 — No incluidos</div>
+          <div class="feat-check locked"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        </div>
+        <div class="plan-feat" style="opacity:.35;">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+          <div>Comunidad élite — No incluida</div>
+          <div class="feat-check locked"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        </div>
+      </div>
+
+      <a href="#checkout" class="plan-cta cta-base" onclick="selectPlan('base')">EMPEZAR CON BASE</a>
+      <p class="plan-guarantee">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Garantía completa 30 días
+      </p>
+    </div>
+
+    <div class="versus-divider">VS</div>
+
+    <!-- PREMIUM -->
+    <div class="plan-card plan-premium" id="plan-premium" data-reveal="plan-right">
+      <div class="plan-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Plan Premium
+        <span class="label-pill popular">MÁS ELEGIDO</span>
+      </div>
+      <div class="plan-name">PRE<br>MIUM</div>
+      <p class="plan-tagline">Los 9 módulos completos. El ecosistema total para quien no acepta medias tintas y quiere la transformación definitiva.</p>
+
+      <div class="plan-price-block">
+        <div class="price-original">€ 997</div>
+        <div class="price-main">
+          <span class="price-currency">€</span>
+          <span>597</span>
+        </div>
+        <p class="price-note">Pago único · Acceso de por vida · Actualizaciones</p>
+        <div class="price-save">AHORRA €400</div>
+      </div>
+
+      <div class="plan-features">
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div><strong>Módulos 01–04</strong> — Todo el plan Base</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/></svg></div>
+          <div><strong>Módulo 05</strong> — Recovery Protocol</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <div><strong>Módulo 06</strong> — Deep Focus Protocol</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+          <div><strong>Módulo 07</strong> — Sistemas Mentales</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          <div><strong>Módulo 08</strong> — Identity Shift</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="plan-feat">
+          <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></div>
+          <div><strong>Módulo 09</strong> — Elite Network + Sesiones en vivo</div>
+          <div class="feat-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+      </div>
+
+      <a href="#checkout" class="plan-cta cta-premium" onclick="selectPlan('premium')">ACCEDER AL SISTEMA COMPLETO</a>
+      <p class="plan-guarantee">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Garantía completa 30 días · Sin preguntas
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARE TABLE ══ -->
+<section class="compare-section">
+  <div class="comparison-title">
+    <div class="overline" style="justify-content:center;">Comparativa</div>
+    <h2 class="section-title" style="margin-top:16px;">Base vs<br><em>Premium</em></h2>
+  </div>
+
+  <div class="compare-table">
+    <div class="compare-row header">
+      <div class="compare-cell col-head label">Qué incluye</div>
+      <div class="compare-cell col-head center">BASE</div>
+      <div class="compare-cell col-head center accent">PREMIUM</div>
+    </div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="0"><div class="compare-cell label">Módulos 01–04 (Sistema Base)</div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="1"><div class="compare-cell label">Recovery Protocol (Módulo 05)</div><div class="compare-cell center"><span class="check-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="2"><div class="compare-cell label">Deep Focus Protocol (Módulo 06)</div><div class="compare-cell center"><span class="check-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="3"><div class="compare-cell label">Sistemas Mentales Avanzados (Módulo 07)</div><div class="compare-cell center"><span class="check-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="4"><div class="compare-cell label">Identity Shift — Reprogramación completa (Módulo 08)</div><div class="compare-cell center"><span class="check-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="5"><div class="compare-cell label">Elite Network + Comunidad privada (Módulo 09)</div><div class="compare-cell center"><span class="check-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="6"><div class="compare-cell label">Sesiones en vivo mensuales (x2)</div><div class="compare-cell center"><span class="check-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="7"><div class="compare-cell label">Actualizaciones futuras incluidas</div><div class="compare-cell center"><span class="check-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="8"><div class="compare-cell label">Soporte directo 7 días a la semana</div><div class="compare-cell center"><span class="check-no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="compare-cell center"><span class="check-yes"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
+    <div class="compare-row" data-reveal="row-compare" data-delay="9"><div class="compare-cell label"><strong>Precio</strong></div><div class="compare-cell center"><strong style="color:var(--text);font-family:var(--font-display);font-size:28px;">€297</strong></div><div class="compare-cell center"><strong style="color:var(--accent);font-family:var(--font-display);font-size:28px;">€597</strong></div></div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="testi-section">
+  <div class="overline" data-reveal="fade-up">Resultados Reales</div>
+  <h2 class="section-title" style="margin-top:16px;" data-reveal="fade-up" data-delay=".1">Lo que dicen<br><em>los miembros</em></h2>
+
+  <div class="testi-grid">
+    <div class="testi-card" data-reveal="fade-up" data-delay=".1">
+      <span class="testi-quote-mark">"</span>
+      <p class="testi-text">En 90 días pasé de procrastinar cada día a tener un sistema tan automatizado que producir alto rendimiento es mi modo default. No hay vuelta atrás.</p>
+      <span class="testi-result">4.2X</span>
+      <div class="testi-author">
+        <strong>Alejandro M.</strong>
+        Founder, Madrid — Plan Premium
+      </div>
+    </div>
+    <div class="testi-card" data-reveal="fade-up" data-delay=".2">
+      <span class="testi-quote-mark">"</span>
+      <p class="testi-text">Perdí 14kg de grasa, gané músculo y triplicé mi output laboral simultáneamente. El sistema hace que todo funcione junto. No por separado.</p>
+      <span class="testi-result">-14KG</span>
+      <div class="testi-author">
+        <strong>Carlos V.</strong>
+        Ingeniero, Barcelona — Plan Premium
+      </div>
+    </div>
+    <div class="testi-card" data-reveal="fade-up" data-delay=".3">
+      <span class="testi-quote-mark">"</span>
+      <p class="testi-text">Empecé con el plan base y en dos semanas sabía que necesitaba el premium. La comunidad élite y las sesiones en vivo son lo que lo hace diferente.</p>
+      <span class="testi-result">3.8X</span>
+      <div class="testi-author">
+        <strong>Sergio R.</strong>
+        Trader, Valencia — Upgrade a Premium
+      </div>
+    </div>
+    <div class="testi-card" data-reveal="fade-up" data-delay=".4">
+      <span class="testi-quote-mark">"</span>
+      <p class="testi-text">El módulo de Identity Shift me cambió a nivel fundamental. Cambié mis rutinas, mi mentalidad y mis resultados. Todo en 90 días estructurados.</p>
+      <span class="testi-result">+300%</span>
+      <div class="testi-author">
+        <strong>David L.</strong>
+        CEO, Bilbao — Plan Premium
+      </div>
+    </div>
+    <div class="testi-card" data-reveal="fade-up" data-delay=".5">
+      <span class="testi-quote-mark">"</span>
+      <p class="testi-text">Dudé entre los planes. Elegí base para probar. Funcionó tan bien que en el día 30 ya había pagado el upgrade. Vale cada céntimo por separado.</p>
+      <span class="testi-result">97%</span>
+      <div class="testi-author">
+        <strong>Marta P.</strong>
+        Emprendedora, Sevilla — Upgrade a Premium
+      </div>
+    </div>
+    <div class="testi-card" data-reveal="fade-up" data-delay=".6">
+      <span class="testi-quote-mark">"</span>
+      <p class="testi-text">El recovery protocol y el deep focus son los módulos más infravalorados del sistema. Cuando tu sueño y tu concentración son élite, todo lo demás escala.</p>
+      <span class="testi-result">∞</span>
+      <div class="testi-author">
+        <strong>Iñaki A.</strong>
+        Atleta + Empresario, San Sebastián — Premium
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="faq-section">
+  <div class="overline" data-reveal="fade-up">Preguntas Frecuentes</div>
+  <h2 class="section-title" style="margin-top:16px;" data-reveal="fade-up" data-delay=".1">Sin<br><em>Filtros</em></h2>
+
+  <div class="faq-grid">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">¿Cuál es la diferencia real entre Base y Premium?<div class="faq-arrow"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+      <div class="faq-a"><div class="faq-a-inner">El plan Base te da los 4 pilares fundamentales del sistema. Es completo y funciona. El Premium añade 5 módulos avanzados (Recovery, Deep Focus, Sistemas Mentales, Identity Shift y Elite Network), más acceso a la comunidad privada y sesiones en vivo mensuales. Si quieres la transformación total, Premium.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">¿Cuándo obtengo acceso al sistema?<div class="faq-arrow"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+      <div class="faq-a"><div class="faq-a-inner">Inmediatamente después del pago. Recibirás un email de acceso en menos de 5 minutos. No hay esperas, no hay procesos. Pagas y entras.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">¿Hay garantía de devolución?<div class="faq-arrow"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+      <div class="faq-a"><div class="faq-a-inner">Sí. 30 días de garantía total, sin preguntas. Si en 30 días decides que el sistema no es para ti, devolvemos el 100% del importe. Sin formularios absurdos, sin burocracia.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">¿Necesito experiencia previa?<div class="faq-arrow"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+      <div class="faq-a"><div class="faq-a-inner">No. El sistema está diseñado para funcionar desde cero. Lo que sí necesitas es estar dispuesto a ejecutar con compromisos reales. Si buscas algo fácil, este no es tu sistema.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">¿Puedo empezar con Base y hacer upgrade?<div class="faq-arrow"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+      <div class="faq-a"><div class="faq-a-inner">Sí. Si empiezas con Base puedes hacer upgrade a Premium en cualquier momento pagando solo la diferencia. El acceso se mantiene sin interrupciones.</div></div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">¿Cuánto tiempo al día requiere el sistema?<div class="faq-arrow"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>
+      <div class="faq-a"><div class="faq-a-inner">El sistema está diseñado para integrarse en tu vida, no para añadir horas. En los primeros 14 días necesitas entre 45 y 90 minutos de configuración inicial. Después el sistema funciona contigo de manera integrada.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHECKOUT ══ -->
+<section class="checkout-strip" id="checkout">
+  <div class="checkout-left">
+    <div class="overline">Reserva tu plaza</div>
+    <h2 class="checkout-title">ES<br><em>HOY</em></h2>
+    <p class="checkout-sub">
+      Las plazas son limitadas para mantener la calidad del sistema. No esperamos a que estés listo. El sistema te hará listo. El único paso es decidir.
+    </p>
+  </div>
+  <div class="checkout-form" data-reveal="fade-up">
+    <div class="form-plan-select">
+      <div class="form-plan-opt" id="opt-base" onclick="selectPlan('base')">
+        <div class="opt-name">BASE</div>
+        <div class="opt-price">€297 · Pago único</div>
+        <div class="opt-modules">Módulos 01–04</div>
+      </div>
+      <div class="form-plan-opt selected" id="opt-premium" onclick="selectPlan('premium')">
+        <div class="opt-name">PREMIUM</div>
+        <div class="opt-price">€597 · Pago único</div>
+        <div class="opt-modules">Módulos 01–09 + Comunidad</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Nombre completo</label>
+      <input type="text" placeholder="Tu nombre completo">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" placeholder="tu@email.com">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Número de tarjeta</label>
+        <input type="text" placeholder="•••• •••• •••• ••••" maxlength="19">
+      </div>
+      <div class="form-group">
+        <label>CVC</label>
+        <input type="text" placeholder="•••" maxlength="4">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Caducidad</label>
+        <input type="text" placeholder="MM / AA" maxlength="7">
+      </div>
+      <div class="form-group">
+        <label>Código postal</label>
+        <input type="text" placeholder="28001">
+      </div>
+    </div>
+
+    <button class="form-submit" id="form-submit-btn" onclick="handleSubmit(event)">
+      UNIRME AL SISTEMA — PREMIUM
+    </button>
+    <div class="form-secure">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Pago 100% seguro y encriptado
+    </div>
+    <div class="form-methods">
+      <span class="method-badge">VISA</span>
+      <span class="method-badge">MASTERCARD</span>
+      <span class="method-badge">AMEX</span>
+      <span class="method-badge">PAYPAL</span>
+      <span class="method-badge">TRANSFERENCIA</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <a class="footer-logo" href="index.html">ASCEND <span>SYSTEM</span></a>
+  <div class="footer-links-row">
+    <a href="index.html">Inicio</a>
+    <a href="#">Privacidad</a>
+    <a href="#">Términos</a>
+    <a href="#">Contacto</a>
+    <a href="#">Garantía</a>
+  </div>
+  <div class="footer-copy">© 2026 ASCEND SYSTEM · Todos los derechos reservados</div>
+</footer>
+
+<!-- ─── PROMO PILL ─── -->
+<div class="promo-pill" id="promoPill">
+  <span class="promo-pill-text">⚡ Precio especial — <strong>Ahorra €400</strong> en PREMIUM hoy</span>
+  <a href="#checkout" class="promo-pill-cta" onclick="selectPlan('premium')">ENTRAR AHORA</a>
+</div>
+
+<script>
+/* ─── CURSOR ─── */
+const cursor=document.getElementById('cursor');
+const ring=document.getElementById('cursor-ring');
+if(cursor){
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+  (function animRing(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+}
+
+/* ─── PROGRESS BAR ─── */
+const pb=document.getElementById('progress-bar');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  pb.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';
+},{passive:true});
+
+/* ─── NAV ─── */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>40);
+},{passive:true});
+
+/* ─── PARTICLES ─── */
+const pContainer=document.getElementById('particles');
+for(let i=0;i<50;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.left=Math.random()*100+'%';
+  p.style.animationDuration=(8+Math.random()*20)+'s';
+  p.style.animationDelay=(-Math.random()*20)+'s';
+  p.style.width=p.style.height=(1+Math.random()*3)+'px';
+  p.style.opacity=Math.random()*0.5;
+  pContainer.appendChild(p);
+}
+
+/* ─── 3D INTRO CINEMATIC ─── */
+const overlay=document.getElementById('intro-overlay');
+const iw1=document.getElementById('iw1');
+const iw2=document.getElementById('iw2');
+
+function runIntro(){
+  // Word 1
+  gsap.to(iw1,{
+    opacity:1,rotateX:0,z:0,
+    duration:1,delay:.3,ease:'power4.out',
+    onComplete:()=>{
+      // Word 2
+      gsap.to(iw2,{
+        opacity:1,rotateX:0,z:0,
+        duration:1,delay:.1,ease:'power4.out'
+      });
+    }
+  });
+
+  // Hold then collapse 3D + exit
+  gsap.to([iw1,iw2],{
+    rotateY:720,scale:.1,opacity:0,
+    duration:1,delay:2.2,ease:'power4.in',
+    stagger:.06
+  });
+
+  // Exit overlay
+  gsap.to(overlay,{
+    opacity:0,duration:.7,delay:2.9,ease:'power2.in',
+    onComplete:()=>{
+      overlay.style.display='none';
+      // Show nav
+      nav.classList.add('visible');
+      // Trigger page animations
+      initPageAnimations();
+    }
+  });
+}
+runIntro();
+
+/* ─── COUNTDOWN ─── */
+function updateCountdown(){
+  const target=new Date();
+  target.setHours(target.getHours()+47);
+  target.setMinutes(target.getMinutes()+23);
+
+  const deadline=new Date(Date.now()+(47*3600+23*60+12)*1000);
+
+  function tick(){
+    const now=Date.now();
+    const diff=Math.max(0,deadline-now);
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    document.getElementById('cd-d').textContent=String(d).padStart(2,'0');
+    document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
+    document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+    document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+    if(diff>0)requestAnimationFrame(tick);
+  }
+  tick();
+}
+updateCountdown();
+
+/* ─── PLAN SELECTION ─── */
+let selectedPlan='premium';
+function selectPlan(plan){
+  selectedPlan=plan;
+  document.getElementById('opt-base').classList.toggle('selected',plan==='base');
+  document.getElementById('opt-premium').classList.toggle('selected',plan==='premium');
+  const btn=document.getElementById('form-submit-btn');
+  if(plan==='premium'){
+    btn.textContent='UNIRME AL SISTEMA — PREMIUM · €597';
+  } else {
+    btn.textContent='UNIRME AL SISTEMA — BASE · €297';
+  }
+}
+
+/* ─── FAQ ─── */
+function toggleFaq(item){
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+
+/* ─── FORM SUBMIT ─── */
+function handleSubmit(e){
+  e.preventDefault();
+  const btn=document.getElementById('form-submit-btn');
+  btn.textContent='PROCESANDO...';
+  btn.style.opacity='.7';
+  setTimeout(()=>{
+    btn.textContent='✓ ACCESO ACTIVADO';
+    btn.style.background='#4aff8a';
+    setTimeout(()=>{
+      btn.textContent=selectedPlan==='premium'?'UNIRME AL SISTEMA — PREMIUM · €597':'UNIRME AL SISTEMA — BASE · €297';
+      btn.style.background='';btn.style.opacity='';
+    },3000);
+  },2000);
+}
+
+/* ─── PROMO PILL ─── */
+let pillShown=false;
+window.addEventListener('scroll',()=>{
+  if(!pillShown&&window.scrollY>400){
+    pillShown=true;
+    document.getElementById('promoPill').classList.add('visible');
+  }
+  if(pillShown&&window.scrollY<200){
+    document.getElementById('promoPill').classList.remove('visible');
+    pillShown=false;
+  }
+},{passive:true});
+
+/* ─── GSAP SCROLL ANIMATIONS ─── */
+gsap.registerPlugin(ScrollTrigger);
+
+function initPageAnimations(){
+
+  /* Hero elements */
+  gsap.from('[data-reveal="fade-up"]',{
+    opacity:0,y:80,duration:1.3,ease:'power4.out',
+    delay:(el)=>parseFloat(el.getAttribute('data-delay')||0),
+    stagger:{each:.05},
+    scrollTrigger:{trigger:'.pay-hero',start:'top 80%'}
+  });
+
+  /* Module rows — slide in from left */
+  gsap.utils.toArray('[data-reveal="row"]').forEach((el,i)=>{
+    gsap.from(el,{
+      opacity:0,x:-60,duration:1.1,ease:'power3.out',
+      scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none reverse'}
+    });
+  });
+
+  /* Compare rows */
+  gsap.utils.toArray('[data-reveal="row-compare"]').forEach((el,i)=>{
+    gsap.from(el,{
+      opacity:0,x:-30,duration:.9,ease:'power3.out',
+      delay:i*0.04,
+      scrollTrigger:{trigger:'.compare-table',start:'top 85%',toggleActions:'play none none reverse'}
+    });
+  });
+
+  /* Plan cards — 3D tilt in */
+  const planLeft=document.querySelector('[data-reveal="plan-left"]');
+  const planRight=document.querySelector('[data-reveal="plan-right"]');
+  if(planLeft){
+    gsap.from(planLeft,{
+      opacity:0,x:-120,rotateY:25,duration:1.6,ease:'power4.out',
+      scrollTrigger:{trigger:'.plans-wrapper',start:'top 85%',toggleActions:'play none none reverse'}
+    });
+  }
+  if(planRight){
+    gsap.from(planRight,{
+      opacity:0,x:120,rotateY:-25,duration:1.6,ease:'power4.out',delay:.12,
+      scrollTrigger:{trigger:'.plans-wrapper',start:'top 85%',toggleActions:'play none none reverse'}
+    });
+  }
+
+  /* Testimonials */
+  gsap.from('.testi-card',{
+    opacity:0,y:80,duration:1.2,stagger:.08,ease:'power4.out',clearProps:'all',
+    scrollTrigger:{trigger:'.testi-grid',start:'top 85%',toggleActions:'play none none reverse'}
+  });
+
+  /* FAQ */
+  gsap.from('.faq-item',{
+    opacity:0,y:40,duration:1,stagger:.06,ease:'power3.out',clearProps:'all',
+    scrollTrigger:{trigger:'.faq-grid',start:'top 88%',toggleActions:'play none none reverse'}
+  });
+
+  /* Checkout */
+  gsap.from('[data-reveal="fade-up"]',{
+    opacity:0,y:60,duration:1.2,ease:'power4.out',
+    scrollTrigger:{trigger:'.checkout-strip',start:'top 85%',toggleActions:'play none none reverse'}
+  });
+
+  /* Parallax grid */
+  gsap.to('.hero-grid-3d',{
+    yPercent:-20,ease:'none',
+    scrollTrigger:{trigger:'.pay-hero',start:'top top',end:'bottom top',scrub:1.5}
+  });
+
+  /* Trust bar fade */
+  gsap.from('.trust-item',{
+    opacity:0,y:20,duration:.9,stagger:.07,ease:'power3.out',clearProps:'all',
+    scrollTrigger:{trigger:'.trust-bar',start:'top 92%',toggleActions:'play none none reverse'}
+  });
+
+  /* Section titles stagger */
+  gsap.utils.toArray('.section-title').forEach(el=>{
+    gsap.from(el,{
+      opacity:0,y:70,duration:1.4,ease:'power4.out',clearProps:'all',
+      scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none reverse'}
+    });
+  });
+
+  /* Overlines */
+  gsap.utils.toArray('.overline').forEach(el=>{
+    gsap.from(el,{
+      opacity:0,x:-30,duration:1,ease:'power3.out',clearProps:'all',
+      scrollTrigger:{trigger:el,start:'top 90%',toggleActions:'play none none reverse'}
+    });
+  });
+
+  /* 3D card hover for plan cards */
+  document.querySelectorAll('.plan-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      gsap.to(card,{rotateX:-y*6,rotateY:x*6,z:20,duration:.4,ease:'power2.out',transformPerspective:1000});
+    });
+    card.addEventListener('mouseleave',()=>{
+      gsap.to(card,{rotateX:0,rotateY:0,z:0,duration:.8,ease:'power3.out',transformPerspective:1000});
+    });
+  });
+
+  /* Testi card 3D */
+  document.querySelectorAll('.testi-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      gsap.to(card,{rotateX:-y*4,rotateY:x*4,duration:.3,ease:'power2.out',transformPerspective:1000});
+    });
+    card.addEventListener('mouseleave',()=>{
+      gsap.to(card,{rotateX:0,rotateY:0,duration:.8,ease:'power3.out',transformPerspective:1000});
+    });
+  });
+
+  /* Module rows hover glow */
+  document.querySelectorAll('.module-row').forEach(row=>{
+    const num=row.querySelector('.row-num');
+    row.addEventListener('mouseenter',()=>{
+      gsap.to(num,{color:'var(--accent)',duration:.4});
+    });
+    row.addEventListener('mouseleave',()=>{
+      const isPremium=row.classList.contains('premium-only');
+      gsap.to(num,{color:isPremium?'rgba(255,209,74,0.4)':'rgba(200,255,62,0.3)',duration:.4});
+    });
+  });
+
+  /* Scroll-reveal for strip header */
+  gsap.from('.strip-header > *',{
+    opacity:0,y:60,duration:1.2,stagger:.12,ease:'power4.out',clearProps:'all',
+    scrollTrigger:{trigger:'.strip-header',start:'top 85%',toggleActions:'play none none reverse'}
+  });
+
+  /* Checkout form */
+  gsap.from('.checkout-left > *',{
+    opacity:0,x:-60,duration:1.2,stagger:.1,ease:'power4.out',clearProps:'all',
+    scrollTrigger:{trigger:'.checkout-strip',start:'top 85%',toggleActions:'play none none reverse'}
+  });
+  gsap.from('.checkout-form',{
+    opacity:0,x:60,duration:1.2,ease:'power4.out',clearProps:'all',
+    scrollTrigger:{trigger:'.checkout-strip',start:'top 85%',toggleActions:'play none none reverse'}
+  });
+}
+
+/* ─── CARD FORMAT INPUT ─── */
+document.addEventListener('input',function(e){
+  if(e.target.placeholder==='•••• •••• •••• ••••'){
+    let v=e.target.value.replace(/\D/g,'').substring(0,16);
+    e.target.value=v.replace(/(.{4})/g,'$1 ').trim();
+  }
+  if(e.target.placeholder==='MM / AA'){
+    let v=e.target.value.replace(/\D/g,'');
+    if(v.length>=2)v=v.substring(0,2)+' / '+v.substring(2,4);
+    e.target.value=v;
+  }
+});
+
+/* ─── BLOCK RIGHT CLICK ─── */
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))||(e.ctrlKey&&e.key==='u'))e.preventDefault();
+});
+</script>
+</body>
+</html>
