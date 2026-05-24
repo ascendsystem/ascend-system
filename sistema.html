@@ -2443,19 +2443,15 @@ function downloadPDF(){
   /* ── LOGO / BRAND ── */
   doc.setFont('helvetica','bold');
   doc.setFontSize(20);
-  doc.setLetterSpacing(6);
   setAccent();
   doc.text('ASCEND', 20, 22);
   doc.setTextColor(240,237,232);
   doc.text('SYSTEM', 20+doc.getTextWidth('ASCEND')+3, 22);
-  doc.setLetterSpacing(0);
 
   doc.setFontSize(8);
   doc.setFont('helvetica','normal');
   setMuted();
-  doc.setLetterSpacing(3);
   doc.text('INFORME DE DIAGNÓSTICO PERSONAL', 20, 30);
-  doc.setLetterSpacing(0);
 
   /* date top right */
   doc.setFontSize(7);
@@ -2507,10 +2503,8 @@ function downloadPDF(){
     /* label */
     doc.setFont('helvetica','bold');
     doc.setFontSize(7);
-    doc.setLetterSpacing(2.5);
     doc.setTextColor(...(a.highlight?[200,255,62]:[140,135,130]));
     doc.text(a.label, a.x+bw/2, scoreY+8, {align:'center'});
-    doc.setLetterSpacing(0);
 
     /* number */
     doc.setFont('helvetica','bold');
@@ -2527,10 +2521,8 @@ function downloadPDF(){
     /* verdict */
     doc.setFont('helvetica','bold');
     doc.setFontSize(6.5);
-    doc.setLetterSpacing(1.5);
     doc.setTextColor(...col);
     doc.text(scoreLabel(a.score), a.x+bw/2, scoreY+35, {align:'center'});
-    doc.setLetterSpacing(0);
 
     /* bar track */
     doc.setFillColor(30,30,30);
@@ -2565,10 +2557,8 @@ function downloadPDF(){
 
     doc.setFont('helvetica','bold');
     doc.setFontSize(9);
-    doc.setLetterSpacing(2);
     doc.setTextColor(...col);
     doc.text(a.label, 26, curY+5.5);
-    doc.setLetterSpacing(0);
 
     doc.setFont('helvetica','bold');
     doc.setFontSize(9);
@@ -2621,10 +2611,8 @@ function downloadPDF(){
 
   doc.setFont('helvetica','bold');
   doc.setFontSize(11);
-  doc.setLetterSpacing(2);
   setWhite();
   doc.text('VEREDICTO GLOBAL', 20, curY);
-  doc.setLetterSpacing(0);
   curY+=8;
 
   const verdictText = getOverallIntroPure(overall, body, mind, time);
@@ -2653,10 +2641,8 @@ function downloadPDF(){
 
   doc.setFont('helvetica','bold');
   doc.setFontSize(12);
-  doc.setLetterSpacing(1);
   setWhite();
   doc.text('EL SISTEMA EXISTE PARA ESTO.', 20+(W-40)/2, curY+12, {align:'center'});
-  doc.setLetterSpacing(0);
 
   doc.setFont('helvetica','normal');
   doc.setFontSize(8.5);
@@ -2669,10 +2655,8 @@ function downloadPDF(){
   doc.rect(20+(W-40)/2-35, curY+32, 70, 7,'F');
   doc.setFont('helvetica','bold');
   doc.setFontSize(8);
-  doc.setLetterSpacing(2.5);
   doc.setTextColor(0,0,0);
   doc.text('ACCEDER AL SISTEMA', 20+(W-40)/2, curY+37.5, {align:'center'});
-  doc.setLetterSpacing(0);
 
   doc.setFont('helvetica','normal');
   doc.setFontSize(7);
@@ -2685,9 +2669,7 @@ function downloadPDF(){
   doc.setFont('helvetica','normal');
   doc.setFontSize(6.5);
   setMuted();
-  doc.setLetterSpacing(1.5);
   doc.text('ASCEND SYSTEM · DIAGNÓSTICO CONFIDENCIAL · ' + today, W/2, H-7, {align:'center'});
-  doc.setLetterSpacing(0);
 
   doc.save('AscendSystem_Diagnostico.pdf');
 }
