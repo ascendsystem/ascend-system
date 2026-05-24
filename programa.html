@@ -114,7 +114,56 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:18px;height:18px;
 ::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.3);border-radius:999px;}
 
 /* ══════════════════════════════════════════
-   NAV — matched exactly to index.html
+   MOBILE MENU (from index.html)
+══════════════════════════════════════════ */
+.mobile-menu{
+  position:fixed;inset:0;
+  background:rgba(3,3,3,0.97);
+  backdrop-filter:blur(40px);
+  z-index:9050;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:44px;
+  clip-path:circle(0% at calc(100% - 52px) 52px);
+  transition:clip-path .7s cubic-bezier(.77,0,.175,1);
+  pointer-events:none;
+}
+.mobile-menu.open{
+  clip-path:circle(170% at calc(100% - 52px) 52px);
+  pointer-events:all;
+}
+.mobile-menu a{
+  font-family:var(--font-display);font-size:56px;
+  color:rgba(240,237,232,0.4);text-decoration:none;
+  letter-spacing:4px;text-transform:uppercase;
+  transition:color .3s,transform .3s;
+}
+.mobile-menu a:hover{color:var(--accent);transform:translateX(12px);}
+.mobile-menu a.mobile-active{color:var(--accent);}
+.mobile-menu .mobile-cta{
+  font-family:var(--font-cond);font-size:14px;font-weight:800;
+  letter-spacing:3px;color:black;background:var(--accent);
+  padding:16px 44px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  text-decoration:none;
+}
+
+/* ─── HAMBURGER ─── */
+.nav-hamburger{
+  display:none;flex-direction:column;gap:5px;cursor:pointer;
+  padding:8px;z-index:9100;background:none;border:none;
+}
+.nav-hamburger span{
+  display:block;width:28px;height:2px;
+  background:var(--text);border-radius:2px;
+  transition:transform .4s,opacity .4s;
+}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+@media(max-width:900px){
+  .nav-hamburger{display:flex;}
+}
+
+/* ══════════════════════════════════════════
+   NAV
 ══════════════════════════════════════════ */
 .nav{
   position:fixed;top:0;left:0;width:100%;
@@ -144,7 +193,7 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:18px;height:18px;
 .logo:hover::after{transform:scaleX(1);}
 .logo-img{height:34px;width:auto;object-fit:contain;filter:drop-shadow(0 0 8px rgba(200,255,62,0.4));}
 .logo span{color:var(--accent);}
-.-links{display:flex;gap:44px;align-items:center;}
+.nav-links{display:flex;gap:44px;align-items:center;}
 .nav-links a{
   text-decoration:none;color:rgba(240,237,232,0.55);
   font-family:var(--font-cond);font-size:12px;font-weight:700;
@@ -182,7 +231,7 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:18px;height:18px;
   .nav{padding:22px 24px;}
   .nav.scrolled{padding:14px 24px;}
   .nav-links{display:none;}
-  .nav-cta{padding:10px 18px;font-size:10px;}
+  .nav-cta{display:none;}
 }
 
 /* ══════════════════════════════════════════
@@ -966,6 +1015,13 @@ footer{
     0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px
   );
 }
+
+/* ══════════════════════════════════════════
+   MOBILE MENU RESPONSIVE
+══════════════════════════════════════════ */
+@media(max-width:480px){
+  .mobile-menu a{font-size:40px;}
+}
 </style>
 </head>
 <body>
@@ -976,8 +1032,18 @@ footer{
 <div id="grain"></div>
 <div id="ambient"></div>
 <div class="scanlines"></div>
-  
-   <!-- ══ NAV ══ -->
+
+<!-- ══ MOBILE MENU ══ -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html" onclick="closeMobileMenu()">INICIO</a>
+  <a href="sistema.html" onclick="closeMobileMenu()">SISTEMA</a>
+  <a href="programa.html" class="mobile-active" onclick="closeMobileMenu()">PROGRAMA</a>
+  <a href="resultados.html" onclick="closeMobileMenu()">RESULTADOS</a>
+  <a href="contacto.html" onclick="closeMobileMenu()">CONTACTO</a>
+  <a href="pay.html" class="mobile-cta" onclick="closeMobileMenu()">ENTRAR AHORA</a>
+</div>
+
+<!-- ══ NAV ══ -->
 <nav class="nav" id="nav">
   <a class="logo" href="index.html">
     <img class="logo-img" src="logo.png" alt="Ascend" onerror="this.style.display='none'">
@@ -991,6 +1057,9 @@ footer{
     <a href="contacto.html">CONTACTO</a>
   </div>
   <a href="pay.html" class="nav-cta">ENTRAR AHORA</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- ══ HERO ══ -->
@@ -1425,6 +1494,20 @@ footer{
 </footer>
 
 <script>
+/* ══════════════════════════════════════════
+   MOBILE MENU
+══════════════════════════════════════════ */
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const burger = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  burger.classList.toggle('open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
 /* ══════════════════════════════════════════
    CURSOR
 ══════════════════════════════════════════ */
