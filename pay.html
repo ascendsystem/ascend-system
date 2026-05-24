@@ -3,1171 +3,963 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ASCEND SYSTEM — Acceso Élite</title>
+<title>ASCEND SYSTEM — Checkout</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-:root{
-  --bg:#020202;--bg2:#050505;--bg3:#080808;
-  --text:#f0ede8;--muted:#4a4744;--muted2:#7a7572;
-  --accent:#c8ff3e;--accent2:#a8e800;
-  --gold:#ffd14a;
-  --line:rgba(255,255,255,0.06);--line2:rgba(255,255,255,0.1);
-  --font-d:'Bebas Neue',sans-serif;
-  --font-b:'Barlow',sans-serif;
-  --font-c:'Barlow Condensed',sans-serif;
-  --ease:cubic-bezier(.16,1,.3,1);
+:root {
+  --bg: #050505;
+  --surface: #0d0d0d;
+  --border: rgba(255,255,255,0.06);
+  --border-hi: rgba(200,255,62,0.2);
+  --accent: #c8ff3e;
+  --accent-dim: rgba(200,255,62,0.08);
+  --gold: #ffd66e;
+  --text: #f2efe9;
+  --muted: #4a4844;
+  --muted2: #7a7773;
+  --font-d: 'Bebas Neue', sans-serif;
+  --font-b: 'DM Sans', sans-serif;
+  --font-m: 'Space Grotesk', sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
-body{font-family:var(--font-b);background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;}
-@media(max-width:768px){body{cursor:auto;}}
-
-/* ── CURSOR ── */
-#cur{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
-#cur-r{position:fixed;width:36px;height:36px;border:1px solid rgba(200,255,62,.4);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .4s var(--ease),height .4s var(--ease),border-color .3s;}
-body:has(a:hover) #cur-r,body:has(button:hover) #cur-r{width:60px;height:60px;border-color:var(--accent);}
-@media(max-width:768px){#cur,#cur-r{display:none;}}
-
-/* ── GRAIN ── */
-#grain{position:fixed;inset:0;pointer-events:none;z-index:9997;opacity:.35;animation:grain .3s steps(1) infinite;}
-@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}50%{transform:translate(2px,-2px)}75%{transform:translate(-1px,3px)}100%{transform:translate(1px,-1px)}}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:2px;}
-::-webkit-scrollbar-thumb{background:rgba(200,255,62,.3);}
-
-/* ── PROGRESS ── */
-#pgbar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:99997;width:0;box-shadow:0 0 12px rgba(200,255,62,.7);}
-
-/* ══ INTRO ══ */
-#intro{position:fixed;inset:0;z-index:99990;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;}
-#intro-canvas{position:absolute;inset:0;width:100%;height:100%;}
-.intro-logo{position:relative;z-index:2;font-family:var(--font-d);font-size:clamp(64px,14vw,180px);letter-spacing:-2px;line-height:.85;text-align:center;opacity:0;}
-.intro-logo .l1{color:rgba(240,237,232,.1);display:block;}
-.intro-logo .l2{color:var(--accent);display:block;text-shadow:0 0 80px rgba(200,255,62,.5);}
-.intro-bar{position:absolute;bottom:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 0 16px rgba(200,255,62,.8);}
-
-/* ══ NAV ══ */
-.nav{position:fixed;top:0;left:0;width:100%;padding:26px 72px;display:flex;align-items:center;justify-content:space-between;z-index:9000;border-bottom:1px solid transparent;opacity:0;transform:translateY(-16px);transition:opacity .8s,transform .8s,padding .5s,background .5s,border-color .5s;}
-.nav.vis{opacity:1;transform:translateY(0);}
-.nav.sc{padding:14px 72px;background:rgba(2,2,2,.96);backdrop-filter:blur(40px);border-bottom-color:var(--line);}
-.logo{font-family:var(--font-d);font-size:20px;letter-spacing:6px;color:#fff;text-decoration:none;}
-.logo em{color:var(--accent);font-style:normal;}
-.nav-right{display:flex;align-items:center;gap:28px;}
-.nav-back{font-family:var(--font-c);font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--muted2);text-decoration:none;text-transform:uppercase;transition:color .3s;}
-.nav-back:hover{color:var(--text);}
-.nav-badge{display:flex;align-items:center;gap:8px;font-family:var(--font-c);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;}
-.nav-badge svg{width:12px;height:12px;stroke:var(--accent);fill:none;stroke-width:2;}
-@media(max-width:768px){.nav{padding:18px 20px;}.nav.sc{padding:12px 20px;}.nav-badge{display:none;}}
-
-/* ══ HERO ══ */
-.hero{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:120px 72px 100px;text-align:center;}
-#hero-c{position:absolute;inset:0;z-index:0;width:100%;height:100%;}
-.hero-vig{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 70% 70% at center,transparent,rgba(2,2,2,.85) 100%),linear-gradient(to bottom,rgba(2,2,2,.6) 0%,transparent 18%,transparent 60%,rgba(2,2,2,1) 100%);}
-.hero-inner{position:relative;z-index:10;}
-
-.hero-pill{display:inline-flex;align-items:center;gap:14px;padding:9px 22px;border:1px solid rgba(200,255,62,.18);background:rgba(200,255,62,.03);margin-bottom:32px;opacity:0;animation:fu .9s .2s var(--ease) forwards;}
-.pip{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:pip 1.8s ease-in-out infinite;}
-@keyframes pip{0%,100%{opacity:.2;transform:scale(.5)}50%{opacity:1;transform:scale(1.2)}}
-.hero-pill span{font-family:var(--font-c);font-size:9px;font-weight:700;letter-spacing:4px;color:var(--accent);text-transform:uppercase;}
-
-@keyframes fu{to{opacity:1;transform:translateY(0)}}
-
-.hero-title{font-family:var(--font-d);font-size:clamp(72px,13vw,190px);line-height:.82;letter-spacing:-4px;margin-bottom:14px;opacity:0;transform:translateY(40px);animation:fu 1.2s .5s var(--ease) forwards;}
-.hero-title .stroke{display:block;-webkit-text-stroke:1.5px rgba(255,255,255,.15);color:transparent;}
-.hero-title .acc{display:block;color:var(--accent);text-shadow:0 0 100px rgba(200,255,62,.35);}
-
-.hero-sub{max-width:580px;margin:0 auto 44px;font-size:17px;line-height:1.85;color:rgba(240,237,232,.45);opacity:0;transform:translateY(24px);animation:fu 1s .9s var(--ease) forwards;}
-
-/* Countdown */
-.cdwrap{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:48px;opacity:0;animation:fu 1s 1.1s var(--ease) forwards;}
-.cd{padding:18px 26px;border:1px solid rgba(200,255,62,.1);background:rgba(200,255,62,.02);position:relative;}
-.cd+.cd{border-left:none;}
-.cd-n{font-family:var(--font-d);font-size:52px;color:#fff;line-height:1;}
-.cd-l{font-family:var(--font-c);font-size:8px;font-weight:700;letter-spacing:3px;color:var(--muted2);text-transform:uppercase;margin-top:4px;}
-
-.scroll-ind{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:10;display:flex;flex-direction:column;align-items:center;gap:9px;opacity:0;animation:fu 1s 1.5s var(--ease) forwards;}
-.scroll-ind span{font-family:var(--font-c);font-size:8px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
-.scroll-l{width:1px;height:32px;background:linear-gradient(to bottom,var(--accent),transparent);animation:sp 2s ease-in-out infinite;}
-@keyframes sp{0%,100%{opacity:.3}50%{opacity:1}}
-
-/* ══ TRUST BAR ══ */
-.tbar{background:rgba(200,255,62,.025);border-top:1px solid rgba(200,255,62,.06);border-bottom:1px solid rgba(200,255,62,.06);padding:20px 72px;display:flex;align-items:center;justify-content:center;gap:52px;flex-wrap:wrap;}
-.tb{display:flex;align-items:center;gap:9px;font-family:var(--font-c);font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--muted2);text-transform:uppercase;}
-.tb svg{width:14px;height:14px;stroke:var(--accent);fill:none;stroke-width:2;}
-.tb strong{color:var(--text);}
-@media(max-width:768px){.tbar{padding:16px 20px;gap:20px;}}
-
-/* ══ SECTION LABELS ══ */
-.ov{font-family:var(--font-c);font-size:9px;font-weight:700;letter-spacing:5px;color:var(--accent);text-transform:uppercase;display:flex;align-items:center;gap:14px;margin-bottom:20px;}
-.ov::before{content:'';width:26px;height:1px;background:var(--accent);}
-.ov.c{justify-content:center;}.ov.c::after{content:'';width:26px;height:1px;background:var(--accent);}
-
-/* ══ MODULES SECTION ══ */
-.mods-sec{padding:160px 72px;background:var(--bg2);position:relative;overflow:hidden;}
-#mods-c{position:absolute;inset:0;pointer-events:none;}
-.mods-wrap{max-width:1300px;margin:0 auto;position:relative;z-index:2;}
-.mods-hdr{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:end;margin-bottom:100px;}
-.sec-title{font-family:var(--font-d);font-size:clamp(52px,7.5vw,100px);line-height:.88;letter-spacing:-1px;color:#fff;margin-top:12px;}
-.sec-title em{font-style:normal;color:var(--accent);}
-.mods-desc{font-size:14px;line-height:1.9;color:rgba(240,237,232,.42);}
-.mods-desc strong{color:var(--text);}
-
-/* Module card row */
-.mcard{display:grid;grid-template-columns:80px 1fr 1fr;border-top:1px solid rgba(200,255,62,.05);position:relative;overflow:hidden;transition:background .4s;cursor:default;}
-.mcard:last-child{border-bottom:1px solid rgba(200,255,62,.05);}
-.mcard:hover{background:rgba(200,255,62,.02);}
-.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);}
-.mcard:hover::before{transform:scaleX(1);}
-.mcard.prem{border-left:2px solid rgba(255,209,74,.15);}
-
-/* 3D canvas inside each card */
-.mcard-3d{position:absolute;right:0;top:50%;transform:translateY(-50%);width:220px;height:220px;pointer-events:none;opacity:.1;transition:opacity .5s;}
-.mcard:hover .mcard-3d{opacity:.38;}
-
-.mc-num{padding:0 0 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:46px;font-family:var(--font-d);font-size:13px;color:rgba(200,255,62,.25);letter-spacing:2px;border-right:1px solid rgba(200,255,62,.05);transition:color .4s;}
-.mcard:hover .mc-num{color:var(--accent);}
-.mc-main{padding:38px 48px 38px 44px;border-right:1px solid rgba(200,255,62,.05);}
-.mc-label{font-family:var(--font-c);font-size:9px;font-weight:700;letter-spacing:3.5px;color:var(--accent);text-transform:uppercase;margin-bottom:10px;display:block;}
-.mcard.prem .mc-label{color:var(--gold);}
-.mc-title{font-family:var(--font-d);font-size:40px;color:#fff;line-height:.9;margin-bottom:14px;letter-spacing:-.5px;}
-.mc-body{font-size:12.5px;line-height:1.82;color:rgba(240,237,232,.42);}
-.mc-side{padding:38px 44px 38px 44px;display:flex;flex-direction:column;justify-content:flex-start;gap:10px;}
-.mc-feat{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:rgba(240,237,232,.45);line-height:1.55;}
-.mc-feat svg{width:12px;height:12px;stroke:var(--accent);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px;}
-.mcard.prem .mc-feat svg{stroke:var(--gold);}
-.mc-badge{position:absolute;top:40px;right:8px;font-family:var(--font-c);font-size:7.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;}
-.badge-b{color:var(--accent);border:1px solid rgba(200,255,62,.15);background:rgba(200,255,62,.04);}
-.badge-p{color:var(--gold);border:1px solid rgba(255,209,74,.15);background:rgba(255,209,74,.04);}
-
-@media(max-width:900px){
-  .mods-sec{padding:80px 20px;}
-  .mods-hdr{grid-template-columns:1fr;gap:32px;margin-bottom:60px;}
-  .mcard{grid-template-columns:48px 1fr;}
-  .mc-side{display:none;}
-  .mcard-3d{display:none;}
-  .mc-main{border-right:none;padding:28px 18px;}
-  .mc-badge{display:none;}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* ══ PLANS ══ */
-.plans-sec{padding:160px 72px;background:var(--bg);position:relative;overflow:hidden;}
-#plans-c{position:absolute;inset:0;pointer-events:none;}
-.plans-wrap{max-width:1280px;margin:0 auto;position:relative;z-index:2;}
-.plans-hdr{text-align:center;margin-bottom:90px;}
+/* ─── GRAIN ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999; mix-blend-mode: overlay;
+}
 
-.plans-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
-.pcard{position:relative;overflow:hidden;padding:64px 56px 72px;border:1px solid var(--line);background:rgba(255,255,255,.01);transition:transform .6s var(--ease),box-shadow .6s,border-color .4s;cursor:default;will-change:transform;}
-.pcard:hover{transform:translateY(-8px);}
-.pcard-base:hover{border-color:rgba(200,255,62,.1);box-shadow:0 40px 100px rgba(0,0,0,.6);}
-.pcard-prem{background:rgba(200,255,62,.015);border-color:rgba(200,255,62,.07);}
-.pcard-prem::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 0 30px rgba(200,255,62,.5);}
-.pcard-prem:hover{border-color:rgba(200,255,62,.18);box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 60px rgba(200,255,62,.04);}
+/* ─── CANVAS BG ─── */
+#bg-canvas {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
 
-/* 3D canvas in plan card */
-.pc-3d{position:absolute;top:-20px;right:-20px;width:240px;height:240px;pointer-events:none;opacity:.14;transition:opacity .5s;}
-.pcard:hover .pc-3d{opacity:.45;}
+/* ─── LAYOUT ─── */
+.page {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
 
-.pc-label{font-family:var(--font-c);font-size:9px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
-.pcard-base .pc-label{color:var(--muted2);}
-.pcard-prem .pc-label{color:var(--accent);}
-.most-pop{background:var(--accent);color:#000;font-family:var(--font-c);font-size:7px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;padding:3px 10px;animation:glow 2.5s ease-in-out infinite;}
-@keyframes glow{0%,100%{box-shadow:none}50%{box-shadow:0 0 14px rgba(200,255,62,.4)}}
+/* ─── LEFT PANEL ─── */
+.left {
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 52px;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+.left-canvas-wrap {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: hidden;
+}
+#left-canvas { width: 100%; height: 100%; }
+.left-top { position: relative; z-index: 2; }
+.logo {
+  font-family: var(--font-d);
+  font-size: 17px; letter-spacing: 5px;
+  color: white; text-decoration: none;
+  display: flex; align-items: center; gap: 10px;
+}
+.logo span { color: var(--accent); }
+.logo-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:.3;transform:scale(.6);} 50%{opacity:1;transform:scale(1.3);} }
 
-.pc-name{font-family:var(--font-d);font-size:84px;line-height:.85;letter-spacing:-2px;color:#fff;margin-bottom:10px;}
-.pcard-prem .pc-name{color:var(--accent);}
-.pc-tag{font-size:13px;line-height:1.75;color:rgba(240,237,232,.38);margin-bottom:48px;max-width:320px;}
+/* Big title */
+.left-hero { position: relative; z-index: 2; text-align: left; }
+.left-eyebrow {
+  font-family: var(--font-m); font-size: 9px; font-weight: 600;
+  letter-spacing: 4px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.left-eyebrow::before { content:''; width: 24px; height: 1px; background: var(--accent); }
+.left-big {
+  font-family: var(--font-d);
+  font-size: clamp(72px, 9vw, 112px);
+  line-height: .86; letter-spacing: -1px;
+  color: white;
+}
+.left-big .hi { color: var(--accent); display: block; }
+.left-sub {
+  font-size: 13px; line-height: 1.75;
+  color: var(--muted2); margin-top: 20px; max-width: 340px;
+}
 
-.price-box{padding:28px 32px;background:rgba(0,0,0,.3);border:1px solid var(--line);position:relative;margin-bottom:44px;}
-.pcard-prem .price-box{background:rgba(200,255,62,.035);border-color:rgba(200,255,62,.1);}
-.pr-old{font-family:var(--font-c);font-size:15px;font-weight:600;color:var(--muted);text-decoration:line-through;letter-spacing:1px;margin-bottom:4px;}
-.pr-main{font-family:var(--font-d);font-size:100px;line-height:.85;letter-spacing:-3px;color:#fff;display:flex;align-items:flex-start;gap:7px;}
-.pcard-prem .pr-main{color:var(--accent);}
-.pr-cur{font-size:38px;margin-top:9px;}
-.pr-note{font-family:var(--font-c);font-size:9px;font-weight:600;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:9px;}
-.pr-save{position:absolute;top:-13px;right:20px;background:var(--accent);color:#000;font-family:var(--font-c);font-size:8px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;padding:5px 12px;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
+/* Plan pills in left */
+.plan-pills { display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
+.pill {
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  font-family: var(--font-m); font-size: 10px;
+  font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted2);
+  transition: all .3s; cursor: default;
+}
+.pill.active {
+  border-color: rgba(200,255,62,.3);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
 
-.pc-feats{display:flex;flex-direction:column;gap:13px;margin-bottom:44px;}
-.pc-feat{display:flex;align-items:center;gap:13px;font-size:13px;color:rgba(240,237,232,.52);padding-bottom:13px;border-bottom:1px solid rgba(255,255,255,.03);}
-.pc-feat:last-child{border-bottom:none;padding-bottom:0;}
-.fi{width:28px;height:28px;flex-shrink:0;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;}
-.fi svg{width:12px;height:12px;stroke:var(--muted2);fill:none;stroke-width:2;}
-.pcard-prem .fi svg{stroke:var(--accent);}
-.fck{margin-left:auto;width:20px;height:20px;flex-shrink:0;background:rgba(200,255,62,.07);border:1px solid rgba(200,255,62,.18);display:flex;align-items:center;justify-content:center;}
-.fck svg{width:9px;height:9px;stroke:var(--accent);fill:none;stroke-width:2.5;}
-.fck.no{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.06);}
-.fck.no svg{stroke:var(--muted);}
-.pc-feat strong{color:var(--text);}
+/* Modules list left */
+.modules-list { position: relative; z-index: 2; }
+.modules-label {
+  font-family: var(--font-m); font-size: 8px;
+  font-weight: 700; letter-spacing: 3px;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.mod-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  transition: all .3s;
+}
+.mod-item:last-child { border-bottom: none; }
+.mod-item.locked { opacity: .3; }
+.mod-num-badge {
+  width: 22px; height: 22px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-d); font-size: 11px;
+  border: 1px solid rgba(200,255,62,.15);
+  color: var(--accent); margin-top: 1px;
+}
+.mod-item.locked .mod-num-badge { border-color: rgba(255,255,255,.06); color: var(--muted); }
+.mod-info { flex: 1; }
+.mod-name {
+  font-family: var(--font-m); font-size: 12px;
+  font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 1px;
+}
+.mod-item.locked .mod-name { color: var(--muted2); }
+.mod-tag-sm {
+  font-family: var(--font-m); font-size: 8px; font-weight: 500;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+}
+.mod-tag-sm.premium-tag { color: rgba(255,214,110,.5); }
+.mod-chk {
+  width: 18px; height: 18px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+.mod-chk svg { width: 10px; height: 10px; stroke: var(--accent); fill: none; stroke-width: 2.5; }
+.mod-item.locked .mod-chk svg { stroke: var(--muted); }
 
-.pc-cta{width:100%;position:relative;overflow:hidden;font-family:var(--font-c);font-size:12px;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;padding:22px 36px;border:none;cursor:pointer;clip-path:polygon(11px 0%,100% 0%,calc(100% - 11px) 100%,0% 100%);transition:transform .4s var(--ease),box-shadow .4s;text-decoration:none;display:block;text-align:center;}
-.pc-cta::before{content:'';position:absolute;top:0;left:-130%;width:80%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-25deg);transition:left .7s;}
-.pc-cta:hover::before{left:160%;}
-.cta-base{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:var(--text);}
-.cta-prem{background:var(--accent);color:#000;}
-.cta-prem:hover{box-shadow:0 24px 70px rgba(200,255,62,.4);}
-.pc-guar{margin-top:18px;text-align:center;font-family:var(--font-c);font-size:8px;font-weight:600;letter-spacing:2px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px;}
-.pc-guar svg{width:10px;height:10px;stroke:var(--muted);fill:none;stroke-width:2;}
+/* Bottom badges */
+.left-bottom { position: relative; z-index: 2; display: flex; gap: 24px; flex-wrap: wrap; }
+.badge-sm {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-m); font-size: 9px;
+  font-weight: 600; letter-spacing: 1.5px;
+  color: var(--muted2); text-transform: uppercase;
+}
+.badge-sm svg { width: 12px; height: 12px; stroke: var(--accent); fill: none; stroke-width: 2; }
 
-@media(max-width:768px){.plans-sec{padding:80px 20px;}.plans-grid{grid-template-columns:1fr;}.pc-name{font-size:66px;}.pr-main{font-size:80px;}}
+/* ─── RIGHT PANEL ─── */
+.right {
+  padding: 48px 52px;
+  display: flex; flex-direction: column;
+  gap: 32px;
+}
 
-/* ══ COMPARE ══ */
-.cmp-sec{padding:140px 72px;background:var(--bg2);border-top:1px solid var(--line);}
-.cmp-wrap{max-width:1000px;margin:0 auto;}
-.cmp-table{margin-top:80px;}
-.cmp-row{display:grid;grid-template-columns:1fr 100px 100px;border-bottom:1px solid var(--line);transition:background .3s;}
-.cmp-row:hover{background:rgba(200,255,62,.01);}
-.cmp-row.hdr{border-bottom:2px solid rgba(200,255,62,.1);}
-.cmp-c{padding:18px 20px;font-size:12.5px;color:rgba(240,237,232,.48);}
-.cmp-c.lbl{color:var(--text);padding-left:0;}
-.cmp-c.ctr{text-align:center;}
-.cmp-c.ch{font-family:var(--font-c);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);padding-bottom:12px;}
-.cmp-c.ch.acc{color:var(--accent);}
-.ck{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;}
-.ck.y{background:rgba(200,255,62,.07);border:1px solid rgba(200,255,62,.15);}
-.ck.y svg{stroke:var(--accent);}
-.ck.n{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);}
-.ck.n svg{stroke:var(--muted);}
-.ck svg{width:11px;height:11px;fill:none;stroke-width:2.5;}
-@media(max-width:768px){.cmp-sec{padding:80px 20px;}.cmp-row{grid-template-columns:1fr 70px 70px;}}
+/* Plan selector */
+.section-label {
+  font-family: var(--font-m); font-size: 8px;
+  font-weight: 700; letter-spacing: 3px;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.plan-toggle {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3px; background: rgba(0,0,0,.3); padding: 3px;
+  border: 1px solid var(--border);
+}
+.plan-opt {
+  padding: 18px 20px; cursor: pointer;
+  border: 1px solid transparent;
+  transition: all .4s cubic-bezier(.16,1,.3,1);
+  position: relative;
+}
+.plan-opt.active {
+  border-color: rgba(200,255,62,.22);
+  background: var(--accent-dim);
+}
+.plan-opt.active::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; background: var(--accent);
+}
+.plan-opt-name {
+  font-family: var(--font-d); font-size: 28px; color: white;
+  line-height: 1; margin-bottom: 4px;
+}
+.plan-opt.active .plan-opt-name { color: var(--accent); }
+.plan-opt-price {
+  font-family: var(--font-m); font-size: 11px;
+  font-weight: 600; color: var(--muted2);
+}
+.plan-opt-count {
+  font-family: var(--font-m); font-size: 8px;
+  font-weight: 500; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 2px;
+}
+.plan-opt.active .plan-opt-count { color: rgba(200,255,62,.5); }
+.plan-opt-badge {
+  position: absolute; top: -10px; right: 12px;
+  background: var(--accent); color: black;
+  font-family: var(--font-m); font-size: 7px;
+  font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; padding: 3px 10px;
+  display: none;
+}
+.plan-opt.active .plan-opt-badge { display: block; }
 
-/* ══ TESTI ══ */
-.testi-sec{padding:140px 72px;background:var(--bg);}
-.testi-wrap{max-width:1280px;margin:0 auto;}
-.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:80px;}
-.tc{padding:44px 36px;background:rgba(255,255,255,.012);border:1px solid var(--line);position:relative;overflow:hidden;transition:transform .5s var(--ease),background .4s,border-color .4s;cursor:default;}
-.tc:hover{transform:translateY(-9px) scale(1.01);background:rgba(200,255,62,.018);border-color:rgba(200,255,62,.07);}
-.tc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);}
-.tc:hover::before{transform:scaleX(1);}
-.tq{font-family:var(--font-d);font-size:72px;color:rgba(200,255,62,.06);line-height:.7;margin-bottom:16px;}
-.tt{font-size:13.5px;line-height:1.8;color:rgba(240,237,232,.58);margin-bottom:30px;font-style:italic;}
-.tr{font-family:var(--font-d);font-size:38px;color:var(--accent);display:block;margin-bottom:4px;}
-.ta{font-family:var(--font-c);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-.ta strong{color:var(--muted2);display:block;margin-bottom:2px;font-size:10px;}
-@media(max-width:768px){.testi-sec{padding:80px 20px;}.tg{grid-template-columns:1fr;}}
+/* Price display */
+.price-display {
+  display: flex; align-items: flex-end; gap: 14px;
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,.2);
+  position: relative; overflow: hidden;
+}
+.price-display::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(200,255,62,.03) 0%, transparent 60%);
+}
+.price-old {
+  font-family: var(--font-m); font-size: 13px;
+  color: var(--muted); text-decoration: line-through;
+  margin-bottom: 4px;
+}
+.price-new {
+  font-family: var(--font-d);
+  font-size: 80px; line-height: .85; letter-spacing: -2px;
+  color: white; display: flex; align-items: flex-start; gap: 6px;
+}
+.price-curr { font-size: 32px; margin-top: 8px; }
+#displayPrice { transition: all .3s; }
+.price-save {
+  position: absolute; top: 16px; right: 20px;
+  background: rgba(200,255,62,.08); border: 1px solid rgba(200,255,62,.18);
+  padding: 4px 12px;
+  font-family: var(--font-m); font-size: 9px;
+  font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--accent);
+}
+.price-note {
+  font-family: var(--font-m); font-size: 9px;
+  font-weight: 500; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+  margin-top: 8px;
+}
 
-/* ══ FAQ ══ */
-.faq-sec{padding:140px 72px;background:var(--bg2);border-top:1px solid var(--line);}
-.faq-wrap{max-width:1100px;margin:0 auto;}
-.faq-g{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:80px;}
-.fi2{border:1px solid var(--line);background:rgba(255,255,255,.01);transition:background .3s;cursor:pointer;}
-.fi2:hover{background:rgba(200,255,62,.018);}
-.fq{padding:28px 36px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:var(--font-c);font-size:15px;font-weight:700;letter-spacing:.5px;color:var(--text);}
-.fa-arr{width:26px;height:26px;flex-shrink:0;border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;transition:transform .4s,background .3s,border-color .3s;}
-.fi2.open .fa-arr{transform:rotate(45deg);background:rgba(200,255,62,.07);border-color:rgba(200,255,62,.18);}
-.fa-arr svg{width:11px;height:11px;stroke:var(--muted2);fill:none;stroke-width:2;}
-.fa{max-height:0;overflow:hidden;transition:max-height .5s var(--ease);}
-.fi2.open .fa{max-height:220px;}
-.fa-in{padding:0 36px 28px;font-size:12.5px;line-height:1.82;color:rgba(240,237,232,.44);border-top:1px solid var(--line);padding-top:18px;}
-@media(max-width:768px){.faq-sec{padding:80px 20px;}.faq-g{grid-template-columns:1fr;}}
+/* Form */
+.form-section { display: flex; flex-direction: column; gap: 12px; }
+.fg { display: flex; flex-direction: column; gap: 6px; }
+.fg label {
+  font-family: var(--font-m); font-size: 8px;
+  font-weight: 700; letter-spacing: 2.5px;
+  color: var(--muted); text-transform: uppercase;
+}
+.fg input {
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.07);
+  color: var(--text);
+  font-family: var(--font-b); font-size: 15px;
+  padding: 14px 16px; outline: none;
+  transition: border-color .3s, background .3s;
+  border-radius: 0;
+  -webkit-appearance: none;
+}
+.fg input:focus {
+  border-color: rgba(200,255,62,.3);
+  background: rgba(200,255,62,.025);
+}
+.fg input::placeholder { color: var(--muted); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* ══ CHECKOUT ══ */
-.co-sec{padding:140px 72px;background:var(--bg);border-top:1px solid var(--line);position:relative;overflow:hidden;}
-#co-c{position:absolute;inset:0;pointer-events:none;}
-.co-wrap{max-width:1260px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:110px;align-items:center;position:relative;z-index:2;}
-.co-title{font-family:var(--font-d);font-size:clamp(64px,8.5vw,125px);line-height:.85;letter-spacing:-2px;color:#fff;margin-top:16px;margin-bottom:32px;}
-.co-title em{font-style:normal;color:var(--accent);display:block;}
-.co-sub{font-size:14px;line-height:1.85;color:rgba(240,237,232,.4);max-width:380px;}
+/* Card visual */
+.card-visual {
+  background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+  border: 1px solid rgba(255,255,255,.08);
+  padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 4px;
+}
+.card-chip {
+  width: 28px; height: 20px;
+  background: linear-gradient(135deg, var(--gold) 0%, #c8a43a 100%);
+  border-radius: 3px; opacity: .7;
+}
+.card-brand {
+  font-family: var(--font-d); font-size: 14px;
+  letter-spacing: 3px; color: rgba(255,255,255,.2);
+}
 
-/* Plan tabs */
-.plan-tabs{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:28px;}
-.ptab{padding:20px 22px;border:1px solid var(--line);background:rgba(255,255,255,.01);cursor:pointer;transition:background .3s,border-color .3s;position:relative;}
-.ptab:hover{background:rgba(200,255,62,.02);}
-.ptab.sel{background:rgba(200,255,62,.035);border-color:rgba(200,255,62,.16);}
-.ptab.sel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);}
-.pt-name{font-family:var(--font-d);font-size:24px;color:#fff;line-height:1;margin-bottom:3px;}
-.ptab.sel .pt-name{color:var(--accent);}
-.pt-price{font-family:var(--font-c);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);}
-.pt-info{font-family:var(--font-c);font-size:8px;font-weight:600;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-top:3px;}
+/* Submit */
+.submit-btn {
+  width: 100%; padding: 22px 32px;
+  background: var(--accent); color: black;
+  border: none; cursor: pointer;
+  font-family: var(--font-m); font-size: 12px;
+  font-weight: 700; letter-spacing: 3.5px;
+  text-transform: uppercase;
+  position: relative; overflow: hidden;
+  clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+}
+.submit-btn::after {
+  content: ''; position: absolute; top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+  transform: skewX(-20deg);
+  transition: left .7s;
+}
+.submit-btn:hover::after { left: 160%; }
+.submit-btn:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(200,255,62,.35); }
 
-.fg{margin-bottom:13px;position:relative;}
-.fg label{display:block;font-family:var(--font-c);font-size:8.5px;font-weight:700;letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;}
-.fg input{width:100%;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);color:var(--text);font-family:var(--font-b);font-size:14px;padding:14px 16px;outline:none;transition:border-color .3s,background .3s;border-radius:0;}
-.fg input:focus{border-color:rgba(200,255,62,.25);background:rgba(200,255,62,.02);}
-.fg input::placeholder{color:var(--muted);}
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
-.fsub{width:100%;margin-top:22px;position:relative;overflow:hidden;font-family:var(--font-c);font-size:12px;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;color:#000;background:var(--accent);border:none;padding:22px 36px;cursor:pointer;clip-path:polygon(11px 0%,100% 0%,calc(100% - 11px) 100%,0% 100%);transition:transform .4s var(--ease),box-shadow .4s;}
-.fsub::before{content:'';position:absolute;top:0;left:-130%;width:80%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-25deg);transition:left .7s;}
-.fsub:hover::before{left:160%;}
-.fsub:hover{transform:translateY(-5px);box-shadow:0 22px 65px rgba(200,255,62,.4);}
-.fsec{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-c);font-size:8.5px;font-weight:600;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-.fsec svg{width:10px;height:10px;stroke:var(--muted);fill:none;stroke-width:2;}
-.pmethods{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
-.pm{padding:5px 13px;border:1px solid rgba(255,255,255,.055);background:rgba(255,255,255,.02);font-family:var(--font-c);font-size:7.5px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+/* Secure row */
+.secure-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 20px; flex-wrap: wrap;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.sec-item {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-m); font-size: 8px;
+  font-weight: 600; letter-spacing: 1.5px;
+  color: var(--muted); text-transform: uppercase;
+}
+.sec-item svg { width: 11px; height: 11px; stroke: var(--muted2); fill: none; stroke-width: 2; }
 
-@media(max-width:768px){.co-sec{padding:80px 20px;}.co-wrap{grid-template-columns:1fr;gap:56px;}.fr{grid-template-columns:1fr;}}
+/* Methods */
+.methods { display: flex; align-items: center; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.method-card {
+  padding: 5px 12px;
+  border: 1px solid rgba(255,255,255,.05);
+  background: rgba(255,255,255,.02);
+  font-family: var(--font-m); font-size: 8px;
+  font-weight: 700; letter-spacing: 2px;
+  color: var(--muted); text-transform: uppercase;
+}
 
-/* ── REVEAL ── */
-[data-r]{opacity:0;transform:translateY(56px);transition:opacity .9s var(--ease),transform .9s var(--ease);}
-[data-r].vis{opacity:1;transform:translateY(0);}
-[data-r][data-d="1"]{transition-delay:.1s;}[data-r][data-d="2"]{transition-delay:.2s;}[data-r][data-d="3"]{transition-delay:.3s;}[data-r][data-d="4"]{transition-delay:.4s;}
+/* Guarantee */
+.guarantee {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid rgba(255,255,255,.04);
+  background: rgba(255,255,255,.01);
+}
+.gua-icon {
+  width: 38px; height: 38px; flex-shrink: 0;
+  border: 1px solid rgba(200,255,62,.18);
+  background: var(--accent-dim);
+  display: flex; align-items: center; justify-content: center;
+}
+.gua-icon svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 2; }
+.gua-text { font-family: var(--font-m); font-size: 11px; font-weight: 500; color: var(--muted2); line-height: 1.5; }
+.gua-text strong { color: var(--text); display: block; font-size: 12px; margin-bottom: 2px; }
 
-/* ── PROMO PILL ── */
-.promo{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(18px);background:rgba(2,2,2,.97);border:1px solid rgba(200,255,62,.18);backdrop-filter:blur(28px);padding:12px 24px;display:flex;align-items:center;gap:18px;z-index:8000;opacity:0;transition:opacity .6s,transform .6s;pointer-events:none;white-space:nowrap;}
-.promo.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:all;}
-.promo-t{font-family:var(--font-c);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text);text-transform:uppercase;}
-.promo-t strong{color:var(--accent);}
-.promo-btn{font-family:var(--font-c);font-size:10px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#000;background:var(--accent);padding:8px 20px;border:none;cursor:pointer;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);transition:transform .3s;text-decoration:none;}
-.promo-btn:hover{transform:scale(1.04);}
+/* Nav top strip */
+.top-strip {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), rgba(200,255,62,.2));
+  box-shadow: 0 0 16px rgba(200,255,62,.5);
+}
 
-/* ── FOOTER ── */
-footer{background:var(--bg2);border-top:1px solid var(--line);padding:48px 72px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px;}
-.fl{font-family:var(--font-d);font-size:19px;letter-spacing:6px;color:#fff;text-decoration:none;}
-.fl em{color:var(--accent);font-style:normal;}
-.flinks{display:flex;gap:28px;flex-wrap:wrap;}
-.flinks a{font-family:var(--font-c);font-size:9px;font-weight:600;letter-spacing:2px;color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color .3s;}
-.flinks a:hover{color:var(--text);}
-.fc{font-family:var(--font-c);font-size:9px;letter-spacing:1.5px;color:var(--muted);}
-@media(max-width:768px){footer{padding:36px 20px;flex-direction:column;gap:14px;}}
+/* Mobile */
+@media (max-width: 900px) {
+  .page { grid-template-columns: 1fr; }
+  .left { position: static; height: auto; padding: 36px 24px; }
+  .right { padding: 28px 24px; }
+  .modules-list { display: none; }
+  .price-new { font-size: 60px; }
+}
+
+/* ─── SUCCESS state ─── */
+.success-screen {
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 60px 40px;
+  position: absolute; inset: 0;
+  background: var(--bg); z-index: 10;
+}
+.success-screen.show { display: flex; }
+.success-icon {
+  width: 80px; height: 80px;
+  border: 2px solid var(--accent);
+  background: var(--accent-dim);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 28px;
+  animation: successPop .6s cubic-bezier(.16,1,.3,1);
+}
+@keyframes successPop { from{transform:scale(.5);opacity:0;} to{transform:scale(1);opacity:1;} }
+.success-icon svg { width: 32px; height: 32px; stroke: var(--accent); fill: none; stroke-width: 2; }
+.success-title {
+  font-family: var(--font-d); font-size: 54px;
+  color: white; margin-bottom: 10px;
+}
+.success-sub { font-size: 14px; color: var(--muted2); line-height: 1.7; max-width: 320px; }
+.right { position: relative; }
 </style>
 </head>
 <body>
-<div id="pgbar"></div>
-<div id="cur"></div>
-<div id="cur-r"></div>
-<div id="grain"></div>
 
-<!-- ══ INTRO ══ -->
-<div id="intro">
-  <canvas id="intro-canvas"></canvas>
-  <div class="intro-logo" id="ilogo">
-    <span class="l1">ACCESO</span>
-    <span class="l2">ÉLITE</span>
-  </div>
-  <div class="intro-bar" id="ibar"></div>
-</div>
+<div class="top-strip"></div>
+<canvas id="bg-canvas"></canvas>
 
-<!-- ══ NAV ══ -->
-<nav class="nav" id="nav">
-  <a class="logo" href="index.html">ASCEND <em>SYSTEM</em></a>
-  <div class="nav-right">
-    <a class="nav-back" href="index.html">← Volver al inicio</a>
-    <div class="nav-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Pago Seguro SSL</div>
-    <div class="nav-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>30 días garantía</div>
-  </div>
-</nav>
+<div class="page">
 
-<!-- ══ HERO ══ -->
-<section class="hero">
-  <canvas id="hero-c"></canvas>
-  <div class="hero-vig"></div>
-  <div class="hero-inner">
-    <div class="hero-pill"><div class="pip"></div><span>Acceso Élite 2026 — Plazas Limitadas</span><div class="pip"></div></div>
-    <h1 class="hero-title">
-      <span class="stroke">ÚNETE AL</span>
-      <span class="acc">SISTEMA</span>
-    </h1>
-    <p class="hero-sub">Elige tu pack. Descarga los PDFs al instante. En 90 días no serás la misma persona que empezó. 9 módulos de élite. Sin excusas.</p>
-    <div class="cdwrap">
-      <div class="cd"><span class="cd-n" id="cdD">00</span><span class="cd-l">Días</span></div>
-      <div class="cd"><span class="cd-n" id="cdH">00</span><span class="cd-l">Horas</span></div>
-      <div class="cd"><span class="cd-n" id="cdM">00</span><span class="cd-l">Min</span></div>
-      <div class="cd"><span class="cd-n" id="cdS">00</span><span class="cd-l">Seg</span></div>
-    </div>
-    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fu 1s 1.3s var(--ease) forwards;">
-      <a href="#checkout" class="pc-cta cta-prem" style="clip-path:polygon(11px 0%,100% 0%,calc(100% - 11px) 100%,0% 100%);padding:18px 44px;font-family:var(--font-c);font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#000;background:var(--accent);border:none;cursor:pointer;text-decoration:none;display:inline-block;position:relative;overflow:hidden;" onclick="selectPlan('premium')">ACCEDER AL SISTEMA PREMIUM — €597</a>
-      <a href="#checkout" style="font-family:var(--font-c);font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(240,237,232,.5);border:1px solid rgba(255,255,255,.08);padding:17px 36px;text-decoration:none;transition:color .3s,border-color .3s;" onclick="selectPlan('base')">PLAN BASE — €297</a>
-    </div>
-  </div>
-  <div class="scroll-ind"><span>Scroll</span><div class="scroll-l"></div></div>
-</section>
-
-<!-- ══ TRUST BAR ══ -->
-<div class="tbar">
-  <div class="tb"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span><strong>12.400+</strong> miembros activos</span></div>
-  <div class="tb"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span><strong>97%</strong> retención a 90 días</span></div>
-  <div class="tb"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Garantía <strong>30 días</strong> total</span></div>
-  <div class="tb"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>Pago 100% <strong>seguro</strong></span></div>
-  <div class="tb"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Descarga <strong>inmediata</strong></span></div>
-</div>
-
-<!-- ══ MODULES ══ -->
-<section class="mods-sec" id="modulos">
-  <canvas id="mods-c"></canvas>
-  <div class="mods-wrap">
-    <div class="mods-hdr">
-      <div>
-        <div class="ov" data-r>9 PDFs incluidos</div>
-        <h2 class="sec-title" data-r data-d="1">El Sistema<br><em>Completo</em></h2>
-      </div>
-      <p class="mods-desc" data-r data-d="2">
-        <strong>9 PDFs de alto rendimiento</strong> construidos sobre neurociencia aplicada, psicología de comportamiento y ciencia del entrenamiento. Descarga inmediata. Acceso vitalicio.<br><br>
-        Los 4 módulos base forman el sistema fundacional. Los 5 módulos premium lo llevan al nivel máximo. <strong>Cada uno amplifica a los demás.</strong>
-      </p>
+  <!-- ═══ LEFT ═══ -->
+  <div class="left">
+    <div class="left-canvas-wrap">
+      <canvas id="left-canvas"></canvas>
     </div>
 
-    <!-- ─ MÓDULO 01 ─ -->
-    <div class="mcard" data-r>
-      <canvas class="mcard-3d" id="mc3d1"></canvas>
-      <div class="mc-num">01</div>
-      <div class="mc-main">
-        <span class="mc-label">Pilar I — Disciplina · Base + Premium</span>
-        <h3 class="mc-title">DISCIPLINA<br>ABSOLUTA</h3>
-        <p class="mc-body">La disciplina no es fuerza de voluntad. Es identidad + sistema + automatismo. Identity System, Habit Architecture, control dopaminérgico y protocolo anti-procrastinación de emergencia. Cuando los tres elementos se alinean, la disciplina deja de ser un esfuerzo y se convierte en tu forma de existir.</p>
-      </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Morning &amp; Night Protocol élite — 7 reglas absolutas no negociables</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Sistema 5D anti-procrastinación con protocolo de emergencia activable</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Identity Score System — tracking diario de coherencia identitaria</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo SURF de control de impulsos y reset dopaminérgico</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Reto 30 → 90 días con accountability multinivel y military method</div>
-      </div>
-      <span class="mc-badge badge-b">BASE + PREMIUM</span>
+    <div class="left-top">
+      <a class="logo" href="index.html">
+        <div class="logo-dot"></div>
+        ASCEND <span>SYSTEM</span>
+      </a>
     </div>
 
-    <!-- ─ MÓDULO 02 ─ -->
-    <div class="mcard" data-r>
-      <canvas class="mcard-3d" id="mc3d2"></canvas>
-      <div class="mc-num">02</div>
-      <div class="mc-main">
-        <span class="mc-label">Pilar II — Deep Work · Base + Premium</span>
-        <h3 class="mc-title">DEEP<br>FOCUS</h3>
-        <p class="mc-body">Deep Work no es trabajar más horas. Es operar en un estado de concentración tan intensa que tu output por hora supera 4-10x al de cualquier persona en modo reactivo. Método 90/20 basado en ciclos ultradianos, Flow State activation y Time Blocking Elite.</p>
+    <div class="left-hero">
+      <div class="left-eyebrow">Acceso Élite 2026</div>
+      <h1 class="left-big">
+        TU<br>
+        <span class="hi">SISTEMA</span>
+      </h1>
+      <p class="left-sub">9 PDFs de alto rendimiento. Descarga inmediata. Sin excusas.</p>
+
+      <div class="plan-pills" id="leftPills">
+        <span class="pill active" id="pillBase">4 PDFs BASE</span>
+        <span class="pill" id="pillPremium">9 PDFs PREMIUM</span>
       </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo SHIELD anti-distracción de 6 niveles de blindaje cognitivo</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Time Blocking Elite — arquitectura del día perfecto con bloques sagrados</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Gestión energética por momentos del día — pico cognitivo 05-07h</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>KPIs semanales — Productivity Score Elite: objetivo 85+</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Anti-burnout protocol con deload cognitivo cada 6 semanas</div>
-      </div>
-      <span class="mc-badge badge-b">BASE + PREMIUM</span>
     </div>
 
-    <!-- ─ MÓDULO 03 ─ -->
-    <div class="mcard" data-r>
-      <canvas class="mcard-3d" id="mc3d3"></canvas>
-      <div class="mc-num">03</div>
-      <div class="mc-main">
-        <span class="mc-label">Pilar III — Físico · Base + Premium</span>
-        <h3 class="mc-title">CUERPO<br>ELITE</h3>
-        <p class="mc-body">Tu cuerpo es el hardware que ejecuta el sistema. Sin optimización física el rendimiento cognitivo colapsa. Rutina Push/Pull/Legs 6 días, nutrición de precisión con calculadora personalizada, suplementación científica y sueño optimizado para HGH +20%.</p>
-      </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Hipertrofia científica con RIR tracking y deload protocol</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Calculadora de calorías y macros personalizada por objetivo</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Menús de volumen, definición y recomposición corporal</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Suplementación con evidencia científica ★★★★★ únicamente</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Recuperación activa: sauna, cold exposure, zona 2 cardio</div>
-      </div>
-      <span class="mc-badge badge-b">BASE + PREMIUM</span>
-    </div>
+    <!-- Modules -->
+    <div class="modules-list" id="modulesList">
+      <div class="modules-label">Incluido en tu pack</div>
 
-    <!-- ─ MÓDULO 04 ─ -->
-    <div class="mcard" data-r>
-      <canvas class="mcard-3d" id="mc3d4"></canvas>
-      <div class="mc-num">04</div>
-      <div class="mc-main">
-        <span class="mc-label">Pilar IV — El Núcleo · Base + Premium</span>
-        <h3 class="mc-title">SISTEMAS<br>MENTALES</h3>
-        <p class="mc-body">La diferencia entre quien ejecuta y quien sueña no es información ni talento. Es arquitectura mental. Este módulo reconstruye tu sistema operativo interno: Ownership Total, Delayed Gratification, Anti-ansiedad fisiológico y reprogramación en 21 días.</p>
-      </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Mapa diagnóstico Elite vs Promedio en 8 dimensiones de mentalidad</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Box Breathing SEAL + Respiración 4-7-8 anti-ansiedad fisiológico</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Presencia dominante — 5 elementos de autoridad y confianza real</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Reprogramación mental 21 días — auditoría, interrupción, acción</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo de recuperación mental para días de colapso total</div>
-      </div>
-      <span class="mc-badge badge-b">BASE + PREMIUM</span>
-    </div>
-
-    <!-- PREMIUM separator -->
-    <div style="grid-column:1/-1;padding:48px 0 32px;display:flex;align-items:center;gap:24px;" data-r>
-      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,209,74,.3));"></div>
-      <span style="font-family:var(--font-c);font-size:10px;font-weight:800;letter-spacing:4px;color:var(--gold);text-transform:uppercase;white-space:nowrap;">★ Módulos Extra — Solo Pack Premium ★</span>
-      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(255,209,74,.3),transparent);"></div>
-    </div>
-
-    <!-- ─ MÓDULO 05 ─ -->
-    <div class="mcard prem" data-r>
-      <canvas class="mcard-3d" id="mc3d5"></canvas>
-      <div class="mc-num">05</div>
-      <div class="mc-main">
-        <span class="mc-label" style="color:var(--gold);">Extra Premium — Productividad</span>
-        <h3 class="mc-title">PRODUCTIVIDAD<br>EXTREMA</h3>
-        <p class="mc-body">Deep Work avanzado, bloques de flujo máximo y control total del tiempo. El módulo más técnico del programa. Convierte cada hora en una unidad de salida exponencial con el framework de time blocking más avanzado del sistema.</p>
-      </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Framework de time blocking de élite avanzado para 4-10x output real</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo de flujo cognitivo extremo con activación de Flow States</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>KPIs y Productivity Score tracker semanal con análisis de tendencia</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Sistema de batching y energía para máxima densidad productiva</div>
-      </div>
-      <span class="mc-badge badge-p">SOLO PREMIUM</span>
-    </div>
-
-    <!-- ─ MÓDULO 06 ─ -->
-    <div class="mcard prem" data-r>
-      <canvas class="mcard-3d" id="mc3d6"></canvas>
-      <div class="mc-num">06</div>
-      <div class="mc-main">
-        <span class="mc-label" style="color:var(--gold);">Extra Premium — Hábitos</span>
-        <h3 class="mc-title">HABIT<br>ARCHITECTURE</h3>
-        <p class="mc-body">Neuroplasticidad aplicada. Identity-Based Habit Loops. Automatización profunda de comportamiento de alto rendimiento en 66 días (ciencia real, no el mito de los 21 días). Construye hábitos que cambian tu identidad a nivel neurológico.</p>
-      </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Ciclos de hábito e identidad — 3 fases neurológicas comprobadas</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Reprogramación basada en neurociencia (Lally, UCL — 66 días)</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Habit Stacking avanzado y sistema de cues de entorno</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Sistema de accountability y tracking diario automatizado</div>
-      </div>
-      <span class="mc-badge badge-p">SOLO PREMIUM</span>
-    </div>
-
-    <!-- ─ MÓDULO 07 ─ -->
-    <div class="mcard prem" data-r>
-      <canvas class="mcard-3d" id="mc3d7"></canvas>
-      <div class="mc-num">07</div>
-      <div class="mc-main">
-        <span class="mc-label" style="color:var(--gold);">Extra Premium — Medición</span>
-        <h3 class="mc-title">PERFORMANCE<br>DASHBOARD</h3>
-        <p class="mc-body">El sistema de medición que te convierte en tu propio director de performance. KPIs de élite, scoring y análisis de progresión a 90 días en las 4 dimensiones del sistema. Weekly Reviews, Monthly Reviews y Checkpoint System accionables.</p>
-      </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Dashboard integrado — tracking de las 4 dimensiones del sistema</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>KPIs y sistema de puntuación Elite con análisis de tendencia</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Weekly &amp; Monthly Review templates accionables e inmediatos</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Checkpoint System — análisis de progresión real a 30, 60, 90 días</div>
-      </div>
-      <span class="mc-badge badge-p">SOLO PREMIUM</span>
-    </div>
-
-    <!-- ─ MÓDULO 08 ─ -->
-    <div class="mcard prem" data-r>
-      <canvas class="mcard-3d" id="mc3d8"></canvas>
-      <div class="mc-num">08</div>
-      <div class="mc-main">
-        <span class="mc-label" style="color:var(--gold);">Extra Premium — Recovery</span>
-        <h3 class="mc-title">RECOVERY<br>PROTOCOL</h3>
-        <p class="mc-body">Sueño, HRV y recuperación biohackeada al nivel más avanzado. Sauna, baño frío y zona 2 cardio integrados. Opera al máximo nivel cada día sin excepciones porque la recuperación es entrenamiento, y este módulo lo trata así.</p>
-      </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Protocolo de sueño 7 reglas — HGH +20%, testosterona óptima</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>HRV &amp; Biometrics tracking — protocolo biohacking avanzado</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Cold exposure, sauna y movilidad diaria integrados en rutina</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Stack nootrópico y de recuperación con evidencia científica sólida</div>
-      </div>
-      <span class="mc-badge badge-p">SOLO PREMIUM</span>
-    </div>
-
-    <!-- ─ MÓDULO 09 ─ -->
-    <div class="mcard prem" data-r>
-      <canvas class="mcard-3d" id="mc3d9"></canvas>
-      <div class="mc-num">09</div>
-      <div class="mc-main">
-        <span class="mc-label" style="color:var(--gold);">Extra Premium — Físico Avanzado</span>
-        <h3 class="mc-title">PHYSICAL<br>SYSTEM</h3>
-        <p class="mc-body">Protocolo de entrenamiento y nutrición de élite avanzado. Hipertrofia científica profunda con periodización por bloques, nutrición molecular con timing de macros para composición corporal óptima y stack de suplementación de alta evidencia.</p>
-      </div>
-      <div class="mc-side">
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Hipertrofia científica avanzada — periodización por bloques y picos</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Nutrición molecular y timing preciso de macros para composición</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Stack de suplementación de alta evidencia científica verificada</div>
-        <div class="mc-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Cardio de rendimiento y recomposición corporal avanzada</div>
-      </div>
-      <span class="mc-badge badge-p">SOLO PREMIUM</span>
-    </div>
-  </div>
-</section>
-
-<!-- ══ PLANS ══ -->
-<section class="plans-sec" id="planes">
-  <canvas id="plans-c"></canvas>
-  <div class="plans-wrap">
-    <div class="plans-hdr">
-      <div class="ov c" data-r>Elige tu Pack</div>
-      <h2 class="sec-title" style="text-align:center;margin-top:12px;" data-r data-d="1">Base o<br><em>Premium</em></h2>
-    </div>
-    <div class="plans-grid">
-      <!-- BASE -->
-      <div class="pcard pcard-base" id="planBase">
-        <canvas class="pc-3d" id="pc3d1"></canvas>
-        <div class="pc-label">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          Pack Base
+      <div class="mod-item" data-id="1">
+        <div class="mod-num-badge">01</div>
+        <div class="mod-info">
+          <div class="mod-name">Disciplina Absoluta</div>
+          <div class="mod-tag-sm">Identity · Hábitos · Dopamina</div>
         </div>
-        <div class="pc-name">BASE</div>
-        <p class="pc-tag">Los 4 pilares fundacionales. El sistema completo para transformar tu vida desde el día uno. Descarga inmediata, acceso vitalicio.</p>
-        <div class="price-box">
-          <div class="pr-old">€ 497</div>
-          <div class="pr-main"><span class="pr-cur">€</span><span>297</span></div>
-          <p class="pr-note">Pago único · Descarga inmediata · Acceso vitalicio</p>
-          <div class="pr-save">AHORRA €200</div>
-        </div>
-        <div class="pc-feats">
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 01</strong> — Disciplina Absoluta</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 02</strong> — Deep Focus</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 03</strong> — Cuerpo Elite</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 04</strong> — Sistemas Mentales</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat" style="opacity:.3;"><div class="fi"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><span>PDFs 05–09 — No incluidos</span><div class="fck no"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
-        </div>
-        <a href="#checkout" class="pc-cta cta-base" onclick="selectPlan('base')">EMPEZAR CON BASE — €297</a>
-        <p class="pc-guar"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Garantía total 30 días · Sin preguntas</p>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
       </div>
 
-      <!-- PREMIUM -->
-      <div class="pcard pcard-prem" id="planPremium">
-        <canvas class="pc-3d" id="pc3d2"></canvas>
-        <div class="pc-label">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          Pack Premium
-          <span class="most-pop">MÁS ELEGIDO</span>
+      <div class="mod-item" data-id="2">
+        <div class="mod-num-badge">02</div>
+        <div class="mod-info">
+          <div class="mod-name">Deep Focus</div>
+          <div class="mod-tag-sm">Método 90/20 · Flow State</div>
         </div>
-        <div class="pc-name">PRE<br>MIUM</div>
-        <p class="pc-tag">Los 9 PDFs completos. El ecosistema total para quien no acepta medias tintas y quiere la transformación definitiva. Actualizaciones futuras incluidas.</p>
-        <div class="price-box">
-          <div class="pr-old">€ 997</div>
-          <div class="pr-main"><span class="pr-cur">€</span><span>597</span></div>
-          <p class="pr-note">Pago único · Descarga inmediata · Acceso vitalicio · Actualizaciones</p>
-          <div class="pr-save">AHORRA €400</div>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+
+      <div class="mod-item" data-id="3">
+        <div class="mod-num-badge">03</div>
+        <div class="mod-info">
+          <div class="mod-name">Cuerpo Elite</div>
+          <div class="mod-tag-sm">PPL 6 días · Nutrición · Recovery</div>
         </div>
-        <div class="pc-feats">
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><span><strong>PDFs 01–04</strong> — Todo el pack Base</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 05</strong> — Productividad Extrema</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 06</strong> — Habit Architecture</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 07</strong> — Performance Dashboard</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 08</strong> — Recovery Protocol</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><span><strong>PDF 09</strong> — Physical System</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-          <div class="pc-feat"><div class="fi"><svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg></div><span>Actualizaciones futuras incluidas</span><div class="fck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+
+      <div class="mod-item" data-id="4">
+        <div class="mod-num-badge">04</div>
+        <div class="mod-info">
+          <div class="mod-name">Sistemas Mentales</div>
+          <div class="mod-tag-sm">Ownership · Anti-ansiedad · 21 días</div>
         </div>
-        <a href="#checkout" class="pc-cta cta-prem" onclick="selectPlan('premium')">ACCEDER AL SISTEMA COMPLETO — €597</a>
-        <p class="pc-guar"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Garantía total 30 días · Sin preguntas</p>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+
+      <div class="mod-item locked" data-id="5">
+        <div class="mod-num-badge">05</div>
+        <div class="mod-info">
+          <div class="mod-name">Productividad Extrema</div>
+          <div class="mod-tag-sm premium-tag">Solo Premium</div>
+        </div>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+
+      <div class="mod-item locked" data-id="6">
+        <div class="mod-num-badge">06</div>
+        <div class="mod-info">
+          <div class="mod-name">Habit Architecture</div>
+          <div class="mod-tag-sm premium-tag">Solo Premium</div>
+        </div>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+
+      <div class="mod-item locked" data-id="7">
+        <div class="mod-num-badge">07</div>
+        <div class="mod-info">
+          <div class="mod-name">Performance Dashboard</div>
+          <div class="mod-tag-sm premium-tag">Solo Premium</div>
+        </div>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+
+      <div class="mod-item locked" data-id="8">
+        <div class="mod-num-badge">08</div>
+        <div class="mod-info">
+          <div class="mod-name">Recovery Protocol</div>
+          <div class="mod-tag-sm premium-tag">Solo Premium</div>
+        </div>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+      </div>
+
+      <div class="mod-item locked" data-id="9">
+        <div class="mod-num-badge">09</div>
+        <div class="mod-info">
+          <div class="mod-name">Physical System</div>
+          <div class="mod-tag-sm premium-tag">Solo Premium</div>
+        </div>
+        <div class="mod-chk"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ══ COMPARE ══ -->
-<section class="cmp-sec">
-  <div class="cmp-wrap">
-    <div class="ov c" data-r>Comparativa detallada</div>
-    <h2 class="sec-title" style="text-align:center;margin-top:12px;" data-r data-d="1">Base vs<br><em>Premium</em></h2>
-    <div class="cmp-table">
-      <div class="cmp-row hdr"><div class="cmp-c lbl ch">Qué incluye</div><div class="cmp-c ctr ch">BASE</div><div class="cmp-c ctr ch acc">PREMIUM</div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 01 — Disciplina Absoluta</div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 02 — Deep Focus</div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 03 — Cuerpo Elite</div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 04 — Sistemas Mentales</div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 05 — Productividad Extrema</div><div class="cmp-c ctr"><span class="ck n"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 06 — Habit Architecture</div><div class="cmp-c ctr"><span class="ck n"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 07 — Performance Dashboard</div><div class="cmp-c ctr"><span class="ck n"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 08 — Recovery Protocol</div><div class="cmp-c ctr"><span class="ck n"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">PDF 09 — Physical System</div><div class="cmp-c ctr"><span class="ck n"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl">Actualizaciones futuras</div><div class="cmp-c ctr"><span class="ck n"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div><div class="cmp-c ctr"><span class="ck y"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span></div></div>
-      <div class="cmp-row" data-r><div class="cmp-c lbl"><strong>Precio</strong></div><div class="cmp-c ctr"><strong style="color:var(--text);font-family:var(--font-d);font-size:26px;">€297</strong></div><div class="cmp-c ctr"><strong style="color:var(--accent);font-family:var(--font-d);font-size:26px;">€597</strong></div></div>
+    <div class="left-bottom">
+      <div class="badge-sm"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>30 días garantía</div>
+      <div class="badge-sm"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Descarga inmediata</div>
+      <div class="badge-sm"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Pago encriptado</div>
     </div>
   </div>
-</section>
 
-<!-- ══ TESTI ══ -->
-<section class="testi-sec">
-  <div class="testi-wrap">
-    <div class="ov" data-r>Resultados Reales</div>
-    <h2 class="sec-title" style="margin-top:12px;" data-r data-d="1">Lo que dicen<br><em>los miembros</em></h2>
-    <div class="tg">
-      <div class="tc"><div class="tq">"</div><p class="tt">En 90 días pasé de procrastinar cada día a tener un sistema tan automatizado que producir alto rendimiento es mi modo default. No hay vuelta atrás.</p><span class="tr">4.2X</span><div class="ta"><strong>Alejandro M. — Founder, Madrid</strong>Pack Premium</div></div>
-      <div class="tc"><div class="tq">"</div><p class="tt">Perdí 14kg de grasa, gané músculo y triplicé mi output laboral simultáneamente. El sistema hace que todo funcione junto, no por separado.</p><span class="tr">-14KG</span><div class="ta"><strong>Carlos V. — Ingeniero, Barcelona</strong>Pack Premium</div></div>
-      <div class="tc"><div class="tq">"</div><p class="tt">Empecé con el base y en dos semanas hice upgrade al premium. Los 5 PDFs extra son lo que lo convierte de bueno en extraordinario.</p><span class="tr">3.8X</span><div class="ta"><strong>Sergio R. — Trader, Valencia</strong>Upgrade a Premium</div></div>
-      <div class="tc"><div class="tq">"</div><p class="tt">El PDF de Sistemas Mentales me cambió a nivel fundamental. Cambié mis rutinas, mi mentalidad y mis resultados. Todo en 90 días bien estructurados.</p><span class="tr">+300%</span><div class="ta"><strong>David L. — CEO, Bilbao</strong>Pack Premium</div></div>
-      <div class="tc"><div class="tq">"</div><p class="tt">Dudé entre los packs. Elegí base para probar. Funcionó tan bien que en el día 30 ya había pagado el upgrade. Vale cada céntimo.</p><span class="tr">97%</span><div class="ta"><strong>Marta P. — Emprendedora, Sevilla</strong>Upgrade a Premium</div></div>
-      <div class="tc"><div class="tq">"</div><p class="tt">Recovery Protocol y Deep Focus son los más infravalorados. Cuando tu sueño y concentración son élite, todo lo demás escala solo.</p><span class="tr">∞</span><div class="ta"><strong>Iñaki A. — Atleta + Empresario</strong>Pack Premium</div></div>
+  <!-- ═══ RIGHT ═══ -->
+  <div class="right">
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="success-title">ACTIVADO</div>
+      <p class="success-sub">Tu descarga está lista. Recibirás los PDFs en tu email en menos de 5 minutos.</p>
     </div>
-  </div>
-</section>
 
-<!-- ══ FAQ ══ -->
-<section class="faq-sec">
-  <div class="faq-wrap">
-    <div class="ov" data-r>Preguntas Frecuentes</div>
-    <h2 class="sec-title" style="margin-top:12px;" data-r data-d="1">Sin<br><em>Filtros</em></h2>
-    <div class="faq-g">
-      <div class="fi2" onclick="toggleFaq(this)"><div class="fq">¿Qué diferencia hay entre Base y Premium?<div class="fa-arr"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="fa"><div class="fa-in">Base incluye los 4 PDFs pilares (Disciplina, Deep Focus, Cuerpo Elite, Sistemas Mentales). Premium añade 5 PDFs avanzados: Productividad Extrema, Habit Architecture, Performance Dashboard, Recovery Protocol y Physical System avanzado. Más actualizaciones futuras. Si quieres la transformación total, Premium.</div></div></div>
-      <div class="fi2" onclick="toggleFaq(this)"><div class="fq">¿Cuándo recibo los PDFs?<div class="fa-arr"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="fa"><div class="fa-in">Inmediatamente. Recibirás un email con los enlaces de descarga en menos de 5 minutos tras el pago. No hay esperas, no hay procesos manuales. Pagas y descargas al instante. Acceso vitalicio desde ese momento.</div></div></div>
-      <div class="fi2" onclick="toggleFaq(this)"><div class="fq">¿Hay garantía de devolución?<div class="fa-arr"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="fa"><div class="fa-in">Sí. 30 días de garantía total, sin preguntas. Si en 30 días decides que el sistema no es para ti, devolvemos el 100%. Sin formularios absurdos ni burocracia. Tu riesgo es cero.</div></div></div>
-      <div class="fi2" onclick="toggleFaq(this)"><div class="fq">¿Necesito experiencia previa?<div class="fa-arr"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="fa"><div class="fa-in">No. Los PDFs están diseñados para funcionar desde cero. Lo que necesitas es compromiso con la ejecución. Cada módulo explica el porqué científico antes del protocolo. Si buscas algo fácil, este no es tu sistema.</div></div></div>
-      <div class="fi2" onclick="toggleFaq(this)"><div class="fq">¿Puedo empezar con Base y hacer upgrade?<div class="fa-arr"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="fa"><div class="fa-in">Sí. Si empiezas con Base puedes hacer upgrade a Premium en cualquier momento pagando solo la diferencia (€300). Recibirás los 5 PDFs adicionales al instante. Muchos miembros hacen este camino.</div></div></div>
-      <div class="fi2" onclick="toggleFaq(this)"><div class="fq">¿Cuánto tiempo al día requiere?<div class="fa-arr"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="fa"><div class="fa-in">El sistema se integra en tu vida, no añade horas. Los primeros 14 días necesitas 45-90 min para configurar el sistema. Después funciona de manera integrada. No es un curso, es una arquitectura de vida.</div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CHECKOUT ══ -->
-<section class="co-sec" id="checkout">
-  <canvas id="co-c"></canvas>
-  <div class="co-wrap">
+    <!-- Plan selector -->
     <div>
-      <div class="ov" data-r>Reserva tu plaza</div>
-      <h2 class="co-title" data-r data-d="1">ES<br><em>HOY</em></h2>
-      <p class="co-sub" data-r data-d="2">Las plazas son limitadas para mantener la calidad. Descarga inmediata garantizada. El único paso es decidir.</p>
+      <div class="section-label">Elige tu pack</div>
+      <div class="plan-toggle">
+        <div class="plan-opt" id="optBase" onclick="selectPlan('base')">
+          <div class="plan-opt-name">BASE</div>
+          <div class="plan-opt-price">€297 · pago único</div>
+          <div class="plan-opt-count">PDFs 01 – 04</div>
+        </div>
+        <div class="plan-opt active" id="optPremium" onclick="selectPlan('premium')">
+          <div class="plan-opt-badge">MÁS ELEGIDO</div>
+          <div class="plan-opt-name">PREMIUM</div>
+          <div class="plan-opt-price">€597 · pago único</div>
+          <div class="plan-opt-count">PDFs 01 – 09 + Updates</div>
+        </div>
+      </div>
     </div>
-    <div data-r data-d="2">
-      <div class="plan-tabs">
-        <div class="ptab" id="tabBase" onclick="selectPlan('base')"><div class="pt-name">BASE</div><div class="pt-price">€297 · Pago único</div><div class="pt-info">PDFs 01–04</div></div>
-        <div class="ptab sel" id="tabPrem" onclick="selectPlan('premium')"><div class="pt-name">PREMIUM</div><div class="pt-price">€597 · Pago único</div><div class="pt-info">PDFs 01–09 + Updates</div></div>
+
+    <!-- Price -->
+    <div>
+      <div class="price-display">
+        <div>
+          <div class="price-old" id="priceOld">€997</div>
+          <div class="price-new">
+            <span class="price-curr">€</span>
+            <span id="displayPrice">597</span>
+          </div>
+          <div class="price-note">Pago único · Acceso vitalicio</div>
+        </div>
+        <div class="price-save" id="priceSave">AHORRAS €400</div>
       </div>
-      <div class="fg"><label>Nombre completo</label><input type="text" placeholder="Tu nombre completo"></div>
-      <div class="fg"><label>Email</label><input type="email" placeholder="tu@email.com"></div>
-      <div class="fr">
-        <div class="fg"><label>Número de tarjeta</label><input type="text" placeholder="•••• •••• •••• ••••" maxlength="19"></div>
-        <div class="fg"><label>CVC</label><input type="text" placeholder="•••" maxlength="4"></div>
-      </div>
-      <div class="fr">
-        <div class="fg"><label>Caducidad</label><input type="text" placeholder="MM / AA" maxlength="7"></div>
-        <div class="fg"><label>Código postal</label><input type="text" placeholder="28001"></div>
-      </div>
-      <button class="fsub" id="submitBtn" onclick="handleSubmit(event)">ACCEDER AL SISTEMA — PREMIUM · €597</button>
-      <div class="fsec"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Pago 100% seguro y encriptado · Descarga inmediata</div>
-      <div class="pmethods"><span class="pm">VISA</span><span class="pm">MASTERCARD</span><span class="pm">AMEX</span><span class="pm">PAYPAL</span></div>
     </div>
+
+    <!-- Form -->
+    <div class="form-section">
+      <div class="section-label">Datos personales</div>
+      <div class="fg">
+        <label>Nombre completo</label>
+        <input type="text" id="iName" placeholder="Tu nombre" autocomplete="name">
+      </div>
+      <div class="fg">
+        <label>Email</label>
+        <input type="email" id="iEmail" placeholder="tu@email.com" autocomplete="email">
+      </div>
+
+      <div class="section-label" style="margin-top:8px;">Pago</div>
+      <div class="card-visual">
+        <div class="card-chip"></div>
+        <div class="card-brand" id="cardBrand">•••• •••• •••• ••••</div>
+      </div>
+      <div class="fg">
+        <label>Número de tarjeta</label>
+        <input type="text" id="iCard" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric">
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Caducidad</label>
+          <input type="text" id="iExp" placeholder="MM / AA" maxlength="7" inputmode="numeric">
+        </div>
+        <div class="fg">
+          <label>CVC</label>
+          <input type="text" id="iCvc" placeholder="•••" maxlength="4" inputmode="numeric">
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="handleSubmit(event)">
+        COMPLETAR COMPRA — PREMIUM · €597
+      </button>
+
+      <div class="secure-row">
+        <div class="sec-item"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>SSL 256-bit</div>
+        <div class="sec-item"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Compra protegida</div>
+        <div class="sec-item"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Descarga inmediata</div>
+      </div>
+
+      <div class="methods">
+        <div class="method-card">VISA</div>
+        <div class="method-card">MASTERCARD</div>
+        <div class="method-card">AMEX</div>
+        <div class="method-card">PAYPAL</div>
+      </div>
+    </div>
+
+    <!-- Guarantee -->
+    <div class="guarantee">
+      <div class="gua-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <div class="gua-text">
+        <strong>Garantía 30 días sin preguntas</strong>
+        Si en 30 días no ves resultados, devolvemos el 100%. Sin formularios, sin burocracia.
+      </div>
+    </div>
+
   </div>
-</section>
-
-<footer>
-  <a class="fl" href="index.html">ASCEND <em>SYSTEM</em></a>
-  <div class="flinks"><a href="index.html">Inicio</a><a href="#">Privacidad</a><a href="#">Términos</a><a href="#">Contacto</a><a href="#">Garantía</a></div>
-  <div class="fc">© 2026 ASCEND SYSTEM · Todos los derechos reservados</div>
-</footer>
-
-<div class="promo" id="promo">
-  <span class="promo-t">⚡ Precio especial — <strong>Ahorra €400</strong> en PREMIUM hoy</span>
-  <a href="#checkout" class="promo-btn" onclick="selectPlan('premium')">ENTRAR AHORA</a>
 </div>
 
 <script>
-/* ═══════════════════════════════════════
-   THREE.JS — THEMED ANIMATIONS
-   Each module gets a themed 3D object
-═══════════════════════════════════════ */
+/* ══════════════════════════════════════
+   THREE.JS — BACKGROUND: floating gym/mind shapes
+   ══════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  if (!window.THREE) return;
+  const R = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  R.setPixelRatio(Math.min(devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 1000);
+  camera.position.z = 30;
 
-// Theme map: module index → geometry + label
-const moduleThemes = [
-  // 01 Disciplina — Repeating barbell / cylinder combo (dumbell-like)
-  () => {
+  function resize() {
+    const W = innerWidth, H = innerHeight;
+    R.setSize(W, H, false);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  const AC = 0xc8ff3e;
+  const mat = (op) => new THREE.MeshBasicMaterial({ color: AC, wireframe: true, transparent: true, opacity: op });
+
+  // ── DUMBBELL group ──
+  function makeDumbbell(scale) {
     const g = new THREE.Group();
     // bar
-    const bar = new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,2.2,10),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.7}));
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, 2.4, 8), new THREE.MeshBasicMaterial({ color: AC, transparent: true, opacity: .22 }));
+    bar.rotation.z = Math.PI / 2;
     g.add(bar);
-    // plates
-    [-0.9,0.9].forEach(x=>{
-      const plate = new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.18,20),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.5}));
-      plate.position.x=x; plate.rotation.z=Math.PI/2;
-      g.add(plate);
+    // plates left
+    [-1.1, -0.7].forEach(x => {
+      const p = new THREE.Mesh(new THREE.CylinderGeometry(.45, .45, .14, 12), new THREE.MeshBasicMaterial({ color: AC, wireframe: true, transparent: true, opacity: .18 }));
+      p.position.x = x; p.rotation.z = Math.PI / 2;
+      g.add(p);
     });
-    return g;
-  },
-  // 02 Deep Focus — Brain-like icosahedron with orbiting ring
-  () => {
-    const g = new THREE.Group();
-    const brain = new THREE.Mesh(new THREE.IcosahedronGeometry(.7,2),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.55}));
-    g.add(brain);
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.1,.02,6,60),new THREE.MeshBasicMaterial({color:0xc8ff3e,transparent:true,opacity:.4}));
-    ring.rotation.x=Math.PI/3;
-    g.add(ring);
-    return g;
-  },
-  // 03 Cuerpo Elite — Barbell (full)
-  () => {
-    const g = new THREE.Group();
-    const bar = new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,2.8,8),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.7}));
-    bar.rotation.z=Math.PI/2; g.add(bar);
-    [-1.1,-0.85,0.85,1.1].forEach(x=>{
-      const r = Math.abs(x)>1 ? .55 : .42;
-      const plate = new THREE.Mesh(new THREE.CylinderGeometry(r,r,.12,20),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.45}));
-      plate.position.x=x; plate.rotation.z=Math.PI/2;
-      g.add(plate);
+    // plates right
+    [1.1, 0.7].forEach(x => {
+      const p = new THREE.Mesh(new THREE.CylinderGeometry(.45, .45, .14, 12), new THREE.MeshBasicMaterial({ color: AC, wireframe: true, transparent: true, opacity: .18 }));
+      p.position.x = x; p.rotation.z = Math.PI / 2;
+      g.add(p);
     });
+    g.scale.setScalar(scale);
     return g;
-  },
-  // 04 Sistemas Mentales — Dodecahedron (mind / complexity)
-  () => {
+  }
+
+  // ── BRAIN-like icosahedron ──
+  function makeBrain(scale) {
     const g = new THREE.Group();
-    const d = new THREE.Mesh(new THREE.DodecahedronGeometry(.8),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.6}));
-    g.add(d);
-    const inner = new THREE.Mesh(new THREE.OctahedronGeometry(.4),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.4}));
-    g.add(inner);
+    const outer = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 2), mat(.1));
+    const inner = new THREE.Mesh(new THREE.IcosahedronGeometry(0.7, 1), mat(.07));
+    g.add(outer); g.add(inner);
+    // small orbiting nodes
+    for (let i = 0; i < 6; i++) {
+      const node = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), new THREE.MeshBasicMaterial({ color: AC, transparent: true, opacity: .35 }));
+      const ang = (i / 6) * Math.PI * 2;
+      node.position.set(Math.cos(ang) * 1.3, (Math.random() - .5) * 1.2, Math.sin(ang) * 1.3);
+      g.add(node);
+    }
+    g.scale.setScalar(scale);
     return g;
-  },
-  // 05 Productividad — Gear (cog wheel built from torus + cylinders)
-  () => {
+  }
+
+  // ── GEAR-like torus ──
+  function makeGear(scale) {
     const g = new THREE.Group();
-    const torus = new THREE.Mesh(new THREE.TorusGeometry(.6,.14,10,40),new THREE.MeshBasicMaterial({color:0xffd14a,wireframe:true,transparent:true,opacity:.65}));
-    g.add(torus);
-    for(let i=0;i<8;i++){
-      const tooth = new THREE.Mesh(new THREE.BoxGeometry(.16,.32,.14),new THREE.MeshBasicMaterial({color:0xffd14a,wireframe:true,transparent:true,opacity:.5}));
-      const a=(i/8)*Math.PI*2;
-      tooth.position.set(Math.cos(a)*.8,Math.sin(a)*.8,0);
-      tooth.rotation.z=a;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1, .08, 6, 18), mat(.18));
+    const inner = new THREE.Mesh(new THREE.TorusGeometry(.55, .04, 4, 14), mat(.12));
+    g.add(ring); g.add(inner);
+    for (let i = 0; i < 10; i++) {
+      const tooth = new THREE.Mesh(new THREE.BoxGeometry(.12, .22, .08),
+        new THREE.MeshBasicMaterial({ color: AC, wireframe: true, transparent: true, opacity: .2 }));
+      const ang = (i / 10) * Math.PI * 2;
+      tooth.position.set(Math.cos(ang) * 1.06, Math.sin(ang) * 1.06, 0);
+      tooth.rotation.z = ang;
       g.add(tooth);
     }
-    return g;
-  },
-  // 06 Habit Architecture — DNA helix (two spirals)
-  () => {
-    const g = new THREE.Group();
-    const pts1=[],pts2=[];
-    for(let i=0;i<=40;i++){
-      const t=i/40*Math.PI*4;
-      pts1.push(new THREE.Vector3(Math.cos(t)*.5,i*.045-.9,Math.sin(t)*.5));
-      pts2.push(new THREE.Vector3(Math.cos(t+Math.PI)*.5,i*.045-.9,Math.sin(t+Math.PI)*.5));
-    }
-    [pts1,pts2].forEach(pts=>{
-      const curve=new THREE.CatmullRomCurve3(pts);
-      const geom=new THREE.TubeGeometry(curve,50,.025,6,false);
-      g.add(new THREE.Mesh(geom,new THREE.MeshBasicMaterial({color:0xffd14a,transparent:true,opacity:.6})));
-    });
-    for(let i=0;i<8;i++){
-      const t=(i/8)*Math.PI*4;
-      const y=i*.2-.7;
-      const line=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,1,6),new THREE.MeshBasicMaterial({color:0xffd14a,transparent:true,opacity:.4}));
-      line.rotation.z=Math.PI/2;
-      line.position.y=y;
-      g.add(line);
-    }
-    return g;
-  },
-  // 07 Dashboard — Grid cube (data board)
-  () => {
-    const g = new THREE.Group();
-    const box = new THREE.Mesh(new THREE.BoxGeometry(1.4,1.4,1.4),new THREE.MeshBasicMaterial({color:0xffd14a,wireframe:true,transparent:true,opacity:.5}));
-    g.add(box);
-    // bars inside
-    [-.4,0,.4].forEach(x=>{
-      const h=.3+Math.random()*.8;
-      const bar=new THREE.Mesh(new THREE.BoxGeometry(.18,h,.18),new THREE.MeshBasicMaterial({color:0xffd14a,transparent:true,opacity:.35}));
-      bar.position.set(x,h/2-.7,.2);
-      g.add(bar);
-    });
-    return g;
-  },
-  // 08 Recovery — Moon/sleep crescent + stars
-  () => {
-    const g = new THREE.Group();
-    const sphere = new THREE.Mesh(new THREE.SphereGeometry(.7,20,20),new THREE.MeshBasicMaterial({color:0xffd14a,wireframe:true,transparent:true,opacity:.45}));
-    g.add(sphere);
-    const rings = new THREE.Mesh(new THREE.TorusGeometry(1.1,.02,6,80),new THREE.MeshBasicMaterial({color:0xffd14a,transparent:true,opacity:.3}));
-    rings.rotation.x=Math.PI/4;
-    g.add(rings);
-    const rings2 = new THREE.Mesh(new THREE.TorusGeometry(.9,.018,6,80),new THREE.MeshBasicMaterial({color:0xffd14a,transparent:true,opacity:.2}));
-    rings2.rotation.x=-Math.PI/5;
-    g.add(rings2);
-    return g;
-  },
-  // 09 Physical System — Double barbell cross
-  () => {
-    const g = new THREE.Group();
-    [0,Math.PI/2].forEach(rot=>{
-      const bar=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,2.6,8),new THREE.MeshBasicMaterial({color:0xffd14a,wireframe:true,transparent:true,opacity:.6}));
-      bar.rotation.z=Math.PI/2+rot;
-      g.add(bar);
-      [-1,1].forEach(s=>{
-        const plate=new THREE.Mesh(new THREE.CylinderGeometry(.4,.4,.12,16),new THREE.MeshBasicMaterial({color:0xffd14a,wireframe:true,transparent:true,opacity:.45}));
-        plate.rotation.z=Math.PI/2+rot;
-        const pos=new THREE.Vector3();
-        if(rot===0) pos.x=s*.95; else pos.y=s*.95;
-        plate.position.copy(pos);
-        g.add(plate);
-      });
-    });
+    g.scale.setScalar(scale);
     return g;
   }
-];
 
-function makeCardScene(canvasId, buildFn, size) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas || !window.THREE) return;
-  const sz = size || 220;
-  const R = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
-  R.setPixelRatio(Math.min(devicePixelRatio,2));
-  R.setSize(sz,sz,false);
+  // ── ATOM / MOLECULE ──
+  function makeAtom(scale) {
+    const g = new THREE.Group();
+    // nucleus
+    g.add(new THREE.Mesh(new THREE.SphereGeometry(.18, 10, 10), new THREE.MeshBasicMaterial({ color: AC, transparent: true, opacity: .4 })));
+    // orbits
+    [0, Math.PI/3, Math.PI*2/3].forEach((angle, i) => {
+      const orbit = new THREE.Mesh(new THREE.TorusGeometry(.9, .015, 4, 60), mat(.14));
+      orbit.rotation.x = angle;
+      orbit.rotation.y = angle * 0.5;
+      g.add(orbit);
+      // electron
+      const el = new THREE.Mesh(new THREE.SphereGeometry(.07, 6, 6), new THREE.MeshBasicMaterial({ color: AC, transparent: true, opacity: .6 }));
+      el.position.set(Math.cos(i) * .9, 0, Math.sin(i) * .9);
+      el.userData = { orbit, phase: i * 2 };
+      g.add(el);
+    });
+    g.scale.setScalar(scale);
+    return g;
+  }
+
+  // Create and scatter objects
+  const objects = [];
+
+  function placeObj(obj, x, y, z, rotSpeed) {
+    obj.position.set(x, y, z);
+    obj.userData.rotSpeed = rotSpeed;
+    obj.userData.initY = y;
+    obj.userData.floatPhase = Math.random() * Math.PI * 2;
+    obj.userData.floatAmp = 0.4 + Math.random() * 0.6;
+    scene.add(obj);
+    objects.push(obj);
+  }
+
+  placeObj(makeDumbbell(1.4),  -14,  5, -6,  { x: .003, y: .007, z: .002 });
+  placeObj(makeDumbbell(1.0),   16, -4, -8,  { x: .002, y: .005, z: .004 });
+  placeObj(makeDumbbell(.7),    -6, -9, -10, { x: .004, y: .006, z: .001 });
+  placeObj(makeBrain(2.2),       0,  0, -14, { x: .004, y: .006, z: .003 });
+  placeObj(makeBrain(1.4),     -16, -2, -10, { x: .003, y: .007, z: .005 });
+  placeObj(makeGear(2.0),       12,  6, -12, { x: .008, y: .004, z: .002 });
+  placeObj(makeGear(1.3),      -12, -7, -10, { x: .003, y: .008, z: .004 });
+  placeObj(makeAtom(1.8),        8, -7, -11, { x: .005, y: .003, z: .006 });
+  placeObj(makeAtom(1.2),      -8,  8, -12, { x: .002, y: .006, z: .003 });
+
+  // Big outer icosahedron
+  const bigIco = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(22, 1),
+    new THREE.MeshBasicMaterial({ color: AC, wireframe: true, transparent: true, opacity: .025 })
+  );
+  scene.add(bigIco);
+
+  // Particle field
+  const pc = 800;
+  const pp = new Float32Array(pc * 3);
+  for (let i = 0; i < pc; i++) {
+    pp[i*3]   = (Math.random() - .5) * 60;
+    pp[i*3+1] = (Math.random() - .5) * 40;
+    pp[i*3+2] = (Math.random() - .5) * 30 - 5;
+  }
+  const pg = new THREE.BufferGeometry();
+  pg.setAttribute('position', new THREE.BufferAttribute(pp, 3));
+  scene.add(new THREE.Points(pg, new THREE.PointsMaterial({ color: AC, size: .05, transparent: true, opacity: .3 })));
+
+  let t = 0, mx = 0, my = 0;
+  document.addEventListener('mousemove', e => {
+    mx = (e.clientX / innerWidth - .5) * 2;
+    my = (e.clientY / innerHeight - .5) * 2;
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    t += .005;
+    bigIco.rotation.y = t * .04;
+    bigIco.rotation.x = t * .025;
+    objects.forEach(obj => {
+      obj.rotation.x += obj.userData.rotSpeed.x;
+      obj.rotation.y += obj.userData.rotSpeed.y;
+      obj.rotation.z += obj.userData.rotSpeed.z;
+      obj.position.y = obj.userData.initY + Math.sin(t * .8 + obj.userData.floatPhase) * obj.userData.floatAmp;
+    });
+    scene.rotation.y += (mx * .06 - scene.rotation.y) * .02;
+    scene.rotation.x += (-my * .03 - scene.rotation.x) * .02;
+    R.render(scene, camera);
+  }
+  animate();
+})();
+
+/* ══ LEFT PANEL 3D ══ */
+(function() {
+  const canvas = document.getElementById('left-canvas');
+  if (!window.THREE || !canvas) return;
+  const R = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  R.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   const scene = new THREE.Scene();
-  const cam = new THREE.PerspectiveCamera(50,1,.1,100);
-  cam.position.z = 4;
-  const obj = buildFn();
-  scene.add(obj);
-  let t = Math.random()*10;
-  (function loop(){
-    requestAnimationFrame(loop);
-    t+=.012;
-    obj.rotation.x=t*.4;
-    obj.rotation.y=t*.6;
-    R.render(scene,cam);
-  })();
-}
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+  camera.position.z = 8;
 
-// Module card canvases
-for(let i=1;i<=9;i++){
-  makeCardScene('mc3d'+i, moduleThemes[i-1]);
-}
+  function resize() {
+    const W = canvas.offsetWidth, H = canvas.offsetHeight;
+    R.setSize(W, H, false);
+    camera.aspect = W / H;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  addEventListener('resize', () => setTimeout(resize, 100));
 
-// ─── HERO canvas: particle field ───
-(function(){
-  const canvas=document.getElementById('hero-c');
-  if(!canvas)return;
-  const ctx=canvas.getContext('2d');
-  let W,H,nodes=[];
-  const mouse={x:0,y:0};
-  function resize(){
-    W=canvas.width=canvas.offsetWidth;
-    H=canvas.height=canvas.offsetHeight;
-    mouse.x=W/2; mouse.y=H/2;
-    nodes=[];
-    const gx=100,gy=100;
-    for(let r=0;r<=Math.ceil(H/gy)+1;r++){
-      for(let c=0;c<=Math.ceil(W/gx)+1;c++){
-        nodes.push({x:c*gx+(Math.random()-.5)*50,y:r*gy+(Math.random()-.5)*50,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,r:.4+Math.random()*1.6,p:Math.random()*Math.PI*2});
-      }
+  const AC = 0xc8ff3e;
+
+  // DNA-like helix
+  for (let i = 0; i < 40; i++) {
+    const ang = (i / 40) * Math.PI * 8;
+    const y = (i / 40) * 14 - 7;
+    const r = 1.4;
+    // strand A
+    const sA = new THREE.Mesh(
+      new THREE.SphereGeometry(.06, 6, 6),
+      new THREE.MeshBasicMaterial({ color: AC, transparent: true, opacity: .5 })
+    );
+    sA.position.set(Math.cos(ang) * r, y, Math.sin(ang) * r);
+    scene.add(sA);
+    // strand B
+    const sB = new THREE.Mesh(
+      new THREE.SphereGeometry(.06, 6, 6),
+      new THREE.MeshBasicMaterial({ color: 0x4aff8a, transparent: true, opacity: .3 })
+    );
+    sB.position.set(Math.cos(ang + Math.PI) * r, y, Math.sin(ang + Math.PI) * r);
+    scene.add(sB);
+    // rungs every 5
+    if (i % 4 === 0) {
+      const rungG = new THREE.CylinderGeometry(.012, .012, r * 2, 4);
+      const rung = new THREE.Mesh(rungG,
+        new THREE.MeshBasicMaterial({ color: AC, transparent: true, opacity: .18 }));
+      rung.position.y = y;
+      rung.rotation.z = Math.PI / 2;
+      rung.rotation.y = ang;
+      scene.add(rung);
     }
   }
-  canvas.addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;});
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    nodes.forEach(n=>{
-      n.x+=n.vx;n.y+=n.vy;n.p+=.015;
-      if(n.x<-60)n.x=W+60;if(n.x>W+60)n.x=-60;
-      if(n.y<-60)n.y=H+60;if(n.y>H+60)n.y=-60;
-    });
-    for(let i=0;i<nodes.length;i++){
-      for(let j=i+1;j<nodes.length;j++){
-        const a=nodes[i],b=nodes[j];
-        const dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy);
-        if(d<140){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(200,255,62,${(1-d/140)*.13})`;ctx.lineWidth=.5;ctx.stroke();}
-      }
-    }
-    nodes.forEach(n=>{
-      const pulse=.2+Math.sin(n.p)*.15;
-      const dx=mouse.x-n.x,dy=mouse.y-n.y,md=Math.sqrt(dx*dx+dy*dy);
-      const boost=md<200?(1-md/200):0;
-      ctx.beginPath();ctx.arc(n.x,n.y,n.r*(1+boost*1.5),0,Math.PI*2);ctx.fillStyle=`rgba(200,255,62,${pulse+boost*.4})`;ctx.fill();
-    });
-    requestAnimationFrame(draw);
+
+  // Outer helix rings
+  for (let i = 0; i < 5; i++) {
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(2.4 + i * .3, .01, 4, 40),
+      new THREE.MeshBasicMaterial({ color: AC, transparent: true, opacity: .06 - i * .008 })
+    );
+    ring.position.y = (i - 2) * 2;
+    ring.rotation.x = Math.PI / 2;
+    scene.add(ring);
   }
-  window.addEventListener('resize',resize);
-  resize();draw();
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += .008;
+    scene.rotation.y = t * .3;
+    R.render(scene, camera);
+  }
+  animate();
 })();
 
-// ─── INTRO: dumbbell + brain geometry ───
-(function(){
-  const canvas=document.getElementById('intro-canvas');
-  if(!canvas||!window.THREE)return;
-  const R=new THREE.WebGLRenderer({canvas,alpha:false,antialias:true});
-  R.setPixelRatio(Math.min(devicePixelRatio,2));
-  R.setClearColor(0x020202,1);
-  const scene=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(60,1,.1,1000);
-  cam.position.z=22;
-  function resize(){const W=canvas.offsetWidth,H=canvas.offsetHeight;R.setSize(W,H,false);cam.aspect=W/H;cam.updateProjectionMatrix();}
-  resize();window.addEventListener('resize',resize);
+/* ══ PLAN LOGIC ══ */
+let plan = 'premium';
 
-  // Central barbell
-  const bbGrp=new THREE.Group();
-  const bar=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,6,12),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.6}));
-  bar.rotation.z=Math.PI/2;bbGrp.add(bar);
-  [-2.4,-1.8,1.8,2.4].forEach(x=>{
-    const r=Math.abs(x)>2?.9:.7;
-    const p=new THREE.Mesh(new THREE.CylinderGeometry(r,r,.3,20),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.5}));
-    p.position.x=x;p.rotation.z=Math.PI/2;bbGrp.add(p);
+function selectPlan(p) {
+  plan = p;
+  const isPrem = p === 'premium';
+
+  document.getElementById('optBase').classList.toggle('active', !isPrem);
+  document.getElementById('optPremium').classList.toggle('active', isPrem);
+  document.getElementById('pillBase').classList.toggle('active', !isPrem);
+  document.getElementById('pillPremium').classList.toggle('active', isPrem);
+
+  document.getElementById('priceOld').textContent = isPrem ? '€997' : '€497';
+  document.getElementById('displayPrice').textContent = isPrem ? '597' : '297';
+  document.getElementById('priceSave').textContent = isPrem ? 'AHORRAS €400' : 'AHORRAS €200';
+  document.getElementById('submitBtn').textContent =
+    isPrem ? 'COMPLETAR COMPRA — PREMIUM · €597' : 'COMPLETAR COMPRA — BASE · €297';
+
+  // Update modules locked/unlocked
+  document.querySelectorAll('.mod-item').forEach(el => {
+    const id = parseInt(el.dataset.id);
+    const shouldLock = !isPrem && id > 4;
+    el.classList.toggle('locked', shouldLock);
+    const chk = el.querySelector('.mod-chk svg');
+    if (shouldLock) {
+      chk.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>';
+    } else {
+      chk.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+    }
   });
-  scene.add(bbGrp);
-
-  // Orbiting brain-like icosahedra
-  const orbs=[];
-  for(let i=0;i<3;i++){
-    const ico=new THREE.Mesh(new THREE.IcosahedronGeometry(1.2+i*.3,1),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.18-i*.04}));
-    ico.userData={phase:i*(Math.PI*2/3),r:5+i*2,speed:.4+i*.2};
-    scene.add(ico);orbs.push(ico);
-  }
-
-  // Tori rings
-  for(let i=0;i<3;i++){
-    const t=new THREE.Mesh(new THREE.TorusGeometry(7+i*2,.02,6,90),new THREE.MeshBasicMaterial({color:0xc8ff3e,transparent:true,opacity:.14-i*.03}));
-    t.rotation.x=(Math.PI/3)*i;t.rotation.y=(Math.PI/5)*i;
-    t.userData={speed:.25+i*.1,isRing:true};scene.add(t);
-  }
-
-  // Particles
-  const pc=1200,pp=new Float32Array(pc*3);
-  for(let i=0;i<pc;i++){const r=13+Math.random()*7,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);pp[i*3]=r*Math.sin(ph)*Math.cos(th);pp[i*3+1]=r*Math.sin(ph)*Math.sin(th);pp[i*3+2]=r*Math.cos(ph);}
-  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pp,3));
-  scene.add(new THREE.Points(pg,new THREE.PointsMaterial({color:0xc8ff3e,size:.06,transparent:true,opacity:.5})));
-
-  let t2=0;
-  function loop(){
-    requestAnimationFrame(loop);t2+=.005;
-    bbGrp.rotation.y=t2*.4;bbGrp.rotation.x=Math.sin(t2*.3)*.25;
-    orbs.forEach(o=>{o.position.x=Math.cos(t2*o.userData.speed+o.userData.phase)*o.userData.r;o.position.y=Math.sin(t2*o.userData.speed*.7+o.userData.phase)*3;o.position.z=Math.sin(t2*o.userData.speed+o.userData.phase)*o.userData.r*.5;o.rotation.y+=.015;});
-    scene.children.forEach(obj=>{if(obj.userData.isRing)obj.rotation.z+=obj.userData.speed*.004;});
-    R.render(scene,cam);
-  }
-  loop();
-})();
-
-// ─── Plan card 3D scenes ───
-function makePlanScene(canvasId, type){
-  const canvas=document.getElementById(canvasId);
-  if(!canvas||!window.THREE)return;
-  const R=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-  R.setPixelRatio(Math.min(devicePixelRatio,2));
-  R.setSize(240,240,false);
-  const scene=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(50,1,.1,100);cam.position.z=5;
-  const grp=new THREE.Group();
-  if(type==='base'){
-    // Dumbbell
-    const bar=new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,3,10),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.65}));
-    bar.rotation.z=Math.PI/2;grp.add(bar);
-    [-1.1,1.1].forEach(x=>{
-      const p=new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,.22,20),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.5}));
-      p.position.x=x;p.rotation.z=Math.PI/2;grp.add(p);
-    });
-  } else {
-    // Gear + brain
-    const torus=new THREE.Mesh(new THREE.TorusGeometry(.8,.18,12,50),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.55}));
-    grp.add(torus);
-    for(let i=0;i<10;i++){
-      const tooth=new THREE.Mesh(new THREE.BoxGeometry(.18,.38,.18),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.45}));
-      const a=(i/10)*Math.PI*2;
-      tooth.position.set(Math.cos(a)*1.06,Math.sin(a)*1.06,0);tooth.rotation.z=a;grp.add(tooth);
-    }
-    const inner=new THREE.Mesh(new THREE.IcosahedronGeometry(.4,1),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.4}));
-    grp.add(inner);
-  }
-  scene.add(grp);
-  let t=0;
-  (function loop(){requestAnimationFrame(loop);t+=.012;grp.rotation.y=t*.7;grp.rotation.x=t*.35;R.render(scene,cam);})();
-}
-makePlanScene('pc3d1','base');
-makePlanScene('pc3d2','premium');
-
-// ─── Ambient background scenes ───
-function makeAmbient(canvasId){
-  const canvas=document.getElementById(canvasId);
-  if(!canvas||!window.THREE)return;
-  const R=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-  R.setPixelRatio(Math.min(devicePixelRatio,2));
-  const scene=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(60,1,.1,1000);cam.position.z=28;
-  function resize(){const W=canvas.offsetWidth,H=canvas.offsetHeight;R.setSize(W,H,false);cam.aspect=W/H;cam.updateProjectionMatrix();}
-  resize();window.addEventListener('resize',resize);
-  scene.add(new THREE.Mesh(new THREE.IcosahedronGeometry(11,2),new THREE.MeshBasicMaterial({color:0xc8ff3e,wireframe:true,transparent:true,opacity:.03})));
-  for(let i=0;i<3;i++){
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(14+i*3,.014,4,100),new THREE.MeshBasicMaterial({color:0xc8ff3e,transparent:true,opacity:.05-i*.012}));
-    ring.rotation.x=(Math.PI/3)*(i+1);ring.userData={speed:.12+i*.07,isRing:true};scene.add(ring);
-  }
-  const pc=500,pp=new Float32Array(pc*3);
-  for(let i=0;i<pc;i++){const r=18+Math.random()*6,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);pp[i*3]=r*Math.sin(ph)*Math.cos(th);pp[i*3+1]=r*Math.sin(ph)*Math.sin(th);pp[i*3+2]=r*Math.cos(ph);}
-  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pp,3));
-  const pts=new THREE.Points(pg,new THREE.PointsMaterial({color:0xc8ff3e,size:.055,transparent:true,opacity:.22}));scene.add(pts);
-  let t=0;
-  function loop(){requestAnimationFrame(loop);t+=.003;scene.children.forEach(obj=>{if(obj.userData.isRing)obj.rotation.z+=obj.userData.speed*.004;});pts.rotation.y=t*.025;scene.rotation.y=t*.04;R.render(scene,cam);}
-  loop();
-}
-['mods-c','plans-c','co-c'].forEach(makeAmbient);
-
-/* ═══════════════════════════════════════
-   INTRO SEQUENCE
-═══════════════════════════════════════ */
-function runIntro(){
-  const overlay=document.getElementById('intro');
-  const bar=document.getElementById('ibar');
-  const logo=document.getElementById('ilogo');
-  let p=0;
-  const t=setInterval(()=>{p+=2.5;bar.style.width=Math.min(p,100)+'%';if(p>=100)clearInterval(t);},40);
-  setTimeout(()=>{logo.style.transition='opacity .9s ease';logo.style.opacity='1';},180);
-  setTimeout(()=>{overlay.style.transition='opacity .7s ease';overlay.style.opacity='0';},2500);
-  setTimeout(()=>{overlay.style.display='none';document.getElementById('nav').classList.add('vis');},3200);
-}
-runIntro();
-
-/* ═══════════════════════════════════════
-   CURSOR
-═══════════════════════════════════════ */
-const cur=document.getElementById('cur'),ring=document.getElementById('cur-r');
-if(cur){
-  let mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-  (function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
 }
 
-/* ═══════════════════════════════════════
-   MISC
-═══════════════════════════════════════ */
-window.addEventListener('scroll',()=>{
-  document.getElementById('pgbar').style.width=(document.documentElement.scrollTop/(document.documentElement.scrollHeight-document.documentElement.clientHeight)*100)+'%';
-  document.getElementById('nav').classList.toggle('sc',scrollY>40);
-  const pill=document.getElementById('promo');
-  if(scrollY>500)pill.classList.add('show');else pill.classList.remove('show');
-},{passive:true});
+/* ══ CARD FORMAT ══ */
+document.getElementById('iCard').addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 16);
+  e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+  // Update visual
+  const display = v.padEnd(16, '•').replace(/(.{4})/g, '$1 ').trim();
+  document.getElementById('cardBrand').textContent = display || '•••• •••• •••• ••••';
+});
 
-// Countdown
-const deadline=Date.now()+(2*24+2)*3600*1000+23*60*1000;
-function tick(){
-  const d=Math.max(0,deadline-Date.now());
-  document.getElementById('cdD').textContent=String(Math.floor(d/86400000)).padStart(2,'0');
-  document.getElementById('cdH').textContent=String(Math.floor(d%86400000/3600000)).padStart(2,'0');
-  document.getElementById('cdM').textContent=String(Math.floor(d%3600000/60000)).padStart(2,'0');
-  document.getElementById('cdS').textContent=String(Math.floor(d%60000/1000)).padStart(2,'0');
-  if(d>0)requestAnimationFrame(tick);
-}
-tick();
+document.getElementById('iExp').addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g, '');
+  if (v.length >= 2) v = v.slice(0, 2) + ' / ' + v.slice(2, 4);
+  e.target.value = v;
+});
 
-// Plan select
-let plan='premium';
-function selectPlan(p){
-  plan=p;
-  document.getElementById('tabBase').classList.toggle('sel',p==='base');
-  document.getElementById('tabPrem').classList.toggle('sel',p==='premium');
-  const btn=document.getElementById('submitBtn');
-  btn.textContent=p==='premium'?'ACCEDER AL SISTEMA — PREMIUM · €597':'EMPEZAR CON BASE — €297';
-}
-
-// FAQ
-function toggleFaq(el){
-  const open=el.classList.contains('open');
-  document.querySelectorAll('.fi2.open').forEach(i=>i.classList.remove('open'));
-  if(!open)el.classList.add('open');
-}
-
-// Submit
-function handleSubmit(e){
+/* ══ SUBMIT ══ */
+function handleSubmit(e) {
   e.preventDefault();
-  const btn=document.getElementById('submitBtn');
-  btn.textContent='PROCESANDO...';btn.style.opacity='.7';
-  setTimeout(()=>{btn.textContent='✓ DESCARGA ACTIVADA';btn.style.background='#4aff8a';
-    setTimeout(()=>{selectPlan(plan);btn.style.background='';btn.style.opacity='';},3000);
-  },2000);
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = 'PROCESANDO...';
+  btn.style.opacity = '.7';
+  btn.disabled = true;
+  setTimeout(() => {
+    document.getElementById('successScreen').classList.add('show');
+  }, 1800);
 }
 
-// Reveal
-const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('vis');}),{threshold:.1});
-document.querySelectorAll('[data-r]').forEach(el=>obs.observe(el));
-
-// Card tilt
-document.querySelectorAll('.pcard,.tc').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const r=card.getBoundingClientRect();
-    const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
-    card.style.transform=`translateY(-9px) rotateX(${-y*5}deg) rotateY(${x*5}deg)`;
-    card.style.transformStyle='preserve-3d';
-  });
-  card.addEventListener('mouseleave',()=>{card.style.transform='';});
-});
-
-// Magnetic buttons
-document.querySelectorAll('.pc-cta,.fsub').forEach(btn=>{
-  btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;btn.style.transform=`translate(${x*.08}px,${y*.1-4}px)`;});
-  btn.addEventListener('mouseleave',()=>{btn.style.transform='';});
-});
-
-// Card format
-document.addEventListener('input',e=>{
-  if(e.target.placeholder==='•••• •••• •••• ••••'){let v=e.target.value.replace(/\D/g,'').substring(0,16);e.target.value=v.replace(/(.{4})/g,'$1 ').trim();}
-  if(e.target.placeholder==='MM / AA'){let v=e.target.value.replace(/\D/g,'');if(v.length>=2)v=v.substring(0,2)+' / '+v.substring(2,4);e.target.value=v;}
-});
-
-document.addEventListener('contextmenu',e=>e.preventDefault());
+/* ══ INIT ══ */
+selectPlan('premium');
 </script>
 </body>
 </html>
