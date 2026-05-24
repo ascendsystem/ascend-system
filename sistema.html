@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/sistema.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,12 +13,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/SplitText.min.js"></script>
 
 <style>
-/* ════════════════════════════════════════════════════════════
-   ROOT & RESET
-════════════════════════════════════════════════════════════ */
 :root{
   --bg:#030303;
   --bg2:#070707;
@@ -51,9 +48,6 @@ body{
   cursor:none;
 }
 
-/* ════════════════════════════════════════════════════════════
-   CURSOR
-════════════════════════════════════════════════════════════ */
 #cursor{
   position:fixed;width:10px;height:10px;
   background:var(--accent);border-radius:50%;
@@ -73,9 +67,6 @@ body:has(a:hover) #cursor,body:has(button:hover) #cursor{width:18px;height:18px;
 body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:64px;height:64px;border-color:var(--accent);}
 @media(max-width:900px){#cursor,#cursor-ring{display:none;}body{cursor:auto;}}
 
-/* ════════════════════════════════════════════════════════════
-   GRAIN + AMBIENT
-════════════════════════════════════════════════════════════ */
 body::after{
   content:'';position:fixed;inset:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
@@ -95,9 +86,6 @@ body::before{
   pointer-events:none;z-index:-1;
 }
 
-/* ════════════════════════════════════════════════════════════
-   SCROLLBAR + PROGRESS
-════════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar{width:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(200,255,62,0.25);border-radius:999px;}
@@ -109,9 +97,6 @@ body::before{
   transition:width .05s linear;
 }
 
-/* ════════════════════════════════════════════════════════════
-   NAV
-════════════════════════════════════════════════════════════ */
 .nav{
   position:fixed;top:0;left:0;width:100%;
   padding:36px 80px;
@@ -203,9 +188,6 @@ body::before{
   text-decoration:none;
 }
 
-/* ════════════════════════════════════════════════════════════
-   HERO — SISTEMA
-════════════════════════════════════════════════════════════ */
 .sys-hero{
   position:relative;min-height:100vh;
   display:flex;align-items:center;overflow:hidden;
@@ -223,8 +205,6 @@ body::before{
     linear-gradient(to top,rgba(3,3,3,1) 0%,transparent 35%),
     linear-gradient(to bottom,rgba(3,3,3,.6) 0%,transparent 20%);
 }
-
-/* Animated grid background */
 .sys-hero-grid{
   position:absolute;inset:0;z-index:2;
   background-image:
@@ -234,8 +214,6 @@ body::before{
   animation:gridMove 30s linear infinite;
 }
 @keyframes gridMove{0%{background-position:0 0;}100%{background-position:80px 80px;}}
-
-/* Horizontal scan lines */
 .sys-scan{
   position:absolute;inset:0;z-index:3;
   background:linear-gradient(transparent 0%,rgba(200,255,62,0.018) 50%,transparent 100%);
@@ -243,14 +221,11 @@ body::before{
   animation:scanDown 8s linear infinite;pointer-events:none;
 }
 @keyframes scanDown{0%{background-position:0 -220px;}100%{background-position:0 110vh;}}
-
-/* Vertical accent line on left */
 .sys-hero-vline{
   position:absolute;left:80px;top:0;bottom:0;z-index:4;
   width:1px;background:linear-gradient(to bottom,transparent,var(--accent),transparent);
   opacity:.3;
 }
-
 .sys-hero-content{
   position:relative;z-index:10;
   padding:160px 80px 120px;
@@ -266,7 +241,6 @@ body::before{
 .sys-hero-breadcrumb a:hover{color:var(--accent);}
 .sys-hero-breadcrumb .sep{color:rgba(255,255,255,0.15);}
 .sys-hero-breadcrumb .current{color:var(--accent);}
-
 .sys-overline{
   display:inline-flex;align-items:center;gap:16px;
   margin-bottom:40px;
@@ -285,7 +259,6 @@ body::before{
   font-family:var(--font-cond);font-size:11px;font-weight:700;
   letter-spacing:4.5px;color:var(--accent);text-transform:uppercase;
 }
-
 .sys-hero-title{
   font-family:var(--font-display);
   font-size:clamp(80px,12vw,160px);
@@ -306,17 +279,14 @@ body::before{
   color:transparent;-webkit-text-stroke:1px rgba(200,255,62,0.15);
   z-index:-1;transform:translate(5px,5px);
 }
-
 .sys-hero-desc{
   max-width:680px;font-size:20px;line-height:1.8;
   color:rgba(240,237,232,0.58);font-weight:400;
   margin-bottom:72px;
   border-left:2px solid var(--accent);padding-left:28px;
 }
-
 .sys-hero-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
 
-/* ─── PHASE INDICATOR floating right ─── */
 .sys-phase-indicator{
   position:absolute;right:80px;top:50%;transform:translateY(-50%);
   z-index:10;display:flex;flex-direction:column;gap:28px;
@@ -350,9 +320,6 @@ body::before{
 .phase-dot-wrap.active .phase-dot-label,
 .phase-dot-wrap:hover .phase-dot-label{color:var(--accent);}
 
-/* ════════════════════════════════════════════════════════════
-   PROBLEM STATEMENT — "La verdad que nadie dice"
-════════════════════════════════════════════════════════════ */
 .problem-section{
   position:relative;overflow:hidden;
   background:var(--bg);padding:160px 80px;
@@ -362,7 +329,6 @@ body::before{
   gap:120px;align-items:center;
   max-width:1400px;margin:0 auto;
 }
-.problem-left{}
 .problem-overline{
   font-family:var(--font-cond);font-size:10px;font-weight:700;
   letter-spacing:5px;color:var(--accent);text-transform:uppercase;
@@ -378,8 +344,6 @@ body::before{
 .problem-title .stroke{
   -webkit-text-stroke:1px rgba(255,255,255,0.2);color:transparent;
 }
-
-.problem-right{}
 .problem-statement{
   font-size:22px;line-height:1.75;
   color:rgba(240,237,232,0.7);font-weight:300;
@@ -418,9 +382,6 @@ body::before{
 }
 .pill-text strong{color:white;}
 
-/* ════════════════════════════════════════════════════════════
-   SOLUTION BRIDGE — cinematic full-width statement
-════════════════════════════════════════════════════════════ */
 .bridge{
   position:relative;overflow:hidden;
   padding:200px 80px;
@@ -441,7 +402,6 @@ body::before{
   0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1);}
   50%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}
 }
-/* Diagonal accent lines */
 .bridge-diag{
   position:absolute;top:0;bottom:0;width:1px;
   background:linear-gradient(to bottom,transparent,rgba(200,255,62,0.08),transparent);
@@ -450,7 +410,6 @@ body::before{
 .bridge-diag:nth-child(2){left:40%;transform:skewX(4deg);}
 .bridge-diag:nth-child(3){right:30%;transform:skewX(-6deg);}
 .bridge-diag:nth-child(4){right:10%;transform:skewX(10deg);}
-
 .bridge-content{position:relative;z-index:5;max-width:1100px;}
 .bridge-eyebrow{
   font-family:var(--font-cond);font-size:10px;font-weight:700;
@@ -478,23 +437,13 @@ body::before{
 }
 .bridge-sub strong{color:var(--text);}
 
-/* ════════════════════════════════════════════════════════════
-   PHASE SYSTEM — 4 FASES con animación scroll bidireccional
-════════════════════════════════════════════════════════════ */
-.phases-section{
-  background:var(--bg);
-  padding:0 0 0;
-}
-
-/* Chapter header for each phase */
+.phases-section{background:var(--bg);padding:0 0 0;}
 .phase-chapter{
   position:relative;
   min-height:100vh;
   display:flex;
   overflow:hidden;
 }
-
-/* Left fixed panel */
 .phase-fixed{
   position:sticky;top:0;
   width:42%;min-height:100vh;
@@ -503,9 +452,7 @@ body::before{
   padding:100px 80px;
   overflow:hidden;
 }
-.phase-fixed-bg{
-  position:absolute;inset:0;z-index:0;
-}
+.phase-fixed-bg{position:absolute;inset:0;z-index:0;}
 .phase-fixed-bg img{
   width:100%;height:100%;object-fit:cover;
   filter:brightness(.22) saturate(1.3);
@@ -520,7 +467,6 @@ body::before{
     linear-gradient(to bottom,rgba(3,3,3,.5) 0%,transparent 30%);
 }
 .phase-fixed-content{position:relative;z-index:5;}
-
 .phase-num-giant{
   font-family:var(--font-display);
   font-size:clamp(130px,16vw,220px);
@@ -530,29 +476,23 @@ body::before{
   transition:color .8s;
 }
 .phase-chapter:hover .phase-num-giant{color:rgba(200,255,62,0.11);}
-
 .phase-tag{
   font-family:var(--font-cond);font-size:10px;font-weight:700;
   letter-spacing:4px;color:var(--accent);text-transform:uppercase;
-  margin-bottom:20px;display:block;
-  position:relative;
+  margin-bottom:20px;display:block;position:relative;
 }
 .phase-tag::before{
   content:'';display:inline-block;
   width:20px;height:1px;background:var(--accent);
   margin-right:10px;vertical-align:middle;
 }
-
 .phase-name{
   font-family:var(--font-display);
   font-size:clamp(60px,7vw,96px);
   line-height:.88;color:white;
-  letter-spacing:-1px;
-  position:relative;z-index:5;
+  letter-spacing:-1px;position:relative;z-index:5;
 }
 .phase-name em{font-style:normal;color:var(--accent);}
-
-/* Right scrollable panel */
 .phase-scroll{
   flex:1;
   padding:120px 80px 120px 60px;
@@ -565,8 +505,6 @@ body::before{
   max-width:580px;margin-bottom:70px;
 }
 .phase-intro strong{color:var(--text);}
-
-/* ─── What You Get grid ─── */
 .phase-deliverables{
   display:grid;grid-template-columns:1fr 1fr;
   gap:16px;margin-bottom:60px;
@@ -597,12 +535,8 @@ body::before{
   font-family:var(--font-cond);font-size:14px;font-weight:700;
   letter-spacing:1.5px;color:white;text-transform:uppercase;
 }
-.deliverable-desc{
-  font-size:12px;line-height:1.7;
-  color:rgba(240,237,232,0.5);
-}
+.deliverable-desc{font-size:12px;line-height:1.7;color:rgba(240,237,232,0.5);}
 
-/* ─── Phase horizontal separator with number ─── */
 .phase-separator{
   display:flex;align-items:center;gap:24px;
   padding:0 80px;
@@ -613,8 +547,7 @@ body::before{
 }
 .phase-sep-num{
   font-family:var(--font-display);font-size:80px;
-  color:rgba(200,255,62,0.06);line-height:1;
-  flex-shrink:0;
+  color:rgba(200,255,62,0.06);line-height:1;flex-shrink:0;
 }
 .phase-sep-bar{flex:1;height:1px;background:linear-gradient(to right,var(--accent),transparent);}
 .phase-sep-label{
@@ -622,16 +555,13 @@ body::before{
   letter-spacing:4px;color:var(--muted);text-transform:uppercase;
 }
 
-/* ════════════════════════════════════════════════════════════
-   ASSESSMENT FORM — Fase 1
-════════════════════════════════════════════════════════════ */
+/* ── ASSESSMENT SECTION ── */
 .assessment-section{
   background:var(--bg3);
   border-top:1px solid var(--line);
   padding:160px 80px;
   position:relative;overflow:hidden;
 }
-/* Background number watermark */
 .assessment-section::before{
   content:'01';
   position:absolute;right:-30px;top:50%;transform:translateY(-50%);
@@ -639,7 +569,6 @@ body::before{
   color:rgba(200,255,62,0.025);line-height:1;
   pointer-events:none;z-index:0;
 }
-
 .assessment-header{
   max-width:1400px;margin:0 auto 100px;
   display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:end;
@@ -649,44 +578,32 @@ body::before{
   color:rgba(240,237,232,0.55);
 }
 .assessment-intro-text strong{color:var(--text);}
-
 .assessment-form-wrap{
   max-width:1400px;margin:0 auto;
   position:relative;z-index:5;
 }
-
-/* Progress track */
 .form-progress-track{
   display:flex;gap:0;margin-bottom:80px;
-  border:1px solid var(--line);
-  overflow:hidden;
+  border:1px solid var(--line);overflow:hidden;
 }
 .form-progress-step{
   flex:1;padding:20px 24px;
   border-right:1px solid var(--line);
-  background:transparent;
-  transition:background .4s;
-  display:flex;align-items:center;gap:14px;
-  cursor:pointer;
+  background:transparent;transition:background .4s;
+  display:flex;align-items:center;gap:14px;cursor:pointer;
 }
 .form-progress-step:last-child{border-right:none;}
 .form-progress-step.active{background:rgba(200,255,62,0.06);}
 .form-progress-step.done{background:rgba(200,255,62,0.03);}
 .fps-num{
   width:28px;height:28px;border-radius:50%;
-  border:1px solid rgba(255,255,255,0.12);
-  background:transparent;
+  border:1px solid rgba(255,255,255,0.12);background:transparent;
   font-family:var(--font-display);font-size:18px;
   color:var(--muted);display:flex;align-items:center;justify-content:center;
   transition:all .4s;flex-shrink:0;
 }
-.form-progress-step.active .fps-num{
-  border-color:var(--accent);color:var(--accent);
-  box-shadow:0 0 20px rgba(200,255,62,0.2);
-}
-.form-progress-step.done .fps-num{
-  background:var(--accent);color:black;border-color:var(--accent);
-}
+.form-progress-step.active .fps-num{border-color:var(--accent);color:var(--accent);box-shadow:0 0 20px rgba(200,255,62,0.2);}
+.form-progress-step.done .fps-num{background:var(--accent);color:black;border-color:var(--accent);}
 .fps-label{
   font-family:var(--font-cond);font-size:11px;font-weight:700;
   letter-spacing:2px;color:rgba(240,237,232,0.35);
@@ -695,36 +612,29 @@ body::before{
 .form-progress-step.active .fps-label{color:var(--accent);}
 .form-progress-step.done .fps-label{color:rgba(240,237,232,0.5);}
 
-/* Form panels */
 .form-panel{display:none;}
 .form-panel.active{display:block;}
-
 .form-area-title{
   font-family:var(--font-display);font-size:56px;
   color:white;margin-bottom:12px;line-height:.9;
 }
 .form-area-subtitle{
   font-size:15px;line-height:1.7;
-  color:rgba(240,237,232,0.45);margin-bottom:56px;
-  max-width:600px;
+  color:rgba(240,237,232,0.45);margin-bottom:56px;max-width:600px;
 }
-
 .questions-grid{
   display:grid;grid-template-columns:1fr 1fr;
   gap:24px;margin-bottom:56px;
 }
 .question-card{
-  border:1px solid var(--line);
-  background:var(--surface);
-  padding:32px 28px;
-  position:relative;overflow:hidden;
+  border:1px solid var(--line);background:var(--surface);
+  padding:32px 28px;position:relative;overflow:hidden;
   transition:border-color .3s,background .3s;
 }
 .question-card:has(input:checked),
 .question-card:has(input:focus),
 .question-card:has(textarea:focus){
-  border-color:rgba(200,255,62,0.2);
-  background:rgba(200,255,62,0.025);
+  border-color:rgba(200,255,62,0.2);background:rgba(200,255,62,0.025);
 }
 .question-card::before{
   content:'';position:absolute;top:0;left:0;bottom:0;width:2px;
@@ -733,34 +643,22 @@ body::before{
 }
 .question-card:has(input:focus)::before,
 .question-card:has(textarea:focus)::before{transform:scaleY(1);}
-
 .q-label{
   font-family:var(--font-cond);font-size:10px;font-weight:700;
   letter-spacing:3px;color:var(--accent);text-transform:uppercase;
   margin-bottom:12px;display:block;
 }
-.q-text{
-  font-size:15px;font-weight:600;color:rgba(240,237,232,0.85);
-  margin-bottom:20px;line-height:1.5;
-}
-.q-note{
-  font-size:12px;color:var(--muted);font-style:italic;
-  margin-bottom:18px;display:block;
-}
-
-/* Slider */
+.q-text{font-size:15px;font-weight:600;color:rgba(240,237,232,0.85);margin-bottom:20px;line-height:1.5;}
+.q-note{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:18px;display:block;}
 .q-slider-wrap{display:flex;flex-direction:column;gap:10px;}
 .q-slider{
   width:100%;-webkit-appearance:none;
-  height:3px;background:var(--line2);border-radius:2px;cursor:pointer;
-  outline:none;
+  height:3px;background:var(--line2);border-radius:2px;cursor:pointer;outline:none;
 }
 .q-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:18px;height:18px;border-radius:50%;
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
   background:var(--accent);cursor:pointer;
-  box-shadow:0 0 12px rgba(200,255,62,0.4);
-  transition:transform .2s;
+  box-shadow:0 0 12px rgba(200,255,62,0.4);transition:transform .2s;
 }
 .q-slider::-webkit-slider-thumb:hover{transform:scale(1.3);}
 .q-slider-labels{
@@ -768,75 +666,162 @@ body::before{
   font-family:var(--font-cond);font-size:9px;font-weight:700;
   letter-spacing:2px;color:var(--muted);text-transform:uppercase;
 }
-.q-slider-value{
-  text-align:right;font-family:var(--font-display);font-size:32px;
-  color:var(--accent);line-height:1;
-}
-
-/* Textarea */
+.q-slider-value{text-align:right;font-family:var(--font-display);font-size:32px;color:var(--accent);line-height:1;}
 .q-textarea{
-  width:100%;background:transparent;
-  border:none;border-bottom:1px solid var(--line2);
-  color:var(--text);font-family:var(--font-body);font-size:14px;
-  line-height:1.7;padding:12px 0;resize:none;outline:none;
-  transition:border-color .3s;
+  width:100%;background:transparent;border:none;
+  border-bottom:1px solid var(--line2);color:var(--text);
+  font-family:var(--font-body);font-size:14px;line-height:1.7;
+  padding:12px 0;resize:none;outline:none;transition:border-color .3s;
 }
 .q-textarea::placeholder{color:var(--muted);}
 .q-textarea:focus{border-bottom-color:var(--accent);}
-
-/* Radio chips */
 .q-chips{display:flex;flex-wrap:wrap;gap:8px;}
 .q-chip{
-  padding:9px 18px;
-  border:1px solid var(--line);
-  background:transparent;cursor:pointer;
+  padding:9px 18px;border:1px solid var(--line);background:transparent;cursor:pointer;
   font-family:var(--font-cond);font-size:11px;font-weight:700;
-  letter-spacing:2px;color:rgba(240,237,232,0.5);
-  text-transform:uppercase;transition:all .3s;
+  letter-spacing:2px;color:rgba(240,237,232,0.5);text-transform:uppercase;transition:all .3s;
 }
-.q-chip.selected,.q-chip:hover{
-  border-color:var(--accent);
-  background:rgba(200,255,62,0.08);
-  color:var(--accent);
-}
-
-/* Full width question */
+.q-chip.selected,.q-chip:hover{border-color:var(--accent);background:rgba(200,255,62,0.08);color:var(--accent);}
 .questions-grid .q-full{grid-column:1/-1;}
 
-/* Score display */
+/* ── SCORE DISPLAY ── */
 .assessment-score{
   display:grid;grid-template-columns:repeat(4,1fr);
   gap:3px;margin-bottom:56px;
 }
 .score-cell{
-  padding:32px 24px;
-  background:var(--surface);border:1px solid var(--line);
+  padding:32px 24px;background:var(--surface);border:1px solid var(--line);
   text-align:center;transition:background .4s;
 }
-.score-cell.highlighted{
-  background:rgba(200,255,62,0.06);
-  border-color:rgba(200,255,62,0.15);
-}
+.score-cell.highlighted{background:rgba(200,255,62,0.06);border-color:rgba(200,255,62,0.15);}
 .score-area{
   font-family:var(--font-cond);font-size:9px;font-weight:700;
   letter-spacing:3px;color:var(--muted);text-transform:uppercase;
   margin-bottom:12px;display:block;
 }
-.score-num{
-  font-family:var(--font-display);font-size:52px;
-  line-height:1;color:var(--accent);
-}
-.score-bar-wrap{
-  height:3px;background:var(--line);margin-top:12px;border-radius:2px;
-  overflow:hidden;
-}
-.score-bar-fill{
-  height:100%;border-radius:2px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  width:0%;transition:width 1.5s cubic-bezier(.16,1,.3,1);
-}
+.score-num{font-family:var(--font-display);font-size:52px;line-height:1;}
+.score-num.danger{color:var(--red);}
+.score-num.warning{color:var(--orange);}
+.score-num.ok{color:var(--accent);}
+.score-num.good{color:var(--accent);}
+.score-bar-wrap{height:3px;background:var(--line);margin-top:12px;border-radius:2px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:2px;width:0%;transition:width 1.5s cubic-bezier(.16,1,.3,1);}
+.score-bar-fill.danger{background:linear-gradient(90deg,var(--red),#ff6b6b);}
+.score-bar-fill.warning{background:linear-gradient(90deg,var(--orange),#ffb347);}
+.score-bar-fill.ok{background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.score-bar-fill.good{background:linear-gradient(90deg,var(--accent),var(--accent2));}
 
-/* Form nav */
+/* ── DIAGNOSIS BLOCK ── */
+.diagnosis-block{
+  padding:40px;
+  border:1px solid rgba(255,69,69,0.2);
+  background:rgba(255,69,69,0.03);
+  margin-bottom:28px;
+  position:relative;overflow:hidden;
+}
+.diagnosis-block.warning-level{
+  border-color:rgba(255,140,66,0.2);
+  background:rgba(255,140,66,0.03);
+}
+.diagnosis-block.ok-level{
+  border-color:rgba(200,255,62,0.15);
+  background:rgba(200,255,62,0.025);
+}
+.diagnosis-block::before{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:4px;
+}
+.diagnosis-block.danger-level::before{background:var(--red);}
+.diagnosis-block.warning-level::before{background:var(--orange);}
+.diagnosis-block.ok-level::before{background:var(--accent);}
+
+.diag-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;
+}
+.diag-area-name{
+  font-family:var(--font-display);font-size:28px;color:white;
+}
+.diag-verdict{
+  font-family:var(--font-cond);font-size:10px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;padding:6px 14px;
+  border-radius:0;
+}
+.diag-verdict.danger{color:var(--red);border:1px solid rgba(255,69,69,0.3);background:rgba(255,69,69,0.08);}
+.diag-verdict.warning{color:var(--orange);border:1px solid rgba(255,140,66,0.3);background:rgba(255,140,66,0.08);}
+.diag-verdict.ok{color:var(--accent);border:1px solid rgba(200,255,62,0.2);background:rgba(200,255,62,0.05);}
+
+.diag-text{
+  font-size:15px;line-height:1.8;
+  color:rgba(240,237,232,0.65);
+}
+.diag-text strong{color:var(--text);}
+
+.diag-bullets{margin-top:20px;display:flex;flex-direction:column;gap:8px;}
+.diag-bullet{
+  display:flex;align-items:flex-start;gap:12px;
+  font-size:13px;color:rgba(240,237,232,0.55);line-height:1.5;
+}
+.diag-bullet-dot{
+  width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px;
+}
+.danger-level .diag-bullet-dot{background:var(--red);}
+.warning-level .diag-bullet-dot{background:var(--orange);}
+.ok-level .diag-bullet-dot{background:var(--accent);}
+
+/* ── OVERALL VERDICT ── */
+.overall-verdict{
+  padding:44px;
+  border:1px solid rgba(200,255,62,0.1);
+  background:var(--bg);
+  margin-bottom:48px;
+  position:relative;overflow:hidden;
+}
+.overall-verdict::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+}
+.verdict-title{
+  font-family:var(--font-display);font-size:48px;
+  color:white;margin-bottom:20px;line-height:.9;
+}
+.verdict-score-big{
+  font-family:var(--font-display);font-size:100px;
+  line-height:1;margin-bottom:8px;
+}
+.verdict-label{
+  font-family:var(--font-cond);font-size:11px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;display:block;
+}
+.verdict-body{
+  font-size:17px;line-height:1.85;
+  color:rgba(240,237,232,0.6);max-width:700px;
+}
+.verdict-body strong{color:var(--text);}
+
+/* ── DOWNLOAD BUTTON ── */
+.btn-download{
+  position:relative;overflow:hidden;
+  font-family:var(--font-cond);font-size:12px;font-weight:800;
+  letter-spacing:3px;text-transform:uppercase;
+  color:black;background:var(--accent);
+  border:none;padding:18px 44px;cursor:pointer;
+  clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+  transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;
+  display:inline-flex;align-items:center;gap:12px;
+}
+.btn-download::before{
+  content:'';position:absolute;top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);
+  transform:skewX(-25deg);transition:left .7s;
+}
+.btn-download:hover::before{left:150%;}
+.btn-download:hover{
+  transform:translateY(-4px) scale(1.02);
+  box-shadow:0 20px 60px rgba(200,255,62,.4);
+}
+.btn-download svg{width:16px;height:16px;flex-shrink:0;}
+
 .form-nav{
   display:flex;justify-content:space-between;align-items:center;
   padding-top:40px;border-top:1px solid var(--line);
@@ -846,44 +831,29 @@ body::before{
   letter-spacing:2.5px;color:var(--muted);text-transform:uppercase;
 }
 
-/* ════════════════════════════════════════════════════════════
-   ARCHITECTURE PHASE — Plantillas + Pautas
-════════════════════════════════════════════════════════════ */
+/* ARCHITECTURE SECTION */
 .arch-section{
   background:var(--bg);padding:160px 80px;
-  border-top:1px solid var(--line);
-  position:relative;overflow:hidden;
+  border-top:1px solid var(--line);position:relative;overflow:hidden;
 }
 .arch-section::before{
   content:'02';
   position:absolute;left:-40px;top:50%;transform:translateY(-50%);
   font-family:var(--font-display);font-size:400px;
-  color:rgba(200,255,62,0.022);line-height:1;
-  pointer-events:none;z-index:0;
+  color:rgba(200,255,62,0.022);line-height:1;pointer-events:none;z-index:0;
 }
 .arch-inner{max-width:1400px;margin:0 auto;position:relative;z-index:1;}
 .arch-header{
   display:grid;grid-template-columns:1fr 1fr;gap:100px;
   align-items:end;margin-bottom:110px;
 }
-.arch-desc{
-  font-size:18px;line-height:1.85;
-  color:rgba(240,237,232,0.55);
-}
+.arch-desc{font-size:18px;line-height:1.85;color:rgba(240,237,232,0.55);}
 .arch-desc strong{color:var(--text);}
-
-/* The framework showcase */
-.arch-framework{
-  display:grid;grid-template-columns:1fr 1fr 1fr;
-  gap:3px;
-}
+.arch-framework{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;}
 .arch-block{
-  padding:52px 40px;
-  background:var(--surface);border:1px solid var(--line);
-  position:relative;overflow:hidden;
-  transition:background .5s;
-  display:flex;flex-direction:column;
-  min-height:380px;
+  padding:52px 40px;background:var(--surface);border:1px solid var(--line);
+  position:relative;overflow:hidden;transition:background .5s;
+  display:flex;flex-direction:column;min-height:380px;
 }
 .arch-block::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
@@ -896,634 +866,203 @@ body::before{
 .arch-block-num{
   font-family:var(--font-display);font-size:100px;
   color:rgba(200,255,62,0.05);line-height:1;
-  position:absolute;bottom:-10px;right:-10px;
-  letter-spacing:-4px;transition:color .5s;
+  position:absolute;bottom:-10px;right:-10px;letter-spacing:-4px;transition:color .5s;
 }
 .arch-block:hover .arch-block-num{color:rgba(200,255,62,0.09);}
 .arch-icon{
-  width:54px;height:54px;
-  border:1px solid rgba(200,255,62,0.15);
-  background:rgba(200,255,62,0.05);
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:36px;flex-shrink:0;
-  transition:background .4s,border-color .4s,box-shadow .4s;
+  width:54px;height:54px;border:1px solid rgba(200,255,62,0.15);
+  background:rgba(200,255,62,0.05);display:flex;align-items:center;justify-content:center;
+  margin-bottom:36px;flex-shrink:0;transition:background .4s,border-color .4s,box-shadow .4s;
 }
-.arch-block:hover .arch-icon{
-  background:rgba(200,255,62,0.1);
-  border-color:rgba(200,255,62,0.3);
-  box-shadow:0 0 28px rgba(200,255,62,0.12);
-}
-.arch-icon svg{
-  width:22px;height:22px;
-  stroke:var(--accent);fill:none;stroke-width:1.6;
-  stroke-linecap:round;stroke-linejoin:round;
-}
-.arch-block-title{
-  font-family:var(--font-display);font-size:44px;
-  color:white;margin-bottom:16px;line-height:.9;
-  letter-spacing:-.5px;position:relative;z-index:1;
-}
-.arch-block-desc{
-  font-size:14px;line-height:1.8;
-  color:rgba(240,237,232,0.5);
-  flex:1;position:relative;z-index:1;
-}
+.arch-block:hover .arch-icon{background:rgba(200,255,62,0.1);border-color:rgba(200,255,62,0.3);box-shadow:0 0 28px rgba(200,255,62,0.12);}
+.arch-icon svg{width:22px;height:22px;stroke:var(--accent);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.arch-block-title{font-family:var(--font-display);font-size:44px;color:white;margin-bottom:16px;line-height:.9;letter-spacing:-.5px;position:relative;z-index:1;}
+.arch-block-desc{font-size:14px;line-height:1.8;color:rgba(240,237,232,0.5);flex:1;position:relative;z-index:1;}
 .arch-block-tag{
-  margin-top:28px;
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
+  margin-top:28px;font-family:var(--font-cond);font-size:9px;font-weight:700;
   letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;
-  display:inline-flex;align-items:center;gap:8px;
-  position:relative;z-index:1;
+  display:inline-flex;align-items:center;gap:8px;position:relative;z-index:1;
 }
 .arch-block-tag::before{content:'→';font-size:14px;}
-
-/* Wide bottom block */
-.arch-wide{
-  grid-column:1/-1;
-  flex-direction:row;gap:80px;align-items:center;
-  min-height:260px;padding:52px 60px;
-}
+.arch-wide{grid-column:1/-1;flex-direction:row;gap:80px;align-items:center;min-height:260px;padding:52px 60px;}
 .arch-wide-left{flex:1;}
-.arch-wide-right{
-  flex:0 0 380px;
-  display:flex;flex-direction:column;gap:12px;
-}
+.arch-wide-right{flex:0 0 380px;display:flex;flex-direction:column;gap:12px;}
 .arch-timeline-item{
-  display:flex;align-items:center;gap:16px;
-  padding:14px 20px;
-  border:1px solid var(--line);
-  background:transparent;
-  transition:border-color .3s,background .3s;
+  display:flex;align-items:center;gap:16px;padding:14px 20px;
+  border:1px solid var(--line);background:transparent;transition:border-color .3s,background .3s;
 }
 .arch-timeline-item:hover{border-color:rgba(200,255,62,0.15);background:rgba(200,255,62,0.03);}
-.atl-week{
-  font-family:var(--font-display);font-size:26px;
-  color:rgba(200,255,62,0.4);flex-shrink:0;width:60px;
-}
+.atl-week{font-family:var(--font-display);font-size:26px;color:rgba(200,255,62,0.4);flex-shrink:0;width:60px;}
 .atl-bar{flex:1;height:2px;background:var(--line);border-radius:2px;overflow:hidden;}
-.atl-bar-fill{
-  height:100%;border-radius:2px;
-  background:linear-gradient(90deg,var(--accent),transparent);
-}
-.atl-label{
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
-  flex-shrink:0;width:100px;text-align:right;
-}
+.atl-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+.atl-label{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;flex-shrink:0;width:100px;text-align:right;}
 
-/* ════════════════════════════════════════════════════════════
-   EXECUTION PHASE — 90 Days tracker
-════════════════════════════════════════════════════════════ */
-.execution-section{
-  background:var(--bg3);padding:160px 80px;
-  border-top:1px solid var(--line);
-  position:relative;overflow:hidden;
-}
-.execution-section::before{
-  content:'03';
-  position:absolute;right:-40px;top:50%;transform:translateY(-50%);
-  font-family:var(--font-display);font-size:400px;
-  color:rgba(200,255,62,0.02);line-height:1;
-  pointer-events:none;z-index:0;
-}
+/* EXECUTION */
+.execution-section{background:var(--bg3);padding:160px 80px;border-top:1px solid var(--line);position:relative;overflow:hidden;}
+.execution-section::before{content:'03';position:absolute;right:-40px;top:50%;transform:translateY(-50%);font-family:var(--font-display);font-size:400px;color:rgba(200,255,62,0.02);line-height:1;pointer-events:none;z-index:0;}
 .exec-inner{max-width:1400px;margin:0 auto;position:relative;z-index:1;}
-.exec-header{
-  display:grid;grid-template-columns:1fr 1fr;gap:100px;
-  align-items:end;margin-bottom:100px;
-}
-.exec-desc{
-  font-size:18px;line-height:1.85;
-  color:rgba(240,237,232,0.55);
-}
+.exec-header{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:end;margin-bottom:100px;}
+.exec-desc{font-size:18px;line-height:1.85;color:rgba(240,237,232,0.55);}
 .exec-desc strong{color:var(--text);}
-
-/* Daily tracker */
-.daily-tracker{
-  border:1px solid var(--line);
-  background:var(--surface);
-  margin-bottom:40px;
-}
-.tracker-header{
-  padding:32px 40px;
-  border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.tracker-day{
-  font-family:var(--font-display);font-size:48px;
-  color:var(--accent);line-height:1;
-}
-.tracker-date{
-  font-family:var(--font-cond);font-size:11px;font-weight:700;
-  letter-spacing:3px;color:var(--muted);text-transform:uppercase;
-  margin-top:4px;
-}
-.tracker-completion{
-  text-align:right;
-}
-.completion-ring{
-  width:64px;height:64px;position:relative;
-}
+.daily-tracker{border:1px solid var(--line);background:var(--surface);margin-bottom:40px;}
+.tracker-header{padding:32px 40px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+.tracker-day{font-family:var(--font-display);font-size:48px;color:var(--accent);line-height:1;}
+.tracker-date{font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:4px;}
+.completion-ring{width:64px;height:64px;position:relative;}
 .completion-ring svg{transform:rotate(-90deg);}
 .completion-ring .ring-bg{stroke:rgba(255,255,255,0.05);}
-.completion-ring .ring-fill{
-  stroke:var(--accent);
-  stroke-dasharray:163;
-  stroke-dashoffset:163;
-  stroke-linecap:round;
-  transition:stroke-dashoffset 1.5s cubic-bezier(.16,1,.3,1);
-}
-.completion-pct{
-  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  font-family:var(--font-display);font-size:18px;color:var(--accent);
-}
-
+.completion-ring .ring-fill{stroke:var(--accent);stroke-dasharray:163;stroke-dashoffset:163;stroke-linecap:round;transition:stroke-dashoffset 1.5s cubic-bezier(.16,1,.3,1);}
+.completion-pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-display);font-size:18px;color:var(--accent);}
 .tracker-body{padding:40px;}
-.tracker-areas{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:16px;margin-bottom:40px;
-}
-.tracker-area{
-  padding:24px 20px;
-  border:1px solid var(--line);
-  background:var(--bg);
-  display:flex;flex-direction:column;gap:16px;
-  transition:border-color .4s;
-  position:relative;overflow:hidden;
-}
-.tracker-area::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:var(--accent);transform:scaleX(0);transform-origin:left;
-  transition:transform .5s cubic-bezier(.16,1,.3,1);
-}
+.tracker-areas{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;}
+.tracker-area{padding:24px 20px;border:1px solid var(--line);background:var(--bg);display:flex;flex-direction:column;gap:16px;transition:border-color .4s;position:relative;overflow:hidden;}
+.tracker-area::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.16,1,.3,1);}
 .tracker-area:has(input:checked)::after{transform:scaleX(1);}
 .tracker-area:has(input:checked){border-color:rgba(200,255,62,0.2);}
 .ta-icon{font-size:22px;}
-.ta-name{
-  font-family:var(--font-cond);font-size:11px;font-weight:700;
-  letter-spacing:2px;color:rgba(240,237,232,0.6);text-transform:uppercase;
-}
+.ta-name{font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:2px;color:rgba(240,237,232,0.6);text-transform:uppercase;}
 .ta-checks{display:flex;flex-direction:column;gap:10px;}
-.ta-check{
-  display:flex;align-items:center;gap:10px;cursor:pointer;
-}
-.ta-check input[type=checkbox]{
-  width:16px;height:16px;cursor:pointer;
-  accent-color:var(--accent);
-}
-.ta-check-label{
-  font-size:12px;color:rgba(240,237,232,0.5);
-  line-height:1.4;cursor:pointer;
-}
-.ta-check:has(input:checked) .ta-check-label{
-  color:var(--text);
-  text-decoration:line-through;
-  text-decoration-color:var(--accent);
-}
-
-/* Notes row */
-.tracker-notes{
-  display:grid;grid-template-columns:1fr 1fr;gap:16px;
-}
-.tracker-note-field{
-  border:1px solid var(--line);
-  background:var(--bg);padding:20px;
-  display:flex;flex-direction:column;gap:12px;
-}
-.tnf-label{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
-}
-.tnf-textarea{
-  background:transparent;border:none;
-  color:var(--text);font-family:var(--font-body);font-size:13px;
-  line-height:1.7;resize:none;outline:none;
-  min-height:80px;
-}
+.ta-check{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.ta-check input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--accent);}
+.ta-check-label{font-size:12px;color:rgba(240,237,232,0.5);line-height:1.4;cursor:pointer;}
+.ta-check:has(input:checked) .ta-check-label{color:var(--text);text-decoration:line-through;text-decoration-color:var(--accent);}
+.tracker-notes{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.tracker-note-field{border:1px solid var(--line);background:var(--bg);padding:20px;display:flex;flex-direction:column;gap:12px;}
+.tnf-label{font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;}
+.tnf-textarea{background:transparent;border:none;color:var(--text);font-family:var(--font-body);font-size:13px;line-height:1.7;resize:none;outline:none;min-height:80px;}
 .tnf-textarea::placeholder{color:var(--muted);}
-
-/* 90 day grid visual */
-.ninety-grid{
-  display:flex;flex-direction:column;gap:24px;
-}
-.ninety-grid-header{
-  display:flex;justify-content:space-between;align-items:center;
-}
-.ninety-grid-title{
-  font-family:var(--font-cond);font-size:11px;font-weight:700;
-  letter-spacing:3px;color:var(--muted);text-transform:uppercase;
-}
-.ninety-grid-legend{
-  display:flex;align-items:center;gap:20px;
-}
-.legend-item{
-  display:flex;align-items:center;gap:8px;
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:2px;color:var(--muted);text-transform:uppercase;
-}
+.ninety-grid{display:flex;flex-direction:column;gap:24px;}
+.ninety-grid-header{display:flex;justify-content:space-between;align-items:center;}
+.ninety-grid-title{font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
+.ninety-grid-legend{display:flex;align-items:center;gap:20px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
 .legend-dot{width:10px;height:10px;border-radius:2px;}
 .legend-dot.done{background:var(--accent);}
 .legend-dot.partial{background:rgba(200,255,62,0.3);}
 .legend-dot.miss{background:rgba(255,69,69,0.25);}
 .legend-dot.empty{background:rgba(255,255,255,0.06);border:1px solid var(--line);}
-
-.day-blocks{
-  display:grid;grid-template-columns:repeat(30,1fr);
-  gap:3px;
-}
-.day-block{
-  aspect-ratio:1;border-radius:2px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.04);
-  transition:transform .2s,box-shadow .2s;
-  cursor:default;
-  position:relative;
-}
+.day-blocks{display:grid;grid-template-columns:repeat(30,1fr);gap:3px;}
+.day-block{aspect-ratio:1;border-radius:2px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.04);transition:transform .2s,box-shadow .2s;cursor:default;position:relative;}
 .day-block:hover{transform:scale(1.4);z-index:10;}
-.day-block.done{
-  background:var(--accent);
-  border-color:rgba(200,255,62,0.5);
-}
+.day-block.done{background:var(--accent);border-color:rgba(200,255,62,0.5);}
 .day-block.done:hover{box-shadow:0 0 14px rgba(200,255,62,0.5);}
-.day-block.partial{
-  background:rgba(200,255,62,0.3);
-  border-color:rgba(200,255,62,0.3);
-}
-.day-block.miss{
-  background:rgba(255,69,69,0.2);
-  border-color:rgba(255,69,69,0.2);
-}
-.day-block.today{
-  border:1.5px solid var(--accent);
-  animation:todayPulse 2s ease-in-out infinite;
-}
-@keyframes todayPulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(200,255,62,0.3);}
-  50%{box-shadow:0 0 0 4px rgba(200,255,62,0);}
-}
+.day-block.partial{background:rgba(200,255,62,0.3);border-color:rgba(200,255,62,0.3);}
+.day-block.miss{background:rgba(255,69,69,0.2);border-color:rgba(255,69,69,0.2);}
+.day-block.today{border:1.5px solid var(--accent);animation:todayPulse 2s ease-in-out infinite;}
+@keyframes todayPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,255,62,0.3);}50%{box-shadow:0 0 0 4px rgba(200,255,62,0);}}
 
-/* ════════════════════════════════════════════════════════════
-   IDENTITY PHASE — Evaluación final
-════════════════════════════════════════════════════════════ */
-.identity-section{
-  background:var(--bg2);padding:160px 80px;
-  border-top:1px solid var(--line);
-  position:relative;overflow:hidden;
-}
-.identity-section::before{
-  content:'04';
-  position:absolute;left:-40px;top:50%;transform:translateY(-50%);
-  font-family:var(--font-display);font-size:400px;
-  color:rgba(200,255,62,0.02);line-height:1;
-  pointer-events:none;z-index:0;
-}
+/* IDENTITY */
+.identity-section{background:var(--bg2);padding:160px 80px;border-top:1px solid var(--line);position:relative;overflow:hidden;}
+.identity-section::before{content:'04';position:absolute;left:-40px;top:50%;transform:translateY(-50%);font-family:var(--font-display);font-size:400px;color:rgba(200,255,62,0.02);line-height:1;pointer-events:none;z-index:0;}
 .ident-inner{max-width:1400px;margin:0 auto;position:relative;z-index:1;}
-.ident-header{
-  text-align:center;margin-bottom:120px;max-width:800px;margin-left:auto;margin-right:auto;
-}
-.ident-header p{
-  font-size:20px;line-height:1.8;
-  color:rgba(240,237,232,0.55);margin-top:32px;
-}
+.ident-header{text-align:center;margin-bottom:120px;max-width:800px;margin-left:auto;margin-right:auto;}
+.ident-header p{font-size:20px;line-height:1.8;color:rgba(240,237,232,0.55);margin-top:32px;}
 .ident-header strong{color:var(--text);}
-
-/* Before / After comparison */
-.before-after{
-  display:grid;grid-template-columns:1fr 80px 1fr;
-  gap:0;align-items:center;margin-bottom:100px;
-}
-.ba-side{
-  border:1px solid var(--line);
-  background:var(--surface);
-}
-.ba-side.after{
-  border-color:rgba(200,255,62,0.12);
-  background:rgba(200,255,62,0.028);
-}
-.ba-header{
-  padding:28px 36px;
-  border-bottom:1px solid var(--line);
-  display:flex;align-items:center;justify-content:space-between;
-}
+.before-after{display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:center;margin-bottom:100px;}
+.ba-side{border:1px solid var(--line);background:var(--surface);}
+.ba-side.after{border-color:rgba(200,255,62,0.12);background:rgba(200,255,62,0.028);}
+.ba-header{padding:28px 36px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
 .ba-side.after .ba-header{border-bottom-color:rgba(200,255,62,0.1);}
-.ba-label{
-  font-family:var(--font-display);font-size:32px;
-  line-height:1;
-}
+.ba-label{font-family:var(--font-display);font-size:32px;line-height:1;}
 .ba-side.before .ba-label{color:rgba(255,255,255,0.25);}
 .ba-side.after .ba-label{color:var(--accent);}
-.ba-badge{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:2.5px;text-transform:uppercase;padding:5px 12px;
-}
+.ba-badge{font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:5px 12px;}
 .ba-side.before .ba-badge{color:var(--muted);border:1px solid var(--line);}
 .ba-side.after .ba-badge{color:var(--accent);border:1px solid rgba(200,255,62,0.25);}
 .ba-items{padding:32px 36px;display:flex;flex-direction:column;gap:20px;}
-.ba-item{
-  display:flex;align-items:flex-start;gap:14px;
-  font-size:14px;line-height:1.6;
-}
+.ba-item{display:flex;align-items:flex-start;gap:14px;font-size:14px;line-height:1.6;}
 .ba-side.before .ba-item{color:rgba(240,237,232,0.45);}
 .ba-side.after .ba-item{color:rgba(240,237,232,0.8);}
-.ba-dot{
-  width:6px;height:6px;border-radius:50%;
-  flex-shrink:0;margin-top:6px;
-}
+.ba-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px;}
 .ba-side.before .ba-dot{background:rgba(255,255,255,0.15);}
 .ba-side.after .ba-dot{background:var(--accent);}
-
-.ba-divider{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:16px;
-}
-.ba-arrow-icon{
-  width:48px;height:48px;border-radius:50%;
-  border:1px solid rgba(200,255,62,0.25);
-  background:rgba(200,255,62,0.06);
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;
-  animation:arrowPulse 2.5s ease-in-out infinite;
-}
-@keyframes arrowPulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(200,255,62,0.2);}
-  50%{box-shadow:0 0 0 8px rgba(200,255,62,0);}
-}
-.ba-days{
-  font-family:var(--font-display);font-size:22px;
-  color:rgba(200,255,62,0.3);writing-mode:vertical-rl;
-  transform:rotate(180deg);letter-spacing:3px;
-}
-
-/* Identity areas radar-style visual */
-.ident-areas{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:3px;margin-bottom:80px;
-}
-.ident-area{
-  padding:44px 32px;
-  border:1px solid var(--line);
-  background:var(--surface);
-  display:flex;flex-direction:column;gap:20px;
-  position:relative;overflow:hidden;
-  transition:background .4s,border-color .4s;
-}
-.ident-area::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--accent);transform:scaleX(0);transform-origin:left;
-  transition:transform .7s cubic-bezier(.16,1,.3,1);
-}
+.ba-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.ba-arrow-icon{width:48px;height:48px;border-radius:50%;border:1px solid rgba(200,255,62,0.25);background:rgba(200,255,62,0.06);display:flex;align-items:center;justify-content:center;font-size:20px;animation:arrowPulse 2.5s ease-in-out infinite;}
+@keyframes arrowPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,255,62,0.2);}50%{box-shadow:0 0 0 8px rgba(200,255,62,0);}}
+.ba-days{font-family:var(--font-display);font-size:22px;color:rgba(200,255,62,0.3);writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:3px;}
+.ident-areas{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:80px;}
+.ident-area{padding:44px 32px;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:20px;position:relative;overflow:hidden;transition:background .4s,border-color .4s;}
+.ident-area::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .7s cubic-bezier(.16,1,.3,1);}
 .ident-area:hover::before{transform:scaleX(1);}
 .ident-area:hover{background:rgba(200,255,62,0.03);border-color:rgba(200,255,62,0.1);}
 .ia-emoji{font-size:28px;}
-.ia-name{
-  font-family:var(--font-display);font-size:36px;
-  color:white;line-height:.9;
-}
+.ia-name{font-family:var(--font-display);font-size:36px;color:white;line-height:.9;}
 .ia-check-list{display:flex;flex-direction:column;gap:10px;}
-.ia-check{
-  display:flex;align-items:center;gap:10px;cursor:pointer;
-}
+.ia-check{display:flex;align-items:center;gap:10px;cursor:pointer;}
 .ia-check input{accent-color:var(--accent);width:14px;height:14px;}
-.ia-check-text{
-  font-size:12px;color:rgba(240,237,232,0.5);
-  cursor:pointer;transition:color .3s;
-}
-.ia-check:has(input:checked) .ia-check-text{
-  color:var(--accent);
-}
+.ia-check-text{font-size:12px;color:rgba(240,237,232,0.5);cursor:pointer;transition:color .3s;}
+.ia-check:has(input:checked) .ia-check-text{color:var(--accent);}
 
-/* ════════════════════════════════════════════════════════════
-   SYSTEM OVERVIEW TIMELINE — cinematic version
-════════════════════════════════════════════════════════════ */
-.overview-section{
-  position:relative;overflow:hidden;padding:180px 80px;
-  background:var(--bg);border-top:1px solid var(--line);
-}
+/* OVERVIEW */
+.overview-section{position:relative;overflow:hidden;padding:180px 80px;background:var(--bg);border-top:1px solid var(--line);}
 .overview-inner{max-width:1400px;margin:0 auto;}
-.overview-header{
-  text-align:center;margin-bottom:140px;
-}
+.overview-header{text-align:center;margin-bottom:140px;}
+.timeline-track{position:relative;display:flex;align-items:flex-start;gap:0;}
+.timeline-track::before{content:'';position:absolute;top:32px;left:80px;right:80px;height:1px;background:linear-gradient(90deg,var(--accent),rgba(200,255,62,0.25),var(--accent));z-index:0;}
+.tl-node{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;padding:0 24px;cursor:pointer;}
+.tl-circle{width:64px;height:64px;border-radius:50%;background:var(--bg);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:36px;box-shadow:0 0 0 8px var(--bg),0 0 30px rgba(200,255,62,0.15);transition:box-shadow .5s,background .5s;}
+.tl-node:hover .tl-circle{background:rgba(200,255,62,0.08);box-shadow:0 0 0 8px var(--bg),0 0 50px rgba(200,255,62,0.3);}
+.tl-circle-num{font-family:var(--font-display);font-size:26px;color:var(--accent);}
+.tl-phase{font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:10px;}
+.tl-title{font-family:var(--font-display);font-size:36px;color:white;line-height:.9;text-align:center;margin-bottom:16px;}
+.tl-desc{font-size:12px;line-height:1.7;color:rgba(240,237,232,0.45);text-align:center;max-width:200px;}
+.tl-time{margin-top:20px;padding:6px 16px;border:1px solid rgba(200,255,62,0.18);background:rgba(200,255,62,0.05);font-family:var(--font-cond);font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;}
 
-/* Horizontal timeline */
-.timeline-track{
-  position:relative;display:flex;align-items:flex-start;
-  gap:0;
-}
-.timeline-track::before{
-  content:'';position:absolute;
-  top:32px;left:80px;right:80px;height:1px;
-  background:linear-gradient(90deg,var(--accent),rgba(200,255,62,0.25),var(--accent));
-  z-index:0;
-}
-.tl-node{
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  position:relative;z-index:1;padding:0 24px;
-  cursor:pointer;
-}
-.tl-circle{
-  width:64px;height:64px;border-radius:50%;
-  background:var(--bg);border:2px solid var(--accent);
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:36px;
-  box-shadow:0 0 0 8px var(--bg),0 0 30px rgba(200,255,62,0.15);
-  transition:box-shadow .5s,background .5s;
-}
-.tl-node:hover .tl-circle{
-  background:rgba(200,255,62,0.08);
-  box-shadow:0 0 0 8px var(--bg),0 0 50px rgba(200,255,62,0.3);
-}
-.tl-circle-num{
-  font-family:var(--font-display);font-size:26px;
-  color:var(--accent);
-}
-.tl-phase{
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:3px;color:var(--accent);text-transform:uppercase;
-  margin-bottom:10px;
-}
-.tl-title{
-  font-family:var(--font-display);font-size:36px;
-  color:white;line-height:.9;text-align:center;
-  margin-bottom:16px;
-}
-.tl-desc{
-  font-size:12px;line-height:1.7;
-  color:rgba(240,237,232,0.45);text-align:center;
-  max-width:200px;
-}
-.tl-time{
-  margin-top:20px;padding:6px 16px;
-  border:1px solid rgba(200,255,62,0.18);
-  background:rgba(200,255,62,0.05);
-  font-family:var(--font-cond);font-size:9px;font-weight:700;
-  letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;
-}
-
-/* ════════════════════════════════════════════════════════════
-   TICKER
-════════════════════════════════════════════════════════════ */
-.ticker{
-  background:var(--accent);overflow:hidden;
-  white-space:nowrap;padding:17px 0;position:relative;z-index:20;
-}
+/* TICKER */
+.ticker{background:var(--accent);overflow:hidden;white-space:nowrap;padding:17px 0;position:relative;z-index:20;}
 .ticker-inner{display:inline-flex;animation:tickerMove 24s linear infinite;}
 .ticker-item{display:inline-flex;align-items:center;gap:28px;padding:0 32px;}
-.ticker-item span{
-  font-family:var(--font-cond);font-size:12px;font-weight:800;
-  letter-spacing:3.5px;color:black;text-transform:uppercase;
-}
+.ticker-item span{font-family:var(--font-cond);font-size:12px;font-weight:800;letter-spacing:3.5px;color:black;text-transform:uppercase;}
 .ticker-dot{width:4px;height:4px;background:black;border-radius:50%;opacity:.35;}
 @keyframes tickerMove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
-/* ════════════════════════════════════════════════════════════
-   FINAL CTA
-════════════════════════════════════════════════════════════ */
-.final-section{
-  position:relative;overflow:hidden;min-height:80vh;
-  display:flex;align-items:center;justify-content:center;text-align:center;
-  border-top:1px solid var(--line);
-}
+/* FINAL */
+.final-section{position:relative;overflow:hidden;min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;border-top:1px solid var(--line);}
 .final-bg{position:absolute;inset:0;z-index:0;}
-.final-bg img{
-  width:100%;height:100%;object-fit:cover;
-  filter:brightness(.15) saturate(1.5);transform-origin:center;
-}
-.final-vignette{
-  position:absolute;inset:0;z-index:1;
-  background:
-    radial-gradient(ellipse 80% 60% at center,rgba(3,3,3,.2) 0%,rgba(3,3,3,.95) 70%),
-    linear-gradient(to top,var(--bg),transparent 35%);
-}
-.final-glow{
-  position:absolute;width:900px;height:900px;
-  background:radial-gradient(circle,rgba(200,255,62,0.16) 0%,transparent 70%);
-  left:50%;top:50%;transform:translate(-50%,-50%);
-  z-index:2;animation:glowPulse 5s ease-in-out infinite;
-}
-@keyframes glowPulse{
-  0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1);}
-  50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
-}
+.final-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(.15) saturate(1.5);transform-origin:center;}
+.final-vignette{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 80% 60% at center,rgba(3,3,3,.2) 0%,rgba(3,3,3,.95) 70%),linear-gradient(to top,var(--bg),transparent 35%);}
+.final-glow{position:absolute;width:900px;height:900px;background:radial-gradient(circle,rgba(200,255,62,0.16) 0%,transparent 70%);left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;animation:glowPulse 5s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{opacity:.6;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}}
 .final-content{position:relative;z-index:5;padding:100px 40px;}
-.final-eyebrow{
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
-  margin-bottom:32px;display:flex;align-items:center;justify-content:center;gap:14px;
-}
+.final-eyebrow{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:5px;color:var(--accent);text-transform:uppercase;margin-bottom:32px;display:flex;align-items:center;justify-content:center;gap:14px;}
 .final-eyebrow::before,.final-eyebrow::after{content:'';width:28px;height:1px;background:var(--accent);}
-.final-title{
-  font-family:var(--font-display);
-  font-size:clamp(80px,14vw,180px);
-  line-height:.83;letter-spacing:-4px;margin-bottom:48px;
-}
+.final-title{font-family:var(--font-display);font-size:clamp(80px,14vw,180px);line-height:.83;letter-spacing:-4px;margin-bottom:48px;}
 .final-title em{font-style:normal;color:var(--accent);display:block;}
-.final-sub{
-  max-width:680px;margin:0 auto 64px;font-size:19px;
-  line-height:1.85;color:rgba(240,237,232,0.55);
-}
+.final-sub{max-width:680px;margin:0 auto 64px;font-size:19px;line-height:1.85;color:rgba(240,237,232,0.55);}
 .final-actions{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;}
 
-/* ════════════════════════════════════════════════════════════
-   BUTTONS
-════════════════════════════════════════════════════════════ */
-.btn-main{
-  position:relative;overflow:hidden;
-  font-family:var(--font-cond);font-size:13px;font-weight:800;
-  letter-spacing:3px;text-transform:uppercase;
-  color:black;background:var(--accent);
-  border:none;padding:22px 52px;cursor:pointer;
-  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
-  transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;
-  text-decoration:none;display:inline-block;
-}
-.btn-main::before{
-  content:'';position:absolute;top:0;left:-120%;
-  width:80%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);
-  transform:skewX(-25deg);transition:left .7s;
-}
+/* BUTTONS */
+.btn-main{position:relative;overflow:hidden;font-family:var(--font-cond);font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:black;background:var(--accent);border:none;padding:22px 52px;cursor:pointer;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s;text-decoration:none;display:inline-block;}
+.btn-main::before{content:'';position:absolute;top:0;left:-120%;width:80%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);transform:skewX(-25deg);transition:left .7s;}
 .btn-main:hover::before{left:150%;}
-.btn-main:hover{
-  transform:translateY(-6px) scale(1.02);
-  box-shadow:0 30px 90px rgba(200,255,62,.45),0 0 0 1px rgba(200,255,62,0.3);
-}
-.btn-ghost{
-  font-family:var(--font-cond);font-size:12px;font-weight:700;
-  letter-spacing:2.5px;text-transform:uppercase;
-  color:rgba(240,237,232,0.65);background:transparent;
-  border:1px solid rgba(255,255,255,0.1);
-  padding:21px 44px;cursor:pointer;
-  text-decoration:none;display:inline-flex;align-items:center;gap:12px;
-  transition:all .4s;position:relative;overflow:hidden;
-}
-.btn-ghost::before{
-  content:'';position:absolute;inset:0;
-  background:rgba(255,255,255,0.03);
-  transform:scaleX(0);transform-origin:left;
-  transition:transform .4s cubic-bezier(.16,1,.3,1);
-}
+.btn-main:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 30px 90px rgba(200,255,62,.45),0 0 0 1px rgba(200,255,62,0.3);}
+.btn-ghost{font-family:var(--font-cond);font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(240,237,232,0.65);background:transparent;border:1px solid rgba(255,255,255,0.1);padding:21px 44px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:12px;transition:all .4s;position:relative;overflow:hidden;}
+.btn-ghost::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.03);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.16,1,.3,1);}
 .btn-ghost:hover::before{transform:scaleX(1);}
 .btn-ghost:hover{color:white;border-color:rgba(255,255,255,0.22);transform:translateY(-4px);}
-.btn-sm{
-  font-family:var(--font-cond);font-size:11px;font-weight:800;
-  letter-spacing:2.5px;text-transform:uppercase;
-  color:black;background:var(--accent);
-  border:none;padding:14px 32px;cursor:pointer;
-  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
-  transition:transform .3s,box-shadow .3s;
-}
+.btn-sm{font-family:var(--font-cond);font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:black;background:var(--accent);border:none;padding:14px 32px;cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:transform .3s,box-shadow .3s;}
 .btn-sm:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(200,255,62,0.35);}
-.btn-sm-ghost{
-  font-family:var(--font-cond);font-size:11px;font-weight:700;
-  letter-spacing:2.5px;text-transform:uppercase;
-  color:rgba(240,237,232,0.5);background:transparent;
-  border:1px solid rgba(255,255,255,0.1);
-  padding:13px 28px;cursor:pointer;
-  transition:all .3s;display:inline-flex;align-items:center;gap:8px;
-}
+.btn-sm-ghost{font-family:var(--font-cond);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(240,237,232,0.5);background:transparent;border:1px solid rgba(255,255,255,0.1);padding:13px 28px;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px;}
 .btn-sm-ghost:hover{color:white;border-color:rgba(255,255,255,0.2);}
-
-.overline{
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:5px;color:var(--accent);text-transform:uppercase;
-  display:flex;align-items:center;gap:16px;margin-bottom:26px;
-}
+.overline{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:5px;color:var(--accent);text-transform:uppercase;display:flex;align-items:center;gap:16px;margin-bottom:26px;}
 .overline::before{content:'';width:28px;height:1px;background:var(--accent);}
-.section-title{
-  font-family:var(--font-display);
-  font-size:clamp(60px,8.5vw,118px);
-  line-height:.88;letter-spacing:-1px;color:white;
-}
+.section-title{font-family:var(--font-display);font-size:clamp(60px,8.5vw,118px);line-height:.88;letter-spacing:-1px;color:white;}
 .section-title em{font-style:normal;color:var(--accent);}
 
-/* ════════════════════════════════════════════════════════════
-   FOOTER
-════════════════════════════════════════════════════════════ */
-footer{
-  background:var(--bg2);border-top:1px solid var(--line);
-  padding:90px 80px;
-  display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:60px;
-}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--line);padding:90px 80px;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:60px;}
 .footer-brand .logo{font-size:21px;margin-bottom:22px;gap:10px;}
 .footer-brand .logo-img{height:28px;}
 .footer-brand p{font-size:13px;line-height:1.85;color:var(--muted);max-width:270px;}
-.footer-col-title{
-  font-family:var(--font-cond);font-size:10px;font-weight:700;
-  letter-spacing:3.5px;color:rgba(240,237,232,0.35);
-  text-transform:uppercase;margin-bottom:26px;
-}
+.footer-col-title{font-family:var(--font-cond);font-size:10px;font-weight:700;letter-spacing:3.5px;color:rgba(240,237,232,0.35);text-transform:uppercase;margin-bottom:26px;}
 .footer-links{display:flex;flex-direction:column;gap:13px;}
 .footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .3s;}
 .footer-links a:hover{color:var(--text);}
-.footer-bottom{
-  border-top:1px solid var(--line);padding:32px 80px;
-  display:flex;justify-content:space-between;align-items:center;
-}
+.footer-bottom{border-top:1px solid var(--line);padding:32px 80px;display:flex;justify-content:space-between;align-items:center;}
 .footer-bottom p{font-size:11px;color:var(--muted);font-family:var(--font-cond);letter-spacing:1px;}
 .footer-accent-line{width:80px;height:1px;background:linear-gradient(90deg,var(--accent),transparent);}
 
-/* ════════════════════════════════════════════════════════════
-   RESPONSIVE
-════════════════════════════════════════════════════════════ */
+/* RESPONSIVE */
 @media(max-width:1200px){
   .problem-inner{grid-template-columns:1fr;gap:70px;}
   .arch-framework{grid-template-columns:1fr 1fr;}
@@ -1550,10 +1089,7 @@ footer{
   .tl-title{text-align:left;}
 }
 @media(max-width:900px){
-  .section,.arch-section,.execution-section,.assessment-section,
-  .identity-section,.problem-section,.overview-section,.bridge{
-    padding:100px 24px;
-  }
+  .assessment-section,.arch-section,.execution-section,.identity-section,.problem-section,.overview-section,.bridge{padding:100px 24px;}
   .nav{padding:22px 24px;}
   .nav.scrolled{padding:14px 24px;}
   .nav-links,.nav-cta{display:none;}
@@ -1564,12 +1100,6 @@ footer{
   .phase-fixed{display:none;}
   .phase-scroll{padding:80px 24px;}
   .phase-chapter{min-height:auto;}
-  .phase-chapter.mobile-header{
-    min-height:300px;
-    background:var(--bg2);
-    display:flex;align-items:center;padding:60px 24px;
-    border-top:1px solid var(--line);
-  }
   .questions-grid{grid-template-columns:1fr;}
   .before-after{grid-template-columns:1fr;gap:16px;}
   .ba-divider{flex-direction:row;}
@@ -1577,10 +1107,8 @@ footer{
   .ident-areas{grid-template-columns:1fr 1fr;gap:2px;}
   .tracker-areas{grid-template-columns:1fr 1fr;}
   .day-blocks{grid-template-columns:repeat(15,1fr);}
-  .ninety-grid-legend{flex-wrap:wrap;gap:10px;}
   .form-progress-track{flex-wrap:wrap;}
   .form-progress-step{flex:0 0 50%;}
-  .pillars-desc{max-width:100%;}
   footer{grid-template-columns:1fr;padding:60px 24px;gap:40px;}
   .footer-bottom{padding:26px 24px;flex-direction:column;gap:14px;text-align:center;}
   .phase-separator{padding:0 24px;}
@@ -1601,7 +1129,6 @@ footer{
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- ─── MOBILE MENU ─── -->
 <div class="mobile-menu" id="mobileMenu">
   <a href="index.html" onclick="closeMobileMenu()">INICIO</a>
   <a href="sistema.html" onclick="closeMobileMenu()">SISTEMA</a>
@@ -1611,7 +1138,6 @@ footer{
   <a href="pay.html" class="mobile-cta" onclick="closeMobileMenu()">ENTRAR AHORA</a>
 </div>
 
-<!-- ─── NAV ─── -->
 <nav class="nav" id="nav">
   <a class="logo" href="index.html">
     <img class="logo-img" src="logo.png" alt="Ascend System Logo" onerror="this.style.display='none'">
@@ -1630,9 +1156,7 @@ footer{
   </div>
 </nav>
 
-<!-- ════════════════════════════════════════════════════════════
-     HERO
-════════════════════════════════════════════════════════════ -->
+<!-- HERO -->
 <section class="sys-hero">
   <div class="sys-hero-bg">
     <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2400&auto=format&fit=crop" alt="System">
@@ -1641,7 +1165,6 @@ footer{
   <div class="sys-hero-grid"></div>
   <div class="sys-scan"></div>
   <div class="sys-hero-vline"></div>
-
   <div class="sys-hero-content">
     <div class="sys-overline" id="hero-overline">
       <div class="sys-overline-line"></div>
@@ -1662,8 +1185,6 @@ footer{
       </a>
     </div>
   </div>
-
-  <!-- Phase nav dots -->
   <div class="sys-phase-indicator" id="phaseIndicator">
     <div class="phase-dot-wrap active" onclick="scrollToPhase('assessment')">
       <div class="phase-dot"></div>
@@ -1684,9 +1205,7 @@ footer{
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     PROBLEM STATEMENT
-════════════════════════════════════════════════════════════ -->
+<!-- PROBLEM STATEMENT -->
 <section class="problem-section">
   <div class="problem-inner">
     <div class="problem-left">
@@ -1723,9 +1242,7 @@ footer{
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     BRIDGE / MANIFESTO
-════════════════════════════════════════════════════════════ -->
+<!-- BRIDGE -->
 <section class="bridge">
   <div class="bridge-glow"></div>
   <div class="bridge-diag"></div><div class="bridge-diag"></div>
@@ -1743,9 +1260,7 @@ footer{
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     SYSTEM OVERVIEW — timeline
-════════════════════════════════════════════════════════════ -->
+<!-- OVERVIEW -->
 <section class="overview-section" id="overview">
   <div class="overview-inner">
     <div class="overview-header">
@@ -1795,9 +1310,7 @@ footer{
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     PHASE 01 — ASSESSMENT SECTION with FORM
-════════════════════════════════════════════════════════════ -->
+<!-- PHASE 01 SEPARATOR -->
 <div class="phase-separator">
   <span class="phase-sep-num">01</span>
   <div class="phase-sep-bar"></div>
@@ -1860,7 +1373,6 @@ footer{
   </div>
 
   <div class="assessment-form-wrap" data-anim="fade-up" data-delay="1">
-    <!-- Progress Steps -->
     <div class="form-progress-track" id="formProgressTrack">
       <div class="form-progress-step active" onclick="goToPanel(0)">
         <div class="fps-num">01</div>
@@ -1885,18 +1397,16 @@ footer{
       <div class="form-area-title">Cuerpo<br>&amp; Físico</div>
       <div class="form-area-subtitle">Evalúa tu estado físico real. No el que quisieras tener. El que tienes ahora mismo.</div>
       <div class="questions-grid">
-
         <div class="question-card">
           <span class="q-label">Entrenamiento</span>
           <div class="q-text">¿Cuántos días a la semana entrenas realmente (no los que planeas)?</div>
           <span class="q-note">Cuenta solo las semanas de los últimos 30 días.</span>
           <div class="q-slider-wrap">
             <div class="q-slider-value" id="sv-train">0 días</div>
-            <input type="range" class="q-slider" min="0" max="7" value="0" oninput="updateSlider(this,'sv-train','días')">
+            <input type="range" class="q-slider" id="sl-train" min="0" max="7" value="0" oninput="updateSlider(this,'sv-train','días')">
             <div class="q-slider-labels"><span>0 días</span><span>7 días</span></div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Alimentación</span>
           <div class="q-text">¿Cómo calificarías tu alimentación actual?</div>
@@ -1908,34 +1418,30 @@ footer{
             <div class="q-chip" onclick="selectChip(this,'chips-food')">Elite</div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Sueño</span>
           <div class="q-text">¿Cuántas horas duermes por noche de media real?</div>
           <div class="q-slider-wrap">
             <div class="q-slider-value" id="sv-sleep">6h</div>
-            <input type="range" class="q-slider" min="3" max="10" value="6" oninput="updateSlider(this,'sv-sleep','h')">
+            <input type="range" class="q-slider" id="sl-sleep" min="3" max="10" value="6" oninput="updateSlider(this,'sv-sleep','h')">
             <div class="q-slider-labels"><span>3h (peligroso)</span><span>10h (exceso)</span></div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Energía</span>
           <div class="q-text">Del 1 al 10, ¿cómo es tu nivel de energía durante el día?</div>
           <div class="q-slider-wrap">
             <div class="q-slider-value" id="sv-energy">5</div>
-            <input type="range" class="q-slider" min="1" max="10" value="5" oninput="updateSlider(this,'sv-energy','')">
+            <input type="range" class="q-slider" id="sl-energy" min="1" max="10" value="5" oninput="updateSlider(this,'sv-energy','')">
             <div class="q-slider-labels"><span>1 (agotado)</span><span>10 (máximo)</span></div>
           </div>
         </div>
-
         <div class="question-card q-full">
           <span class="q-label">El patrón físico que más te sabotea</span>
           <div class="q-text">¿Qué comportamiento físico sabes que tienes y que más te está frenando?</div>
           <span class="q-note">Sé específico. "Como mal" no es suficiente. "Como por ansiedad entre las 22h y las 0h" sí lo es.</span>
-          <textarea class="q-textarea" rows="3" placeholder="Escribe aquí con total honestidad..."></textarea>
+          <textarea class="q-textarea" id="ta-body" rows="3" placeholder="Escribe aquí con total honestidad..."></textarea>
         </div>
-
       </div>
       <div class="form-nav">
         <span class="form-note">Área 1 de 4 · Cuerpo & Físico</span>
@@ -1948,7 +1454,6 @@ footer{
       <div class="form-area-title">Mente<br>&amp; Foco</div>
       <div class="form-area-subtitle">Tu capacidad de concentración es tu activo más valioso. Y probablemente tu mayor debilidad sin saberlo.</div>
       <div class="questions-grid">
-
         <div class="question-card">
           <span class="q-label">Concentración</span>
           <div class="q-text">¿Cuánto tiempo puedes trabajar en modo deep focus sin distraerte?</div>
@@ -1959,18 +1464,16 @@ footer{
             <div class="q-chip" onclick="selectChip(this,'chips-focus')">+90min</div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Redes Sociales</span>
           <div class="q-text">Tiempo real en redes sociales/entretenimiento al día</div>
           <span class="q-note">Revisa tu tiempo de pantalla. No estimes. Mira el dato real.</span>
           <div class="q-slider-wrap">
             <div class="q-slider-value" id="sv-social">2h</div>
-            <input type="range" class="q-slider" min="0" max="8" value="2" oninput="updateSlider(this,'sv-social','h')">
+            <input type="range" class="q-slider" id="sl-social" min="0" max="8" value="2" oninput="updateSlider(this,'sv-social','h')">
             <div class="q-slider-labels"><span>0h</span><span>+8h</span></div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Ansiedad Mental</span>
           <div class="q-text">¿Con qué frecuencia tu mente está en el pasado o en el futuro en lugar del presente?</div>
@@ -1981,23 +1484,20 @@ footer{
             <div class="q-chip" onclick="selectChip(this,'chips-anxiety')">Raramente</div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Lectura</span>
           <div class="q-text">¿Cuántos libros has leído en el último mes?</div>
           <div class="q-slider-wrap">
             <div class="q-slider-value" id="sv-books">0</div>
-            <input type="range" class="q-slider" min="0" max="10" value="0" oninput="updateSlider(this,'sv-books','')">
+            <input type="range" class="q-slider" id="sl-books" min="0" max="10" value="0" oninput="updateSlider(this,'sv-books','')">
             <div class="q-slider-labels"><span>0</span><span>10</span></div>
           </div>
         </div>
-
         <div class="question-card q-full">
           <span class="q-label">Tu mayor ladrón de foco</span>
           <div class="q-text">Describe tu mayor distracción. ¿Cuándo ocurre? ¿Por qué la permites?</div>
-          <textarea class="q-textarea" rows="3" placeholder="Sé brutalmente honesto sobre esto..."></textarea>
+          <textarea class="q-textarea" id="ta-mind" rows="3" placeholder="Sé brutalmente honesto sobre esto..."></textarea>
         </div>
-
       </div>
       <div class="form-nav">
         <button class="btn-sm-ghost" onclick="prevPanel()">← ANTERIOR</button>
@@ -2010,7 +1510,6 @@ footer{
       <div class="form-area-title">Tiempo<br>&amp; Hábitos</div>
       <div class="form-area-subtitle">El tiempo es el único recurso no renovable. Cómo lo gastas define quién te estás convirtiendo.</div>
       <div class="questions-grid">
-
         <div class="question-card">
           <span class="q-label">Rutina Matutina</span>
           <div class="q-text">¿Tienes una rutina matutina consistente?</div>
@@ -2021,43 +1520,38 @@ footer{
             <div class="q-chip" onclick="selectChip(this,'chips-morning')">Todos los días</div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Productividad Real</span>
           <div class="q-text">¿Cuántas horas de trabajo realmente productivo produces al día?</div>
           <div class="q-slider-wrap">
             <div class="q-slider-value" id="sv-prod">2h</div>
-            <input type="range" class="q-slider" min="0" max="10" value="2" oninput="updateSlider(this,'sv-prod','h')">
+            <input type="range" class="q-slider" id="sl-prod" min="0" max="10" value="2" oninput="updateSlider(this,'sv-prod','h')">
             <div class="q-slider-labels"><span>0h (caos)</span><span>10h (elite)</span></div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Proyectos sin terminar</span>
           <div class="q-text">¿Cuántos proyectos o objetivos tienes "empezados" sin terminar?</div>
           <div class="q-slider-wrap">
             <div class="q-slider-value" id="sv-projects">3</div>
-            <input type="range" class="q-slider" min="0" max="20" value="3" oninput="updateSlider(this,'sv-projects','')">
+            <input type="range" class="q-slider" id="sl-projects" min="0" max="20" value="3" oninput="updateSlider(this,'sv-projects','')">
             <div class="q-slider-labels"><span>0</span><span>+20</span></div>
           </div>
         </div>
-
         <div class="question-card">
           <span class="q-label">Consistencia de Hábitos</span>
           <div class="q-text">¿Cuántos hábitos positivos mantienes de forma constante (más de 30 días)?</div>
           <div class="q-slider-wrap">
             <div class="q-slider-value" id="sv-habits">1</div>
-            <input type="range" class="q-slider" min="0" max="10" value="1" oninput="updateSlider(this,'sv-habits','')">
+            <input type="range" class="q-slider" id="sl-habits" min="0" max="10" value="1" oninput="updateSlider(this,'sv-habits','')">
             <div class="q-slider-labels"><span>0 (ninguno)</span><span>10</span></div>
           </div>
         </div>
-
         <div class="question-card q-full">
           <span class="q-label">El hábito que más cambiaría tu vida</span>
           <div class="q-text">Si tuvieras que construir un solo hábito que cambiaría todo lo demás, ¿cuál sería? ¿Por qué no lo has construido todavía?</div>
-          <textarea class="q-textarea" rows="3" placeholder="La respuesta a esto es más importante de lo que crees..."></textarea>
+          <textarea class="q-textarea" id="ta-time" rows="3" placeholder="La respuesta a esto es más importante de lo que crees..."></textarea>
         </div>
-
       </div>
       <div class="form-nav">
         <button class="btn-sm-ghost" onclick="prevPanel()">← ANTERIOR</button>
@@ -2067,9 +1561,10 @@ footer{
 
     <!-- PANEL 4: RESULTADOS -->
     <div class="form-panel" id="panel-3">
-      <div class="form-area-title">Tu Mapa<br>de Partida</div>
-      <div class="form-area-subtitle">Este es tu punto de arranque real. Guárdalo. El día 90 volverás aquí para ver quién eras.</div>
+      <div class="form-area-title">Tu Diagnóstico<br>Real</div>
+      <div class="form-area-subtitle">Este es el espejo sin filtros. Lo que ves aquí es tu punto de partida honesto. La pregunta es: ¿qué vas a hacer con esta verdad?</div>
 
+      <!-- SCORES -->
       <div class="assessment-score" id="scoreDisplay">
         <div class="score-cell" id="score-body">
           <span class="score-area">Cuerpo</span>
@@ -2093,25 +1588,36 @@ footer{
         </div>
       </div>
 
+      <!-- DIAGNOSIS BLOCKS (generated by JS) -->
+      <div id="diagnosisBlocks"></div>
+
+      <!-- OVERALL VERDICT (generated by JS) -->
+      <div id="overallVerdict"></div>
+
+      <!-- DOWNLOAD + NEXT -->
       <div style="padding:36px 40px;border:1px solid rgba(200,255,62,0.12);background:rgba(200,255,62,0.03);margin-bottom:48px;">
         <div class="overline" style="margin-bottom:16px;">Siguiente paso</div>
         <p style="font-size:16px;line-height:1.8;color:rgba(240,237,232,0.65);">
-          Tienes tu diagnóstico. Ahora pasas a <strong style="color:var(--text);">Fase II: Arquitectura</strong>. Usarás este mapa para diseñar tu sistema personalizado con las plantillas y marcos que te proporcionamos. El sistema se adapta a ti — no al revés.
+          Tienes tu diagnóstico. Ahora pasas a <strong style="color:var(--text);">Fase II: Arquitectura</strong>. Usarás este mapa para diseñar tu sistema personalizado con las plantillas y marcos que te proporcionamos.
         </p>
       </div>
 
       <div class="form-nav">
         <button class="btn-sm-ghost" onclick="prevPanel()">← VOLVER</button>
-        <a href="#arch" class="btn-sm">IR A ARQUITECTURA →</a>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+          <button class="btn-download" id="btnDownload" onclick="downloadPDF()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            DESCARGAR RESULTADOS PDF
+          </button>
+          <a href="#arch" class="btn-sm">IR A ARQUITECTURA →</a>
+        </div>
       </div>
     </div>
 
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     PHASE 02 — ARCHITECTURE
-════════════════════════════════════════════════════════════ -->
+<!-- PHASE 02 SEPARATOR -->
 <div class="phase-separator">
   <span class="phase-sep-num">02</span>
   <div class="phase-sep-bar"></div>
@@ -2170,7 +1676,6 @@ footer{
         No te dejamos solo con un diagnóstico. Te damos <strong>todo el arsenal</strong> para construir un sistema que se adapte exactamente a quien eres y a quien quieres ser.
       </p>
     </div>
-
     <div class="arch-framework" data-anim="stagger-grid">
       <div class="arch-block">
         <span class="arch-block-num">A</span>
@@ -2199,8 +1704,6 @@ footer{
         <div class="arch-block-desc">Bases de entrenamiento y nutrición adaptables a tu nivel. No necesitas ser atleta. Necesitas un protocolo que cumplas.</div>
         <div class="arch-block-tag">Protocolo + guía</div>
       </div>
-
-      <!-- Wide block -->
       <div class="arch-block arch-wide">
         <div class="arch-wide-left">
           <span class="arch-block-num" style="position:static;font-size:70px;color:rgba(200,255,62,0.06);">D</span>
@@ -2212,40 +1715,18 @@ footer{
           <div class="arch-block-tag">Framework de 90 días</div>
         </div>
         <div class="arch-wide-right">
-          <div class="arch-timeline-item">
-            <span class="atl-week">W1</span>
-            <div class="atl-bar"><div class="atl-bar-fill" style="width:30%"></div></div>
-            <span class="atl-label">Setup</span>
-          </div>
-          <div class="arch-timeline-item">
-            <span class="atl-week">W2</span>
-            <div class="atl-bar"><div class="atl-bar-fill" style="width:45%"></div></div>
-            <span class="atl-label">Activación</span>
-          </div>
-          <div class="arch-timeline-item">
-            <span class="atl-week">W4</span>
-            <div class="atl-bar"><div class="atl-bar-fill" style="width:60%"></div></div>
-            <span class="atl-label">Consolidación</span>
-          </div>
-          <div class="arch-timeline-item">
-            <span class="atl-week">W8</span>
-            <div class="atl-bar"><div class="atl-bar-fill" style="width:80%"></div></div>
-            <span class="atl-label">Expansión</span>
-          </div>
-          <div class="arch-timeline-item">
-            <span class="atl-week">W12</span>
-            <div class="atl-bar"><div class="atl-bar-fill" style="width:100%"></div></div>
-            <span class="atl-label">Identidad</span>
-          </div>
+          <div class="arch-timeline-item"><span class="atl-week">W1</span><div class="atl-bar"><div class="atl-bar-fill" style="width:30%"></div></div><span class="atl-label">Setup</span></div>
+          <div class="arch-timeline-item"><span class="atl-week">W2</span><div class="atl-bar"><div class="atl-bar-fill" style="width:45%"></div></div><span class="atl-label">Activación</span></div>
+          <div class="arch-timeline-item"><span class="atl-week">W4</span><div class="atl-bar"><div class="atl-bar-fill" style="width:60%"></div></div><span class="atl-label">Consolidación</span></div>
+          <div class="arch-timeline-item"><span class="atl-week">W8</span><div class="atl-bar"><div class="atl-bar-fill" style="width:80%"></div></div><span class="atl-label">Expansión</span></div>
+          <div class="arch-timeline-item"><span class="atl-week">W12</span><div class="atl-bar"><div class="atl-bar-fill" style="width:100%"></div></div><span class="atl-label">Identidad</span></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     TICKER
-════════════════════════════════════════════════════════════ -->
+<!-- TICKER -->
 <div class="ticker">
   <div class="ticker-inner">
     <div class="ticker-item"><span>DISCIPLINA ABSOLUTA</span><div class="ticker-dot"></div></div>
@@ -2256,7 +1737,6 @@ footer{
     <div class="ticker-item"><span>ARQUITECTURA PERSONAL</span><div class="ticker-dot"></div></div>
     <div class="ticker-item"><span>ASSESSMENT BRUTAL</span><div class="ticker-dot"></div></div>
     <div class="ticker-item"><span>TRANSFORMACIÓN REAL</span><div class="ticker-dot"></div></div>
-    <!-- duplicado para loop -->
     <div class="ticker-item"><span>DISCIPLINA ABSOLUTA</span><div class="ticker-dot"></div></div>
     <div class="ticker-item"><span>SISTEMA PERSONALIZADO</span><div class="ticker-dot"></div></div>
     <div class="ticker-item"><span>90 DÍAS DE EJECUCIÓN</span><div class="ticker-dot"></div></div>
@@ -2268,9 +1748,7 @@ footer{
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════
-     PHASE 03 — EXECUTION / 90 DAY TRACKER
-════════════════════════════════════════════════════════════ -->
+<!-- PHASE 03 SEPARATOR -->
 <div class="phase-separator">
   <span class="phase-sep-num">03</span>
   <div class="phase-sep-bar"></div>
@@ -2331,8 +1809,6 @@ footer{
         Cada noche, 5 minutos. Marcas qué has cumplido y qué no. <strong>No hay juicio. Solo datos.</strong> Los datos son los que transforman. El tracker convierte el compromiso en una visualización que no puedes ignorar.
       </p>
     </div>
-
-    <!-- Daily tracker mockup -->
     <div class="daily-tracker" data-anim="fade-up" data-delay="1">
       <div class="tracker-header">
         <div>
@@ -2355,72 +1831,36 @@ footer{
             <span class="ta-icon">💪</span>
             <span class="ta-name">Físico</span>
             <div class="ta-checks">
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Entrenamiento completado</span>
-              </label>
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Nutrición según plan</span>
-              </label>
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Hidratación objetivo</span>
-              </label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Entrenamiento completado</span></label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Nutrición según plan</span></label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Hidratación objetivo</span></label>
             </div>
           </div>
           <div class="tracker-area">
             <span class="ta-icon">🧠</span>
             <span class="ta-name">Mental</span>
             <div class="ta-checks">
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Deep work: 2h+ bloqueadas</span>
-              </label>
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Sin redes hasta las 12h</span>
-              </label>
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">30min de lectura</span>
-              </label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Deep work: 2h+ bloqueadas</span></label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Sin redes hasta las 12h</span></label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">30min de lectura</span></label>
             </div>
           </div>
           <div class="tracker-area">
             <span class="ta-icon">⚡</span>
             <span class="ta-name">Hábitos</span>
             <div class="ta-checks">
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Rutina matutina completa</span>
-              </label>
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Planificación del día siguiente</span>
-              </label>
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Hora de dormir respetada</span>
-              </label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Rutina matutina completa</span></label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Planificación del día siguiente</span></label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Hora de dormir respetada</span></label>
             </div>
           </div>
           <div class="tracker-area">
             <span class="ta-icon">🎯</span>
             <span class="ta-name">Objetivos</span>
             <div class="ta-checks">
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Tarea #1 del día completada</span>
-              </label>
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Revisión de progreso semanal</span>
-              </label>
-              <label class="ta-check">
-                <input type="checkbox" onchange="updateCompletion()">
-                <span class="ta-check-label">Sin procrastinación activa</span>
-              </label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Tarea #1 del día completada</span></label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Revisión de progreso semanal</span></label>
+              <label class="ta-check"><input type="checkbox" onchange="updateCompletion()"><span class="ta-check-label">Sin procrastinación activa</span></label>
             </div>
           </div>
         </div>
@@ -2436,8 +1876,6 @@ footer{
         </div>
       </div>
     </div>
-
-    <!-- 90 day grid -->
     <div class="ninety-grid" data-anim="fade-up" data-delay="2">
       <div class="ninety-grid-header">
         <span class="ninety-grid-title">Vista de 90 Días</span>
@@ -2455,9 +1893,7 @@ footer{
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     PHASE 04 — IDENTITY
-════════════════════════════════════════════════════════════ -->
+<!-- PHASE 04 SEPARATOR -->
 <div class="phase-separator">
   <span class="phase-sep-num">04</span>
   <div class="phase-sep-bar"></div>
@@ -2512,14 +1948,9 @@ footer{
       <h2 class="section-title" style="margin-top:16px;">¿Quién<br><em>eres ahora?</em></h2>
       <p>El día 90 no es el final. Es la primera vez que te ves con claridad. <strong>90 días de datos honestos, 90 días de ejecución</strong> — lo que queda es una persona diferente. Ahora lo compruebas.</p>
     </div>
-
-    <!-- Before / After -->
     <div class="before-after" data-anim="fade-up" data-delay="1">
       <div class="ba-side before">
-        <div class="ba-header">
-          <span class="ba-label">DÍA 01</span>
-          <span class="ba-badge">PUNTO DE PARTIDA</span>
-        </div>
+        <div class="ba-header"><span class="ba-label">DÍA 01</span><span class="ba-badge">PUNTO DE PARTIDA</span></div>
         <div class="ba-items">
           <div class="ba-item"><div class="ba-dot"></div><span>Entrenas cuando te apetece — 1-2 veces/semana si acaso</span></div>
           <div class="ba-item"><div class="ba-dot"></div><span>3-4 horas de pantalla pasiva al día que no puedes controlar</span></div>
@@ -2533,10 +1964,7 @@ footer{
         <div class="ba-days">90 DÍAS</div>
       </div>
       <div class="ba-side after">
-        <div class="ba-header">
-          <span class="ba-label">DÍA 90</span>
-          <span class="ba-badge">NUEVA IDENTIDAD</span>
-        </div>
+        <div class="ba-header"><span class="ba-label">DÍA 90</span><span class="ba-badge">NUEVA IDENTIDAD</span></div>
         <div class="ba-items">
           <div class="ba-item"><div class="ba-dot"></div><span>Entrenas 4-5 días sistemáticamente. Ya no lo decides — lo haces</span></div>
           <div class="ba-item"><div class="ba-dot"></div><span>Deep work de 3h+ cada mañana antes de abrir el teléfono</span></div>
@@ -2546,8 +1974,6 @@ footer{
         </div>
       </div>
     </div>
-
-    <!-- Identity areas evaluation -->
     <h3 style="font-family:var(--font-display);font-size:52px;color:white;margin-bottom:40px;line-height:.9;" data-anim="fade-up">
       Evaluación<br><span style="color:var(--accent);">Final</span>
     </h3>
@@ -2600,9 +2026,7 @@ footer{
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     FINAL CTA
-════════════════════════════════════════════════════════════ -->
+<!-- FINAL CTA -->
 <section class="final-section">
   <div class="final-bg">
     <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2400&auto=format&fit=crop" alt="Elite">
@@ -2611,9 +2035,7 @@ footer{
   <div class="final-glow"></div>
   <div class="final-content">
     <div class="final-eyebrow" data-anim="fade-up">El sistema te espera</div>
-    <h2 class="final-title" data-anim="fade-up" data-delay="1">
-      AHORA<br><em>DECIDES</em>
-    </h2>
+    <h2 class="final-title" data-anim="fade-up" data-delay="1">AHORA<br><em>DECIDES</em></h2>
     <p class="final-sub" data-anim="fade-up" data-delay="2">
       Tienes el sistema completo. Cuatro fases. Un diagnóstico brutal. Un tracker de 90 días. Plantillas probadas. Y la evaluación final que te mostrará quién te has convertido. Lo único que falta eres tú.
     </p>
@@ -2624,9 +2046,7 @@ footer{
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════
-     FOOTER
-════════════════════════════════════════════════════════════ -->
+<!-- FOOTER -->
 <footer>
   <div class="footer-brand">
     <a class="logo" href="index.html" style="margin-bottom:20px;text-decoration:none;">
@@ -2666,11 +2086,11 @@ footer{
   <p>No estás aquí por motivación. Estás aquí por identidad.</p>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════════════════════════ -->
+<!-- jsPDF CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
-/* ─── MOBILE MENU ─── */
+/* ════════ MOBILE MENU ════════ */
 function toggleMobileMenu(){
   document.getElementById('mobileMenu').classList.toggle('open');
   document.getElementById('hamburger').classList.toggle('open');
@@ -2680,58 +2100,39 @@ function closeMobileMenu(){
   document.getElementById('hamburger').classList.remove('open');
 }
 
-/* ─── PROGRESS BAR ─── */
+/* ════════ PROGRESS BAR ════════ */
 const progressBar=document.getElementById('progress-bar');
 window.addEventListener('scroll',()=>{
   const h=document.documentElement;
   progressBar.style.width=((h.scrollTop/(h.scrollHeight-h.clientHeight))*100)+'%';
 },{passive:true});
 
-/* ─── CURSOR ─── */
+/* ════════ CURSOR ════════ */
 const cursor=document.getElementById('cursor');
 const ring=document.getElementById('cursor-ring');
 if(cursor){
   let mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{
-    mx=e.clientX;my=e.clientY;
-    cursor.style.left=mx+'px';cursor.style.top=my+'px';
-  });
-  (function animRing(){
-    rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;
-    ring.style.left=rx+'px';ring.style.top=ry+'px';
-    requestAnimationFrame(animRing);
-  })();
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+  (function animRing(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
 }
 
-/* ─── NAV SCROLL ─── */
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
-},{passive:true});
+/* ════════ NAV ════════ */
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40),{passive:true});
 
-/* ─── PHASE DOT NAVIGATION ─── */
-function scrollToPhase(id){
-  const el=document.getElementById(id);
-  if(el)el.scrollIntoView({behavior:'smooth'});
-}
+/* ════════ PHASE DOTS ════════ */
+function scrollToPhase(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});}
 const phaseSections=['assessment','arch','execution','identity'];
 const phaseDots=document.querySelectorAll('.phase-dot-wrap');
 window.addEventListener('scroll',()=>{
   let current=0;
-  phaseSections.forEach((id,i)=>{
-    const el=document.getElementById(id);
-    if(el&&el.getBoundingClientRect().top<window.innerHeight*0.5)current=i;
-  });
+  phaseSections.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<window.innerHeight*0.5)current=i;});
   phaseDots.forEach((d,i)=>d.classList.toggle('active',i===current));
 },{passive:true});
 
-/* ─── ASSESSMENT FORM ─── */
+/* ════════ FORM NAVIGATION ════════ */
 let currentPanel=0;
-const totalPanels=4;
-
 function goToPanel(n){
-  document.querySelectorAll('.form-panel').forEach((p,i)=>{
-    p.classList.toggle('active',i===n);
-  });
+  document.querySelectorAll('.form-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
   document.querySelectorAll('.form-progress-step').forEach((s,i)=>{
     s.classList.remove('active','done');
     if(i<n)s.classList.add('done');
@@ -2741,268 +2142,693 @@ function goToPanel(n){
   if(n===3)computeScores();
   document.getElementById('assessment').scrollIntoView({behavior:'smooth',block:'start'});
 }
+function nextPanel(){if(currentPanel<3)goToPanel(currentPanel+1);}
+function prevPanel(){if(currentPanel>0)goToPanel(currentPanel-1);}
 
-function nextPanel(){
-  if(currentPanel<totalPanels-1)goToPanel(currentPanel+1);
-}
-function prevPanel(){
-  if(currentPanel>0)goToPanel(currentPanel-1);
-}
+/* ════════ SLIDERS ════════ */
+function updateSlider(el,targetId,unit){document.getElementById(targetId).textContent=el.value+unit;}
 
-/* ─── SLIDERS ─── */
-function updateSlider(el,targetId,unit){
-  document.getElementById(targetId).textContent=el.value+unit;
-}
-
-/* ─── CHIP SELECT ─── */
+/* ════════ CHIPS ════════ */
 function selectChip(el,groupId){
   document.querySelectorAll('#'+groupId+' .q-chip').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
-/* ─── SCORE COMPUTATION ─── */
+/* ════════ SCORE COMPUTATION (REAL LOGIC) ════════ */
+let computedScores = {body:0, mind:0, time:0, overall:0};
+
 function computeScores(){
-  const body=Math.floor(Math.random()*30+40);
-  const mind=Math.floor(Math.random()*30+35);
-  const time=Math.floor(Math.random()*30+38);
-  const overall=Math.floor((body+mind+time)/3);
-  animScore('scorenum-body','scorebar-body',body);
-  animScore('scorenum-mind','scorebar-mind',mind);
-  animScore('scorenum-time','scorebar-time',time);
-  animScore('scorenum-overall','scorebar-overall',overall);
+  /* ── BODY SCORE ── */
+  const train = parseInt(document.getElementById('sl-train').value); // 0-7
+  const sleep  = parseInt(document.getElementById('sl-sleep').value);  // 3-10
+  const energy = parseInt(document.getElementById('sl-energy').value); // 1-10
+
+  const foodChip = document.querySelector('#chips-food .q-chip.selected');
+  const foodMap  = {'Caótica':0,'Irregular':25,'Aceptable':50,'Controlada':75,'Elite':100};
+  const foodScore = foodChip ? (foodMap[foodChip.textContent]||0) : 0;
+
+  const trainScore = (train/7)*100;
+  const sleepScore = sleep<=5 ? (sleep-3)/2*40 : sleep>=9 ? 70 : ((sleep-5)/3)*40+40;
+  const energyScore = (energy/10)*100;
+  const bodyRaw = trainScore*0.35 + foodScore*0.30 + sleepScore*0.20 + energyScore*0.15;
+  const body = Math.round(Math.min(100, bodyRaw));
+
+  /* ── MIND SCORE ── */
+  const focusChip = document.querySelector('#chips-focus .q-chip.selected');
+  const focusMap  = {'Menos de 15min':10,'15–30min':30,'30–60min':60,'+90min':95};
+  const focusScore = focusChip ? (focusMap[focusChip.textContent]||0) : 0;
+
+  const social = parseInt(document.getElementById('sl-social').value); // 0-8
+  const socialScore = Math.max(0, 100 - social*14);
+
+  const anxChip = document.querySelector('#chips-anxiety .q-chip.selected');
+  const anxMap  = {'Casi siempre':10,'A menudo':35,'A veces':65,'Raramente':90};
+  const anxScore = anxChip ? (anxMap[anxChip.textContent]||0) : 0;
+
+  const books = parseInt(document.getElementById('sl-books').value); // 0-10
+  const bookScore = Math.min(100, books*14);
+
+  const mind = Math.round(focusScore*0.35 + socialScore*0.30 + anxScore*0.20 + bookScore*0.15);
+
+  /* ── TIME SCORE ── */
+  const morChip = document.querySelector('#chips-morning .q-chip.selected');
+  const morMap  = {'No existe':0,'Irregular':25,'3-4 días/semana':60,'Todos los días':100};
+  const morScore = morChip ? (morMap[morChip.textContent]||0) : 0;
+
+  const prod = parseInt(document.getElementById('sl-prod').value);  // 0-10
+  const prodScore = (prod/10)*100;
+
+  const projects = parseInt(document.getElementById('sl-projects').value); // 0-20
+  const projScore = Math.max(0, 100 - projects*5);
+
+  const habits = parseInt(document.getElementById('sl-habits').value); // 0-10
+  const habScore = (habits/10)*100;
+
+  const time = Math.round(morScore*0.30 + prodScore*0.30 + projScore*0.20 + habScore*0.20);
+
+  const overall = Math.round((body + mind + time) / 3);
+
+  computedScores = {body, mind, time, overall};
+
+  /* ── ANIMATE SCORES ── */
+  animScore('scorenum-body','scorebar-body', body);
+  animScore('scorenum-mind','scorebar-mind', mind);
+  animScore('scorenum-time','scorebar-time', time);
+  animScore('scorenum-overall','scorebar-overall', overall);
+
+  /* ── COLOR CLASS ── */
+  colorScore('scorenum-body','scorebar-body', body);
+  colorScore('scorenum-mind','scorebar-mind', mind);
+  colorScore('scorenum-time','scorebar-time', time);
+  colorScore('scorenum-overall','scorebar-overall', overall);
+
+  /* ── BUILD DIAGNOSIS ── */
+  renderDiagnosis(body, mind, time, overall);
 }
-function animScore(numId,barId,val){
+
+function getScoreLevel(s){
+  if(s<35)return'danger';
+  if(s<60)return'warning';
+  return'ok';
+}
+function getScoreLevelClass(s){
+  if(s<35)return'danger-level';
+  if(s<60)return'warning-level';
+  return'ok-level';
+}
+function getVerdict(s){
+  if(s<35)return{label:'CRÍTICO',cls:'danger'};
+  if(s<60)return{label:'DEFICIENTE',cls:'warning'};
+  if(s<75)return{label:'EN PROCESO',cls:'ok'};
+  return{label:'SÓLIDO',cls:'ok'};
+}
+
+function colorScore(numId, barId, val){
+  const numEl = document.getElementById(numId);
+  const barEl = document.getElementById(barId);
+  const cls = getScoreLevel(val);
+  numEl.className = 'score-num ' + cls;
+  barEl.className = 'score-bar-fill ' + cls;
+}
+
+function animScore(numId, barId, val){
   const numEl=document.getElementById(numId);
   const barEl=document.getElementById(barId);
   let start=0;
-  const step=()=>{
-    start=Math.min(start+2,val);
-    numEl.textContent=start+'/100';
-    if(start<val)requestAnimationFrame(step);
-  };
+  const step=()=>{start=Math.min(start+2,val);numEl.textContent=start+'/100';if(start<val)requestAnimationFrame(step);};
   requestAnimationFrame(step);
   setTimeout(()=>{barEl.style.width=val+'%';},100);
 }
 
-/* ─── TRACKER COMPLETION ─── */
+/* ── DIAGNOSIS RENDER ── */
+function renderDiagnosis(body, mind, time, overall){
+  const diagMap = {
+    body: {
+      name:'CUERPO',
+      data:{s:body},
+      bullets: getBullets('body', body)
+    },
+    mind: {
+      name:'MENTE',
+      data:{s:mind},
+      bullets: getBullets('mind', mind)
+    },
+    time: {
+      name:'TIEMPO',
+      data:{s:time},
+      bullets: getBullets('time', time)
+    }
+  };
+
+  let html = '';
+  ['body','mind','time'].forEach(area=>{
+    const {name, data, bullets} = diagMap[area];
+    const v = getVerdict(data.s);
+    const lvlCls = getScoreLevelClass(data.s);
+    const intro = getDiagIntro(area, data.s);
+    html += `
+      <div class="diagnosis-block ${lvlCls}">
+        <div class="diag-header">
+          <span class="diag-area-name">${name} — ${data.s}/100</span>
+          <span class="diag-verdict ${v.cls}">${v.label}</span>
+        </div>
+        <div class="diag-text">${intro}</div>
+        <div class="diag-bullets">
+          ${bullets.map(b=>`<div class="diag-bullet"><div class="diag-bullet-dot"></div><span>${b}</span></div>`).join('')}
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('diagnosisBlocks').innerHTML = html;
+
+  /* overall verdict block */
+  const overallIntro = getOverallIntro(overall, body, mind, time);
+  const ov = getVerdict(overall);
+  document.getElementById('overallVerdict').innerHTML = `
+    <div class="overall-verdict">
+      <div class="overline" style="margin-bottom:24px;">Veredicto Global</div>
+      <div class="verdict-score-big ${getScoreLevel(overall)}" style="color:${overall<35?'var(--red)':overall<60?'var(--orange)':'var(--accent)'}">${overall}</div>
+      <span class="verdict-label" style="color:${overall<35?'var(--red)':overall<60?'var(--orange)':'var(--accent)'}">/ 100 — ${ov.label}</span>
+      <div class="verdict-body">${overallIntro}</div>
+    </div>`;
+}
+
+function getBullets(area, score){
+  const bullets = {
+    body:{
+      danger:[
+        'Entrenas menos de 2 días por semana — tu cuerpo está en modo deterioro activo, no estancamiento.',
+        'Tu alimentación o sueño están en zona de riesgo real para tu salud y rendimiento cognitivo.',
+        'Con esta base física, ningún sistema mental o de productividad va a funcionar. El cuerpo es la plataforma de todo.'
+      ],
+      warning:[
+        'Entrenas, pero sin consistencia suficiente para producir adaptación real. El cuerpo necesita señales repetidas.',
+        'Tu sueño o alimentación son irregulares — estás operando por debajo de tu potencial sin saberlo.',
+        'Tienes potencial físico sin explotar. El sistema te dará la estructura que convierte el esfuerzo esporádico en progreso real.'
+      ],
+      ok:[
+        'Tu base física es funcional, pero hay margen claro de optimización en calidad de sueño o protocolo de entrenamiento.',
+        'Estás en el punto ideal para aplicar un sistema: tienes la disciplina, falta la arquitectura correcta.',
+        'Con el protocolo físico adecuado, puedes subir tu rendimiento un 40-60% en 90 días sin más esfuerzo, solo más inteligencia.'
+      ]
+    },
+    mind:{
+      danger:[
+        'Tu capacidad de concentración está gravemente deteriorada — menos de 30 minutos de foco real es el promedio del usuario más fragmentado.',
+        'El consumo de redes sociales está actuando como un opiáceo para tu dopamina. Cada notificación reescribe tu sistema de recompensa.',
+        'Sin control del foco, no existe productividad real. Puedes trabajar 10 horas y producir lo que otro produce en 2.'
+      ],
+      warning:[
+        'Tu foco existe pero es inconsistente — trabajas bien en ráfagas pero no puedes sostenerlo.',
+        'Las redes sociales te consumen más tiempo del que crees. Tu cerebro está entrenado para la distracción, no para la profundidad.',
+        'El sistema de gestión mental del programa está diseñado específicamente para este punto: transformar el foco esporádico en profundidad sistemática.'
+      ],
+      ok:[
+        'Tu mente funciona razonablemente, pero hay hábitos mentales que frenan tu techo de rendimiento.',
+        'Los bloques de deep work existen en tu vida, pero podrían ser más largos, más consistentes y mejor protegidos.',
+        'Estás a un sistema de batería de pasar de "productivo" a "imparable". Esa es la diferencia que el programa proporciona.'
+      ]
+    },
+    time:{
+      danger:[
+        'No tienes rutina matutina ni estructura diaria — tu tiempo lo controla el entorno, no tú.',
+        'Tienes múltiples proyectos abiertos sin terminar. Esto no es ambición — es dispersión que bloquea todo avance.',
+        'Sin arquitectura de tiempo, el esfuerzo que pones no se acumula. Se disipa. Trabajas mucho y avanzas poco.'
+      ],
+      warning:[
+        'Tu productividad es irregular — tienes días buenos pero no puedes sostenerlos ni predecirlos.',
+        'La falta de rutina matutina significa que cada día empiezas desde cero en lugar de desde momentum.',
+        'El planificador semanal y el tracker del programa son exactamente lo que necesitas para hacer consistente lo que ya haces bien en días buenos.'
+      ],
+      ok:[
+        'Tu gestión del tiempo tiene base, pero falta sistematización para escalar tu productividad real.',
+        'Los hábitos que tienes son valiosos — el sistema los potencia y llena los huecos que tú no ves.',
+        'Con arquitectura de tiempo correcta, lo que produces en una semana actual lo podrías producir en 3-4 días.'
+      ]
+    }
+  };
+
+  const lvl = score<35?'danger':score<60?'warning':'ok';
+  return bullets[area][lvl];
+}
+
+function getDiagIntro(area, score){
+  const intros = {
+    body:{
+      danger:'<strong>Tu base física está comprometida.</strong> No como juicio moral — como dato objetivo. El cuerpo es el sistema operativo sobre el que funciona todo lo demás: mente, disciplina, energía, toma de decisiones. Con esta puntuación, estás operando un ordenador con el procesador al 30%.',
+      warning:'<strong>Tu físico tiene base pero carece de sistema.</strong> Entrenas, duermes, comes — pero de forma irregular. El progreso físico no viene del esfuerzo máximo sino de la consistencia mínima aplicada todos los días. Aquí es donde el 80% de las personas se queda estancada.',
+      ok:'<strong>Tu físico es funcional y tiene potencial real.</strong> Estás en el tercio superior. Lo que separa tu nivel actual del siguiente no es más esfuerzo — es más inteligencia en la aplicación del protocolo.'
+    },
+    mind:{
+      danger:'<strong>Tu mente está bajo control de estímulos externos, no de ti.</strong> No es un problema de inteligencia ni de voluntad — es un problema de arquitectura. Las aplicaciones de redes sociales están diseñadas por los mejores ingenieros del mundo para secuestrar tu atención. Sin un sistema contra-ataque, pierdes.',
+      warning:'<strong>Tu mente funciona, pero vive interrumpida.</strong> Tienes capacidad de foco, pero el entorno —y tus propios hábitos— la fragmentan constantemente. El resultado: trabajo superficial donde debería haber trabajo profundo.',
+      ok:'<strong>Tu mente es un activo, pero todavía no está optimizada.</strong> Ves la diferencia entre los días en que fluyes y los días en que te dispersas. El sistema convierte esa diferencia en la excepción, no en la norma.'
+    },
+    time:{
+      danger:'<strong>Tu tiempo está sin gobernar.</strong> Esto no es una crítica — es el estado por defecto de cualquier persona sin sistema. El tiempo sin estructura siempre fluye hacia lo urgente, lo placentero inmediato y lo que otros demandan. Nunca hacia lo que tú quieres construir.',
+      warning:'<strong>Tu tiempo tiene estructura parcial, pero sin arquitectura completa.</strong> Tienes días productivos y días perdidos sin entender por qué unos sí y otros no. La respuesta siempre es la misma: sistema vs. improvisación.',
+      ok:'<strong>Tu gestión del tiempo es sólida como base, pero tiene techo bajo.</strong> Has construido hábitos, pero hay optimizaciones de palanca alta que te están costando horas cada semana sin que lo sepas.'
+    }
+  };
+  const lvl = score<35?'danger':score<60?'warning':'ok';
+  return intros[area][lvl];
+}
+
+function getOverallIntro(overall, body, mind, time){
+  const lowestArea = body<=mind && body<=time ? 'cuerpo' : mind<=time ? 'mente' : 'gestión del tiempo';
+  const highestArea = body>=mind && body>=time ? 'cuerpo' : mind>=time ? 'mente' : 'gestión del tiempo';
+
+  if(overall < 35){
+    return `<strong>Puntuación global: ${overall}/100. Zona crítica.</strong> Esta es la verdad que la mayoría prefiere no ver. Tu sistema actual — o la ausencia de él — te está costando rendimiento, salud y tiempo de vida que no vas a recuperar. La buena noticia: estás en el punto exacto donde un sistema bien implementado produce los cambios más dramáticos y más rápidos. Tu área más débil es <strong>${lowestArea}</strong>. Por ahí tienes que empezar. El programa Ascend System está diseñado específicamente para personas en esta situación: sin sistema, con potencial, listos para dejar de improvisar.`;
+  }
+  if(overall < 60){
+    return `<strong>Puntuación global: ${overall}/100. Zona de trabajo.</strong> Tienes material con el que trabajar, pero el sistema actual no está produciendo resultados a la altura de lo que sabes que eres capaz. Hay esfuerzo — pero sin arquitectura correcta, el esfuerzo se desperdicia. Tu área más fuerte es <strong>${highestArea}</strong>. Tu área con más palanca inmediata es <strong>${lowestArea}</strong>. En 90 días con el sistema correcto, esta puntuación sube 25-35 puntos. No como motivación — como dato estadístico de lo que ocurre cuando aplicas estructura real a esfuerzo real.`;
+  }
+  return `<strong>Puntuación global: ${overall}/100. Base sólida.</strong> Estás por encima de la media — lo que significa que ya tienes disciplina, ya tienes hábitos, ya tienes intención. Lo que el sistema te da no es el punto de partida, sino el siguiente nivel: convertir lo que haces bien en algo que funciona solo, sin necesitar motivación. Tu mayor palanca está en <strong>${lowestArea}</strong>. Optimizar ahí con el sistema correcto es la diferencia entre ser "disciplinado" y ser "imparable".`;
+}
+
+/* ════════ PDF DOWNLOAD ════════ */
+function downloadPDF(){
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+  const W = 210, H = 297;
+  const {body, mind, time, overall} = computedScores;
+  const today = new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
+
+  /* ── HELPERS ── */
+  function hex(h){const r=parseInt(h.slice(1,3),16)/255,g=parseInt(h.slice(3,5),16)/255,b=parseInt(h.slice(5,7),16)/255;return[r,g,b];}
+  function setAccent(){doc.setTextColor(200,255,62);}
+  function setWhite(){doc.setTextColor(240,237,232);}
+  function setMuted(){doc.setTextColor(120,115,110);}
+  function setDark(){doc.setTextColor(30,30,30);}
+  function setRed(){doc.setTextColor(255,69,69);}
+  function setOrange(){doc.setTextColor(255,140,66);}
+  function scoreColor(s){return s<35?[255,69,69]:s<60?[255,140,66]:[200,255,62];}
+  function scoreLabel(s){return s<35?'CRÍTICO':s<60?'DEFICIENTE':s<75?'EN PROCESO':'SÓLIDO';}
+
+  /* ── BACKGROUND ── */
+  doc.setFillColor(3,3,3);
+  doc.rect(0,0,W,H,'F');
+
+  /* ── TOP ACCENT BAR ── */
+  doc.setFillColor(200,255,62);
+  doc.rect(0,0,W,4,'F');
+
+  /* ── LEFT ACCENT STRIPE ── */
+  doc.setFillColor(200,255,62,0.08);
+  doc.setFillColor(20,20,20);
+  doc.rect(0,4,8,H-4,'F');
+  doc.setFillColor(200,255,62);
+  doc.rect(0,4,2,H-4,'F');
+
+  /* ── LOGO / BRAND ── */
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(20);
+  doc.setLetterSpacing(6);
+  setAccent();
+  doc.text('ASCEND', 20, 22);
+  doc.setTextColor(240,237,232);
+  doc.text('SYSTEM', 20+doc.getTextWidth('ASCEND')+3, 22);
+  doc.setLetterSpacing(0);
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica','normal');
+  setMuted();
+  doc.setLetterSpacing(3);
+  doc.text('INFORME DE DIAGNÓSTICO PERSONAL', 20, 30);
+  doc.setLetterSpacing(0);
+
+  /* date top right */
+  doc.setFontSize(7);
+  setMuted();
+  doc.text(today, W-20, 22, {align:'right'});
+  doc.text('FASE I · ASSESSMENT COMPLETADO', W-20, 28, {align:'right'});
+
+  /* ── DIVIDER ── */
+  doc.setDrawColor(60,60,60);
+  doc.setLineWidth(0.3);
+  doc.line(20, 35, W-20, 35);
+
+  /* ── SECTION TITLE ── */
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(28);
+  setWhite();
+  doc.text('TU PUNTO', 20, 52);
+  doc.setFontSize(28);
+  setAccent();
+  doc.text('DE PARTIDA REAL', 20, 63);
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9);
+  setMuted();
+  const subtitle = 'Este documento recoge tu estado actual en las 4 dimensiones del sistema. Es tu espejo sin filtros.';
+  doc.text(subtitle, 20, 72, {maxWidth: W-40});
+
+  /* ── SCORES ROW ── */
+  const scoreY = 82;
+  const areas = [
+    {label:'CUERPO',score:body, x:20},
+    {label:'MENTE',score:mind, x:65},
+    {label:'TIEMPO',score:time, x:110},
+    {label:'GLOBAL',score:overall, x:155, highlight:true}
+  ];
+
+  areas.forEach(a=>{
+    const col = scoreColor(a.score);
+    const bw = 45;
+
+    /* card bg */
+    doc.setFillColor(a.highlight?15:12,a.highlight?15:12,a.highlight?15:12);
+    doc.rect(a.x, scoreY, bw, 38, 'F');
+
+    /* accent top line */
+    doc.setFillColor(...col);
+    doc.rect(a.x, scoreY, bw, 1.5,'F');
+
+    /* label */
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(7);
+    doc.setLetterSpacing(2.5);
+    doc.setTextColor(...(a.highlight?[200,255,62]:[140,135,130]));
+    doc.text(a.label, a.x+bw/2, scoreY+8, {align:'center'});
+    doc.setLetterSpacing(0);
+
+    /* number */
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(28);
+    doc.setTextColor(...col);
+    doc.text(String(a.score), a.x+bw/2, scoreY+22, {align:'center'});
+
+    /* /100 */
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(7);
+    setMuted();
+    doc.text('/100', a.x+bw/2, scoreY+28, {align:'center'});
+
+    /* verdict */
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(6.5);
+    doc.setLetterSpacing(1.5);
+    doc.setTextColor(...col);
+    doc.text(scoreLabel(a.score), a.x+bw/2, scoreY+35, {align:'center'});
+    doc.setLetterSpacing(0);
+
+    /* bar track */
+    doc.setFillColor(30,30,30);
+    doc.rect(a.x+4, scoreY+39, bw-8, 1.5,'F');
+    /* bar fill */
+    doc.setFillColor(...col);
+    doc.rect(a.x+4, scoreY+39, (bw-8)*(a.score/100), 1.5,'F');
+  });
+
+  /* ── DIVIDER ── */
+  doc.setDrawColor(40,40,40);
+  doc.line(20, scoreY+46, W-20, scoreY+46);
+
+  /* ── PER-AREA DIAGNOSIS ── */
+  let curY = scoreY+54;
+
+  const diagAreas=[
+    {key:'body',label:'CUERPO & FÍSICO',score:body},
+    {key:'mind',label:'MENTE & FOCO',score:mind},
+    {key:'time',label:'TIEMPO & HÁBITOS',score:time}
+  ];
+
+  diagAreas.forEach(a=>{
+    const col=scoreColor(a.score);
+    const lvl=a.score<35?'danger':a.score<60?'warning':'ok';
+
+    /* area header */
+    doc.setFillColor(15,15,15);
+    doc.rect(20, curY, W-40, 8,'F');
+    doc.setFillColor(...col);
+    doc.rect(20, curY, 2, 8,'F');
+
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setLetterSpacing(2);
+    doc.setTextColor(...col);
+    doc.text(a.label, 26, curY+5.5);
+    doc.setLetterSpacing(0);
+
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...col);
+    doc.text(`${a.score}/100 — ${scoreLabel(a.score)}`, W-22, curY+5.5,{align:'right'});
+
+    curY+=12;
+
+    /* intro text */
+    const intro = getDiagIntroPlain(a.key, a.score);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    setMuted();
+    const lines = doc.splitTextToSize(intro, W-44);
+    doc.text(lines, 22, curY);
+    curY += lines.length*4+3;
+
+    /* bullets */
+    const bullets = getBullets(a.key, a.score);
+    bullets.forEach(b=>{
+      doc.setFillColor(...col);
+      doc.circle(24, curY-1.2, 0.9,'F');
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(7.5);
+      setMuted();
+      const blines = doc.splitTextToSize(b, W-52);
+      doc.text(blines, 28, curY);
+      curY+=blines.length*3.6+2;
+    });
+    curY+=4;
+  });
+
+  /* ── GLOBAL VERDICT ── */
+  if(curY > H-60){
+    doc.addPage();
+    doc.setFillColor(3,3,3);
+    doc.rect(0,0,W,H,'F');
+    doc.setFillColor(200,255,62);
+    doc.rect(0,0,W,2,'F');
+    doc.setFillColor(20,20,20);
+    doc.rect(0,2,8,H-2,'F');
+    doc.setFillColor(200,255,62);
+    doc.rect(0,2,2,H-2,'F');
+    curY=20;
+  }
+
+  doc.setDrawColor(40,40,40);
+  doc.line(20, curY, W-20, curY);
+  curY+=8;
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(11);
+  doc.setLetterSpacing(2);
+  setWhite();
+  doc.text('VEREDICTO GLOBAL', 20, curY);
+  doc.setLetterSpacing(0);
+  curY+=8;
+
+  const verdictText = getOverallIntroPure(overall, body, mind, time);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8.5);
+  setMuted();
+  const vlines = doc.splitTextToSize(verdictText, W-40);
+  doc.text(vlines, 20, curY);
+  curY+=vlines.length*4.2+10;
+
+  /* ── CTA BOX ── */
+  const ctaH = 42;
+  if(curY+ctaH > H-20){
+    doc.addPage();
+    doc.setFillColor(3,3,3);
+    doc.rect(0,0,W,H,'F');
+    doc.setFillColor(200,255,62);
+    doc.rect(0,0,W,2,'F');
+    curY=20;
+  }
+
+  doc.setFillColor(18,18,18);
+  doc.rect(20, curY, W-40, ctaH,'F');
+  doc.setFillColor(200,255,62);
+  doc.rect(20, curY, W-40, 2.5,'F');
+
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(12);
+  doc.setLetterSpacing(1);
+  setWhite();
+  doc.text('EL SISTEMA EXISTE PARA ESTO.', 20+(W-40)/2, curY+12, {align:'center'});
+  doc.setLetterSpacing(0);
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(8.5);
+  setMuted();
+  const ctaLine = 'Tu diagnóstico es el punto de partida. Ascend System es lo que convierte ese diagnóstico en transformación real en 90 días.';
+  const ctaLines = doc.splitTextToSize(ctaLine, W-60);
+  doc.text(ctaLines, 20+(W-40)/2, curY+21, {align:'center'});
+
+  doc.setFillColor(200,255,62);
+  doc.rect(20+(W-40)/2-35, curY+32, 70, 7,'F');
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(8);
+  doc.setLetterSpacing(2.5);
+  doc.setTextColor(0,0,0);
+  doc.text('ACCEDER AL SISTEMA', 20+(W-40)/2, curY+37.5, {align:'center'});
+  doc.setLetterSpacing(0);
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(7);
+  setMuted();
+  doc.text('ascendsystem.com', 20+(W-40)/2, curY+50, {align:'center'});
+
+  /* ── FOOTER ── */
+  doc.setDrawColor(30,30,30);
+  doc.line(20, H-12, W-20, H-12);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(6.5);
+  setMuted();
+  doc.setLetterSpacing(1.5);
+  doc.text('ASCEND SYSTEM · DIAGNÓSTICO CONFIDENCIAL · ' + today, W/2, H-7, {align:'center'});
+  doc.setLetterSpacing(0);
+
+  doc.save('AscendSystem_Diagnostico.pdf');
+}
+
+/* Plain text versions for PDF (no HTML tags) */
+function getDiagIntroPlain(area, score){
+  const intros={
+    body:{
+      danger:'Tu base física está comprometida. No como juicio moral, sino como dato objetivo. El cuerpo es el sistema operativo sobre el que funciona todo lo demás: mente, disciplina, energía, toma de decisiones. Con esta puntuación, estás operando un ordenador con el procesador al 30%.',
+      warning:'Tu físico tiene base pero carece de sistema. Entrenas, duermes, comes, pero de forma irregular. El progreso físico no viene del esfuerzo máximo sino de la consistencia mínima aplicada todos los días. Aquí es donde el 80% de las personas se queda estancada.',
+      ok:'Tu físico es funcional y tiene potencial real. Estás en el tercio superior. Lo que separa tu nivel actual del siguiente no es más esfuerzo, sino más inteligencia en la aplicación del protocolo.'
+    },
+    mind:{
+      danger:'Tu mente está bajo control de estímulos externos, no de ti. No es un problema de inteligencia ni de voluntad: es un problema de arquitectura. Las aplicaciones de redes sociales están diseñadas para secuestrar tu atención. Sin un sistema de contraataque, pierdes.',
+      warning:'Tu mente funciona, pero vive interrumpida. Tienes capacidad de foco, pero el entorno y tus propios hábitos la fragmentan constantemente. El resultado: trabajo superficial donde debería haber trabajo profundo.',
+      ok:'Tu mente es un activo, pero todavía no está optimizada. Ves la diferencia entre los días en que fluyes y los días en que te dispersas. El sistema convierte esa diferencia en la excepción, no en la norma.'
+    },
+    time:{
+      danger:'Tu tiempo está sin gobernar. Esto es el estado por defecto de cualquier persona sin sistema. El tiempo sin estructura siempre fluye hacia lo urgente, lo placentero inmediato y lo que otros demandan. Nunca hacia lo que tú quieres construir.',
+      warning:'Tu tiempo tiene estructura parcial, pero sin arquitectura completa. Tienes días productivos y días perdidos sin entender por qué unos sí y otros no. La respuesta siempre es la misma: sistema vs. improvisación.',
+      ok:'Tu gestión del tiempo es sólida como base, pero tiene techo bajo. Hay optimizaciones de palanca alta que te están costando horas cada semana sin que lo sepas.'
+    }
+  };
+  const lvl=score<35?'danger':score<60?'warning':'ok';
+  return intros[area][lvl];
+}
+
+function getOverallIntroPure(overall, body, mind, time){
+  const lowestArea = body<=mind && body<=time ? 'cuerpo' : mind<=time ? 'mente' : 'gestión del tiempo';
+  const highestArea = body>=mind && body>=time ? 'cuerpo' : mind>=time ? 'mente' : 'gestión del tiempo';
+  if(overall<35){
+    return `Puntuación global: ${overall}/100 — Zona crítica. Esta es la verdad que la mayoría prefiere no ver. Tu sistema actual, o la ausencia de él, te está costando rendimiento, salud y tiempo que no vas a recuperar. La buena noticia: estás en el punto exacto donde un sistema bien implementado produce los cambios más dramáticos y más rápidos. Tu área más débil es ${lowestArea}. Por ahí tienes que empezar. El programa Ascend System está diseñado específicamente para personas en esta situación: sin sistema, con potencial, listos para dejar de improvisar.`;
+  }
+  if(overall<60){
+    return `Puntuación global: ${overall}/100 — Zona de trabajo. Tienes material con el que trabajar, pero el sistema actual no produce resultados a la altura de lo que sabes que eres capaz. Hay esfuerzo, pero sin arquitectura correcta, el esfuerzo se desperdicia. Tu área más fuerte es ${highestArea}. Tu área con más palanca inmediata es ${lowestArea}. En 90 días con el sistema correcto, esta puntuación sube 25-35 puntos. No como motivación, sino como dato estadístico de lo que ocurre cuando aplicas estructura real a esfuerzo real.`;
+  }
+  return `Puntuación global: ${overall}/100 — Base sólida. Estás por encima de la media, lo que significa que ya tienes disciplina, hábitos, intención. Lo que el sistema te da no es el punto de partida, sino el siguiente nivel: convertir lo que haces bien en algo que funciona solo, sin necesitar motivación. Tu mayor palanca está en ${lowestArea}. Optimizar ahí con el sistema correcto es la diferencia entre ser "disciplinado" y ser "imparable".`;
+}
+
+/* ════════ TRACKER COMPLETION ════════ */
 function updateCompletion(){
   const all=document.querySelectorAll('.tracker-area input[type=checkbox]');
   const checked=[...all].filter(c=>c.checked).length;
   const pct=Math.round((checked/all.length)*100);
   const circumference=163;
-  const offset=circumference-(pct/100)*circumference;
   const ring=document.getElementById('progressRing');
-  if(ring)ring.style.strokeDashoffset=offset;
+  if(ring)ring.style.strokeDashoffset=circumference-(pct/100)*circumference;
   document.getElementById('completionPct').textContent=pct+'%';
 }
 
-/* ─── BUILD 90-DAY GRID ─── */
-function buildDayGrid(containerId,rows,offset,todayRow,todayIdx){
+/* ════════ 90-DAY GRID ════════ */
+function buildDayGrid(containerId,offset){
   const container=document.getElementById(containerId);
   if(!container)return;
-  const statuses=['done','done','done','partial','done','done','miss','done','done','done',
-    'done','partial','done','done','done','done','miss','miss','done','done',
-    'done','done','done','partial','done','','','','',''];
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<30;c++){
-      const idx=r*30+c;
-      const div=document.createElement('div');
-      div.className='day-block';
-      const globalIdx=offset+idx;
-      if(globalIdx<statuses.length){
-        if(statuses[globalIdx])div.classList.add(statuses[globalIdx]);
-      }
-      if(r===todayRow&&c===todayIdx)div.classList.add('today');
-      div.title='Día '+(globalIdx+1);
-      container.appendChild(div);
-    }
+  const statuses=['done','done','done','partial','done','done','miss','done','done','done','done','partial','done','done','done','done','miss','miss','done','done','done','done','done','partial','done','','','','',''];
+  for(let c=0;c<30;c++){
+    const div=document.createElement('div');
+    div.className='day-block';
+    const globalIdx=offset+c;
+    if(globalIdx<statuses.length&&statuses[globalIdx])div.classList.add(statuses[globalIdx]);
+    if(offset===0&&c===22)div.classList.add('today');
+    div.title='Día '+(globalIdx+1);
+    container.appendChild(div);
   }
 }
-buildDayGrid('dayBlocks',1,0,0,22);
-buildDayGrid('dayBlocks2',1,30,0,0);
-buildDayGrid('dayBlocks3',1,60,0,0);
+buildDayGrid('dayBlocks',0);
+buildDayGrid('dayBlocks2',30);
+buildDayGrid('dayBlocks3',60);
 
-/* ─── GSAP ─── */
+/* ════════ GSAP ANIMATIONS ════════ */
 gsap.registerPlugin(ScrollTrigger);
 
-/* Hero entry */
 ['#hero-overline','#hero-title','#hero-desc','#hero-actions'].forEach((sel,i)=>{
-  gsap.from(sel,{
-    opacity:0,y:80,duration:1.4,
-    delay:0.15+i*0.2,ease:'power4.out',clearProps:'all'
-  });
+  gsap.from(sel,{opacity:0,y:80,duration:1.4,delay:0.15+i*0.2,ease:'power4.out',clearProps:'all'});
 });
-
-/* Hero image parallax */
-gsap.to('.sys-hero-bg img',{
-  yPercent:20,ease:'none',
-  scrollTrigger:{trigger:'.sys-hero',start:'top top',end:'bottom top',scrub:1.5}
-});
-
-/* Final image */
-gsap.to('.final-bg img',{
-  yPercent:15,ease:'none',
-  scrollTrigger:{trigger:'.final-section',start:'top bottom',end:'bottom top',scrub:1.5}
-});
-
-/* Phase fixed panel images */
+gsap.to('.sys-hero-bg img',{yPercent:20,ease:'none',scrollTrigger:{trigger:'.sys-hero',start:'top top',end:'bottom top',scrub:1.5}});
+gsap.to('.final-bg img',{yPercent:15,ease:'none',scrollTrigger:{trigger:'.final-section',start:'top bottom',end:'bottom top',scrub:1.5}});
 document.querySelectorAll('.phase-fixed-bg img').forEach(img=>{
-  gsap.to(img,{
-    yPercent:10,ease:'none',
-    scrollTrigger:{trigger:img.closest('.phase-chapter'),start:'top bottom',end:'bottom top',scrub:2}
-  });
+  gsap.to(img,{yPercent:10,ease:'none',scrollTrigger:{trigger:img.closest('.phase-chapter'),start:'top bottom',end:'bottom top',scrub:2}});
 });
 
-/* Generic scroll anims */
-function setupScrollAnim(el){
-  const type=el.dataset.anim;
-  if(!type||type==='stagger-grid'||type==='timeline'||type==='pillars')return;
-  const fromVars={opacity:0,duration:1.1,ease:'power4.out',clearProps:'all'};
-  if(type==='fade-up')fromVars.y=80;
-  if(type==='fade-left')fromVars.x=80;
-  fromVars.delay=parseFloat(el.dataset.delay||0)*0.14;
-  gsap.from(el,{
-    ...fromVars,
-    scrollTrigger:{
-      trigger:el,start:'top 88%',
-      toggleActions:'play none none reverse'
-    }
-  });
-}
 requestAnimationFrame(()=>{
-  document.querySelectorAll('[data-anim]').forEach(setupScrollAnim);
+  document.querySelectorAll('[data-anim]').forEach(el=>{
+    const type=el.dataset.anim;
+    if(!type||type==='stagger-grid'||type==='timeline')return;
+    const fromVars={opacity:0,duration:1.1,ease:'power4.out',clearProps:'all'};
+    if(type==='fade-up')fromVars.y=80;
+    if(type==='fade-left')fromVars.x=80;
+    fromVars.delay=parseFloat(el.dataset.delay||0)*0.14;
+    gsap.from(el,{...fromVars,scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none reverse'}});
+  });
 });
 
-/* Stagger grids — bidirectional */
 document.querySelectorAll('[data-anim="stagger-grid"]').forEach(grid=>{
-  gsap.from(grid.children,{
-    opacity:0,y:60,scale:.95,duration:1.1,stagger:0.1,ease:'power3.out',clearProps:'all',
-    scrollTrigger:{
-      trigger:grid,start:'top 86%',
-      toggleActions:'play none none reverse'
-    }
-  });
+  gsap.from(grid.children,{opacity:0,y:60,scale:.95,duration:1.1,stagger:0.1,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:grid,start:'top 86%',toggleActions:'play none none reverse'}});
 });
-
-/* Timeline nodes */
 document.querySelectorAll('[data-anim="timeline"] .tl-node').forEach((node,i)=>{
-  gsap.from(node,{
-    opacity:0,y:70,duration:1.1,delay:i*0.15,ease:'power3.out',clearProps:'all',
-    scrollTrigger:{
-      trigger:node,start:'top 88%',
-      toggleActions:'play none none reverse'
-    }
-  });
+  gsap.from(node,{opacity:0,y:70,duration:1.1,delay:i*0.15,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:node,start:'top 88%',toggleActions:'play none none reverse'}});
 });
-
-/* Problem pills stagger */
-gsap.from('.problem-pill',{
-  opacity:0,x:-50,duration:1,stagger:0.12,ease:'power3.out',clearProps:'all',
-  scrollTrigger:{trigger:'.problem-pills',start:'top 86%',toggleActions:'play none none reverse'}
-});
-
-/* Phase deliverables */
+gsap.from('.problem-pill',{opacity:0,x:-50,duration:1,stagger:0.12,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:'.problem-pills',start:'top 86%',toggleActions:'play none none reverse'}});
 document.querySelectorAll('.phase-deliverables').forEach(grid=>{
-  gsap.from(grid.children,{
-    opacity:0,y:50,duration:.9,stagger:.1,ease:'power3.out',clearProps:'all',
-    scrollTrigger:{trigger:grid,start:'top 87%',toggleActions:'play none none reverse'}
-  });
+  gsap.from(grid.children,{opacity:0,y:50,duration:.9,stagger:.1,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:grid,start:'top 87%',toggleActions:'play none none reverse'}});
 });
-
-/* Identity areas */
-gsap.from('.ident-area',{
-  opacity:0,y:60,duration:1,stagger:0.12,ease:'power3.out',clearProps:'all',
-  scrollTrigger:{trigger:'.ident-areas',start:'top 86%',toggleActions:'play none none reverse'}
-});
-
-/* Before/after */
-gsap.from('.ba-side.before',{
-  opacity:0,x:-80,duration:1.2,ease:'power3.out',clearProps:'all',
-  scrollTrigger:{trigger:'.before-after',start:'top 85%',toggleActions:'play none none reverse'}
-});
-gsap.from('.ba-side.after',{
-  opacity:0,x:80,duration:1.2,ease:'power3.out',clearProps:'all',
-  scrollTrigger:{trigger:'.before-after',start:'top 85%',toggleActions:'play none none reverse'}
-});
-gsap.from('.ba-divider',{
-  opacity:0,scale:0,duration:1,ease:'back.out(1.7)',clearProps:'all',
-  scrollTrigger:{trigger:'.before-after',start:'top 82%',toggleActions:'play none none reverse'}
-});
-
-/* Daily tracker entrance */
-gsap.from('.daily-tracker',{
-  opacity:0,y:80,duration:1.3,ease:'power4.out',clearProps:'all',
-  scrollTrigger:{trigger:'.daily-tracker',start:'top 85%',toggleActions:'play none none reverse'}
-});
-
-/* 90 day grid */
-gsap.from('.day-block',{
-  opacity:0,scale:0,duration:0.4,stagger:{each:0.01,grid:[1,30],from:'start'},ease:'power2.out',
-  scrollTrigger:{trigger:'#dayBlocks',start:'top 88%',toggleActions:'play none none reverse'}
-});
-
-/* Phase chapters — bidirectional reveal */
+gsap.from('.ident-area',{opacity:0,y:60,duration:1,stagger:0.12,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:'.ident-areas',start:'top 86%',toggleActions:'play none none reverse'}});
+gsap.from('.ba-side.before',{opacity:0,x:-80,duration:1.2,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:'.before-after',start:'top 85%',toggleActions:'play none none reverse'}});
+gsap.from('.ba-side.after',{opacity:0,x:80,duration:1.2,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:'.before-after',start:'top 85%',toggleActions:'play none none reverse'}});
+gsap.from('.ba-divider',{opacity:0,scale:0,duration:1,ease:'back.out(1.7)',clearProps:'all',scrollTrigger:{trigger:'.before-after',start:'top 82%',toggleActions:'play none none reverse'}});
+gsap.from('.daily-tracker',{opacity:0,y:80,duration:1.3,ease:'power4.out',clearProps:'all',scrollTrigger:{trigger:'.daily-tracker',start:'top 85%',toggleActions:'play none none reverse'}});
+gsap.from('.day-block',{opacity:0,scale:0,duration:0.4,stagger:{each:0.01,grid:[1,30],from:'start'},ease:'power2.out',scrollTrigger:{trigger:'#dayBlocks',start:'top 88%',toggleActions:'play none none reverse'}});
 document.querySelectorAll('.phase-fixed-content').forEach(el=>{
-  gsap.from(el,{
-    opacity:0,x:-60,duration:1.2,ease:'power3.out',clearProps:'all',
-    scrollTrigger:{trigger:el.closest('.phase-chapter'),start:'top 80%',toggleActions:'play none none reverse'}
-  });
+  gsap.from(el,{opacity:0,x:-60,duration:1.2,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:el.closest('.phase-chapter'),start:'top 80%',toggleActions:'play none none reverse'}});
 });
 document.querySelectorAll('.phase-scroll').forEach(el=>{
-  gsap.from(el,{
-    opacity:0,x:60,duration:1.2,ease:'power3.out',clearProps:'all',
-    scrollTrigger:{trigger:el.closest('.phase-chapter'),start:'top 80%',toggleActions:'play none none reverse'}
-  });
+  gsap.from(el,{opacity:0,x:60,duration:1.2,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:el.closest('.phase-chapter'),start:'top 80%',toggleActions:'play none none reverse'}});
 });
+gsap.from('.bridge-quote',{opacity:0,y:100,duration:1.8,ease:'power4.out',clearProps:'all',scrollTrigger:{trigger:'.bridge',start:'top 75%',toggleActions:'play none none reverse'}});
+gsap.from('footer > *',{opacity:0,y:40,duration:1,stagger:.1,ease:'power3.out',clearProps:'all',scrollTrigger:{trigger:'footer',start:'top 90%',toggleActions:'play none none reverse'}});
 
-/* Phase separators */
-gsap.from('.phase-sep-bar',{
-  scaleX:0,transformOrigin:'left',duration:1.5,ease:'power3.out',stagger:.1,
-  scrollTrigger:{trigger:'.phase-separator',start:'top 90%',toggleActions:'play none none reverse'}
-});
-
-/* Bridge diagonals */
-gsap.from('.bridge-diag',{
-  scaleY:0,transformOrigin:'top',duration:2.2,stagger:.15,ease:'power3.out',
-  scrollTrigger:{trigger:'.bridge',start:'top 80%'}
-});
-
-/* Bridge quote split */
-gsap.from('.bridge-quote',{
-  opacity:0,y:100,duration:1.8,ease:'power4.out',clearProps:'all',
-  scrollTrigger:{trigger:'.bridge',start:'top 75%',toggleActions:'play none none reverse'}
-});
-
-/* Footer */
-gsap.from('footer > *',{
-  opacity:0,y:40,duration:1,stagger:.1,ease:'power3.out',clearProps:'all',
-  scrollTrigger:{trigger:'footer',start:'top 90%',toggleActions:'play none none reverse'}
-});
-
-/* Arch timeline bars animate */
 ScrollTrigger.create({
   trigger:'.arch-wide-right',start:'top 80%',once:true,
   onEnter:()=>{
     document.querySelectorAll('.atl-bar-fill').forEach((bar,i)=>{
-      const w=bar.style.width;
-      bar.style.width='0%';
+      const w=bar.style.width;bar.style.width='0%';
       setTimeout(()=>{bar.style.transition='width 1.2s cubic-bezier(.16,1,.3,1)';bar.style.width=w;},i*120);
     });
   }
 });
 
-/* ─── MAGNETIC BUTTONS ─── */
-document.querySelectorAll('.btn-main,.btn-sm').forEach(btn=>{
+/* ── MAGNETIC BUTTONS ── */
+document.querySelectorAll('.btn-main,.btn-sm,.btn-download').forEach(btn=>{
   btn.addEventListener('mousemove',e=>{
     const r=btn.getBoundingClientRect();
     const x=(e.clientX-r.left-r.width/2)*0.1;
     const y=(e.clientY-r.top-r.height/2)*0.12;
-    btn.style.transform=`translate(${x}px,${y-5}px)`;
+    btn.style.transform=`translate(${x}px,${y-4}px)`;
   });
   btn.addEventListener('mouseleave',()=>{btn.style.transform='';});
 });
 
-/* ─── CARD 3D TILT ─── */
+/* ── 3D TILT ── */
 if(!('ontouchstart' in window)){
   document.querySelectorAll('.deliverable,.arch-block,.score-cell,.ident-area').forEach(card=>{
     card.addEventListener('mousemove',e=>{
@@ -3011,21 +2837,18 @@ if(!('ontouchstart' in window)){
       const y=(e.clientY-r.top)/r.height-.5;
       card.style.transform=`perspective(900px) rotateX(${-y*5}deg) rotateY(${x*5}deg) translateZ(6px)`;
     });
-    card.addEventListener('mouseleave',()=>{
-      card.style.transform='perspective(900px) rotateX(0) rotateY(0) translateZ(0)';
-      card.style.transition='transform .7s cubic-bezier(.16,1,.3,1)';
-    });
+    card.addEventListener('mouseleave',()=>{card.style.transform='perspective(900px) rotateX(0) rotateY(0) translateZ(0)';card.style.transition='transform .7s cubic-bezier(.16,1,.3,1)';});
     card.addEventListener('mouseenter',()=>{card.style.transition='transform .12s';});
   });
 }
 
-/* ─── DEVTOOLS BLOCK ─── */
+/* ── DEVTOOLS BLOCK ── */
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{
-  if(e.key==='F12'||
-     (e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||
-     (e.ctrlKey&&e.key==='u'))e.preventDefault();
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||(e.ctrlKey&&e.key==='u'))e.preventDefault();
 });
 </script>
 </body>
 </html>
+HTMLEOF
+echo "Done. File size: $(wc -c < /mnt/user-data/outputs/sistema.html) bytes"
